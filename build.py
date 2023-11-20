@@ -51,8 +51,6 @@ class Generator:
             
         return structure
 
-
-
     def render_template(self, name: str, indents: int = 0, **kwargs: object) -> str:
         if name not in self.templates:
             raise Exception(f"Template {name} not found")
@@ -79,11 +77,12 @@ class Generator:
         return nav
     
     def render_nav(self, indents: int) -> str:
-        return self._render_nav(self.structure, self.url_root + self.dist[1:], indents, True)
+        full_path = self.url_root + self.dist[self.dist.rfind("/")+1:] + "/"
+        return self._render_nav(self.structure, full_path, indents, True)
     
     def render_index(self, indents: int) -> str:
         return self.render_template(
-            "index.html", indents,
+            "index.html", 0,
             nav=self.render_nav(indents+4), url_root=self.url_root
         )
 
@@ -95,7 +94,7 @@ class Generator:
 
 
 if __name__ == "__main__":
-    generator = Generator("pages/", "./generated/pages/", "templates/")
+    generator = Generator("pages", "./generated/pages", "templates")
 
     with open("./generated/index.html", "w") as f:
         f.write(generator.render_index(8))
