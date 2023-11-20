@@ -2,7 +2,7 @@ async function renderFile(path) {
     const app = document.getElementById('app')
     app.innerHTML = '';
 
-    fetch(`generated/pages/${path}.html`)
+    fetch(`pages/${path}.html`)
         .then(res => res.text())
         .then(html => { app.innerHTML += html; });
 }

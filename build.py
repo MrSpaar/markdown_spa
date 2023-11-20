@@ -6,7 +6,7 @@ from os import listdir, path, makedirs, environ, system
 NestedDict = dict[str, "str | NestedDict"]
 
 
-class Rendered:
+class Generator:
     def __init__(self, src: str, dist: str, templates: str) -> None:
         self.url_root = ""
         if 'URL_ROOT' in environ:
@@ -51,15 +51,14 @@ class Rendered:
             
         return structure
 
+
+
     def render_template(self, name: str, indents: int = 0, **kwargs: object) -> str:
         if name not in self.templates:
             raise Exception(f"Template {name} not found")
 
         return "\n".join(" "*indents + line
                          for line in self.templates[name].substitute(**kwargs).split("\n"))
-
-    def render_nav(self, indents: int) -> str:
-        return self._render_nav(self.structure, self.url_root + self.dist[1:], indents, True)
 
     def _render_nav(self, parent: NestedDict, full_path: str, indents: int, first: bool = False) -> str:
         nav: str = ""
@@ -78,16 +77,28 @@ class Rendered:
             )
         
         return nav
+    
+    def render_nav(self, indents: int) -> str:
+        return self._render_nav(self.structure, self.url_root + self.dist[1:], indents, True)
+    
+    def render_index(self, indents: int) -> str:
+        return self.render_template(
+            "index.html", indents,
+            nav=self.render_nav(indents+4), url_root=self.url_root
+        )
+
+    def link_assets(self) -> None:
+        if self.url_root:
+            system("cp -r assets generated/")
+        elif not path.exists("generated/assets"):
+            system("ln -s ../assets generated/")
 
 
 if __name__ == "__main__":
-    renderer = Rendered("pages/", "./generated/pages/", "templates/")
+    generator = Generator("pages/", "./generated/pages/", "templates/")
 
     with open("./generated/index.html", "w") as f:
-        f.write(renderer.render_template(
-            "index.html", url_root=renderer.url_root, nav=renderer.render_nav(8)
-        ))
+        f.write(generator.render_index(8))
 
-    system("cp -r assets generated/")
-    
+    generator.link_assets()
     
