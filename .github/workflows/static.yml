@@ -35,6 +35,10 @@ jobs:
         run: python -m build
         env:
           URL_ROOT: ${{ github.repository }}
+      - name: Exclude unnecessary files 🗑️
+        run: |
+          rm -rf ${{ github.workspace }}/.github ${{ github.workspace }}/build.py
+          rm -rf ${{ github.workspace }}/pages ${{ github.workspace }}/templates
       - name: Setup Pages ⚙️
         uses: actions/configure-pages@v3
       - name: Upload artifact 📤
@@ -44,5 +48,3 @@ jobs:
       - name: Deploy to GitHub Pages 🌍
         id: deployment
         uses: actions/deploy-pages@v2
-      - name: Exclude unnecessary files 🗑️
-        run: rm -rf .github .gitignore pages templates build.py
