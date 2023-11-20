@@ -1,0 +1,11 @@
+@media (prefers-color-scheme: dark) {
+    html {
+        color: white;
+        background-color: #1d1e22;
+    }
+
+    a {
+        color: #03a9f4;
+        &:visited { color: #0276aa; }
+    }
+}
