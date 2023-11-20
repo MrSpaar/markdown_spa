@@ -81,7 +81,7 @@ class Rendered:
 
 
 if __name__ == "__main__":
-    renderer = Rendered(".pages", "./generated/pages/", ".templates")
+    renderer = Rendered("pages/", "./generated/pages/", "templates/")
 
     with open("./generated/index.html", "w") as f:
         f.write(renderer.render_template(
