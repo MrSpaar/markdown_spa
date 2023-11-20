@@ -44,7 +44,7 @@ jobs:
       - name: Upload artifact 📤
         uses: actions/upload-pages-artifact@v2
         with:
-          path: '.'
+          path: './generated'
       - name: Deploy to GitHub Pages 🌍
         id: deployment
         uses: actions/deploy-pages@v2

@@ -1,7 +1,7 @@
 from json import dump
 from string import Template
 from markdown import markdown
-from os import listdir, path, makedirs, environ
+from os import listdir, path, makedirs, environ, system
 
 NestedDict = dict[str, "str | NestedDict"]
 
@@ -87,4 +87,7 @@ if __name__ == "__main__":
         f.write(renderer.render_template(
             "index.html", url_root=renderer.url_root, nav=renderer.render_nav(8)
         ))
+
+    system("cp -r assets generated/")
+    
     
