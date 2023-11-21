@@ -1,4 +1,4 @@
-{% from "macros.html" import render_ul -%}
+{% from "macros.html" import render_nav -%}
 
 <html lang="en">
 <head>
@@ -7,17 +7,38 @@
     <title>Markdown SPA</title>
     
     <link href="{{ url_root }}/assets/style.css" rel="stylesheet"/>
-    <script defer="" src="{{ url_root }}/assets/script.js"></script>
 </head>
 <body>
     <nav>
         <ul>
-            {{ render_ul(tree, "", url_root) | indent(4) -}}
+            {{ render_nav(tree, "", url_root) | indent(4) -}}
         </ul>
     </nav>
     
     <div id="app">
-        {{ content | indent(8) }}
+        {{ page_content | indent(8) }}
     </div>
+
+    <script>
+        const app = document.getElementById('app')
+
+        function changePage(event) {
+            event.preventDefault();
+
+            fetch(`${event.target.href}`)
+                .then(resp => resp.text())
+                .then(html => {
+                    let start = html.indexOf('<div id="app">');
+                    let end = html.indexOf('</div>', start);
+                    app.innerHTML = html.substring(start, end + 6);
+                });
+
+            window.history.pushState({}, '', event.target.href);
+        }
+
+        for (a of document.querySelectorAll('a')) {
+            a.addEventListener('click', changePage)
+        }
+    </script>
 </body>
 </html>
