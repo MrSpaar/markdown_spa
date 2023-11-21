@@ -10,12 +10,11 @@ pages_path = 'pages'
 assets_path = 'assets'
 build_path = 'generated'
 templates_path = 'templates'
-url_root = ""
 
+in_github_actions = "URL_ROOT" in environ
+url_root = f"/{environ['URL_ROOT'].split('/')[1]}" \
+                if in_github_actions else ""
 
-def read_file(path: str) -> str:
-    with open(path) as f:
-        return f.read()
 
 def write_file(path: str, content: str) -> None:
     with open(path, 'w') as f:
@@ -38,9 +37,10 @@ def get_file_tree(parent: str = "") -> FileTree:
 
 
 def build_page(template: Template, path: str, **kwargs: object) -> str:
-    return template.render(
-        content=markdown(read_file(path), extensions=["fenced_code"]), **kwargs
-    )
+    with open(path) as f:
+        return template.render(**kwargs,
+            page_content=markdown(f.read(), extensions=["fenced_code"])
+        )
 
 def build_tree(template: Template, tree: FileTree, full_tree: FileTree, full_path: str = "") -> None:
     for path, child in tree.items():
@@ -59,11 +59,7 @@ def build_tree(template: Template, tree: FileTree, full_tree: FileTree, full_pat
 
         build_tree(template, child, full_tree, f"{full_path}/{path}")
 
-
-if __name__ == "__main__":
-    if "URL_ROOT" in environ:
-        url_root = f"/{environ['URL_ROOT'].split('/')[1]}"
-
+def build():
     if not exists(build_path):
         makedirs(build_path, exist_ok=True)
 
@@ -75,5 +71,11 @@ if __name__ == "__main__":
     build_tree(template, tree, tree)
 
     if not exists(f"{build_path}/{assets_path}"):
-        system(f"cp -r {assets_path} {build_path}/" if url_root
+        system(f"cp -r {assets_path} {build_path}/" if in_github_actions
                else f"ln -s ../{assets_path} {build_path}/")
+
+    print("Build complete!")
+
+
+if __name__ == "__main__":
+    build()
