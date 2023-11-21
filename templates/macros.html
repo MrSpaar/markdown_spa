@@ -1,0 +1,13 @@
+{% macro render_ul(tree, full_path) -%}
+{% for path, item in tree.items() -%}
+    {% if item is not mapping -%}
+        <li><a href="{{ full_path }}/{{ path }}.html"">{{ item }}</a></li>
+    {% else %}
+        <li>{{ path.title() }}
+            <ul>
+                {{ render_ul(item, full_path+'/'+path) }}
+            </ul>
+        </li>
+    {% endif -%}
+{% endfor -%}
+{% endmacro -%}

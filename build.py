@@ -1,107 +1,80 @@
-from json import dump
-from string import Template
+from json import dumps
+from os.path import isfile, exists
+from os import listdir, environ, makedirs, system
+
 from markdown import markdown
-from os import listdir, path, makedirs, mkdir, environ, system
-
-NestedDict = dict[str, "str | NestedDict"]
+from jinja2 import Environment, FileSystemLoader, Template
 
 
-class Generator:
-    def __init__(self, src: str, dist: str, templates: str, assets: str) -> None:
-        if not path.exists(dist):
-            makedirs(dist, exist_ok=True)
-            mkdir(f"{dist}/pages")
+pages_path = 'pages'
+assets_path = 'assets'
+build_path = 'generated'
+templates_path = 'templates'
+url_root = ""
 
-        self.dist = dist
-        self.assets = assets
-        self.url_root = ""
-        self.templates: dict[str, Template] = {}
-        self.structure: NestedDict = self.render_pages(src, f"{dist}/pages")
 
-        if 'URL_ROOT' in environ:
-            self.url_root = f"/{environ['URL_ROOT'].split('/')[1]}"
+def read_file(path: str) -> str:
+    with open(path) as f:
+        return f.read()
 
-        with open(f"{dist}/structure.json", "w") as f:
-            dump(self.structure, f, indent=4)
+def write_file(path: str, content: str) -> None:
+    with open(path, 'w') as f:
+        f.write(content)
 
-        for file in listdir(templates):
-            with open(templates+"/"+file, "r") as f:
-                self.templates[file] = Template(f.read())
+FileTree = dict[str, "str | FileTree"]
+def get_file_tree(parent: str = "") -> FileTree:
+    tree: FileTree = {}
 
-    def render_pages(self, src_root: str, dist_root: str):
-        src_root += "/"
-        dist_root += "/"
-        structure: NestedDict = {}
+    for path in listdir(parent):
+        child = parent + "/" + path
 
-        for page in listdir(src_root):
-            new_src = src_root + page
-            new_dist = dist_root + page.replace(".md", ".html")
+        if isfile(child):
+            name = path[:-3]
+            tree[name] = name.title()
+        else:
+            tree[path] = get_file_tree(child)
 
-            if (path.isdir(new_src)):
-                if not path.exists(new_dist):
-                    makedirs(new_dist, exist_ok=True)
-            
-                structure[page] = self.render_pages(new_src, new_dist)
-                continue
+    return tree
 
-            filename = page.removesuffix(".md")
-            structure[filename] = filename.title()
 
-            with open(new_src, "r") as f:
-                with open(new_dist, "w") as b:
-                    b.write(markdown(f.read(), extensions=["fenced_code"]))
-            
-        return structure
+def build_page(template: Template, path: str, **kwargs: object) -> str:
+    return template.render(
+        content=markdown(read_file(path), extensions=["fenced_code"]), **kwargs
+    )
 
-    def render_template(self, name: str, indents: int = 0, **kwargs: object) -> str:
-        if name not in self.templates:
-            raise Exception(f"Template {name} not found")
-
-        return "\n".join(" "*indents + line
-                         for line in self.templates[name].substitute(**kwargs).split("\n"))
-
-    def _render_nav(self, parent: NestedDict, full_path: str, indents: int, first: bool = False) -> str:
-        nav: str = ""
-        indents = 4 if first else indents
-
-        for path, item in parent.items():
-            if isinstance(item, str):
-                nav += self.render_template(
-                    "item.html", indents, uri=f"{full_path}{path}", title=item
-                )
-                continue
-
-            nav += self.render_template(
-                "category.html", indents+8, title=path.title(),
-                element=self._render_nav(item, full_path+path+"/", indents)
+def build_tree(template: Template, tree: FileTree, full_tree: FileTree, full_path: str = "") -> None:
+    for path, child in tree.items():
+        if isinstance(child, str):
+            html = build_page(
+                template, f"{pages_path}/{full_path}/{path}.md",
+                url_root=url_root, full_path=full_path, tree=full_tree
             )
+
+            write_file(f"{build_path}/{full_path}/{path}.html", html)
+            continue
         
-        return nav
-    
-    def render_nav(self, indents: int) -> str:
-        full_path = f"{self.url_root}/pages/"
-        return self._render_nav(self.structure, full_path, indents, True)
-    
-    def render_index(self, indents: int) -> None:
-        html = self.render_template(
-            "index.html", 0,
-            nav=self.render_nav(indents+4), url_root=self.url_root
-        )
+        directory = f"{build_path}/{full_path}/{path}"
+        if not exists(directory):
+            makedirs(directory, exist_ok=True)
 
-        with open(f"{self.dist}/index.html", "w") as f:
-            f.write(html)
-
-    def link_assets(self) -> None:
-        if self.url_root:
-            system(f"cp -r {self.assets} {self.dist}/")
-        elif not path.exists(f"{self.dist}/assets"):
-            system(f"ln -s ../{self.assets} {self.dist}/")
+        build_tree(template, child, full_tree, f"{full_path}/{path}")
 
 
 if __name__ == "__main__":
-    generator = Generator(
-        "pages", "generated", "templates", "assets"
-    )
+    if "URL_ROOT" in environ:
+        url_root = f"/{environ['URL_ROOT']}"
 
-    generator.link_assets()
-    generator.render_index(4)
+    if not exists(build_path):
+        makedirs(build_path, exist_ok=True)
+
+    env = Environment(loader=FileSystemLoader(templates_path))
+    template = env.get_template('base.html')
+    tree = get_file_tree(pages_path)
+
+    write_file(f"{build_path}/tree.json", dumps(tree, indent=4))
+    build_tree(template, tree, tree)
+
+    if url_root:
+        system(f"cp -r {assets_path} {build_path}/")
+    elif not exists(f"{build_path}/{assets_path}/"):
+        system(f"ln -s ../{assets_path} {build_path}/")
