@@ -10,7 +10,7 @@ pages_path = 'pages'
 assets_path = 'assets'
 build_path = 'generated'
 templates_path = 'templates'
-url_root = "/Markdown-SPA"
+url_root = ""
 
 
 def read_file(path: str) -> str:
@@ -62,7 +62,7 @@ def build_tree(template: Template, tree: FileTree, full_tree: FileTree, full_pat
 
 if __name__ == "__main__":
     if "URL_ROOT" in environ:
-        url_root = f"/{environ['URL_ROOT']}".split("/")[1]
+        url_root = f"/{environ['URL_ROOT'].split('/')[1]}"
 
     if not exists(build_path):
         makedirs(build_path, exist_ok=True)
