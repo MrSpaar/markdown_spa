@@ -1,4 +1,4 @@
-from json import dumps
+from sys import argv
 from os.path import isfile, exists
 from os import listdir, environ, makedirs, system
 
@@ -67,15 +67,28 @@ def build():
     template = env.get_template('base.html')
     tree = get_file_tree(pages_path)
 
-    write_file(f"{build_path}/tree.json", dumps(tree, indent=4))
     build_tree(template, tree, tree)
-
     if not exists(f"{build_path}/{assets_path}"):
         system(f"cp -r {assets_path} {build_path}/" if in_github_actions
                else f"ln -s ../{assets_path} {build_path}/")
 
     print("Build complete!")
-
+    
 
 if __name__ == "__main__":
     build()
+
+    if len(argv) > 1 and argv[1] == "--watch":
+        from livereload import Server
+
+        server = Server()
+
+        server.watch('assets/*', build)    
+        server.watch('pages/*', build)
+        server.watch('templates/*', build)
+
+        server.serve(
+            port=5000,
+            liveport=5050,
+            root="generated"
+        )
