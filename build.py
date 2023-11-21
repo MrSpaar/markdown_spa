@@ -10,7 +10,7 @@ pages_path = 'pages'
 assets_path = 'assets'
 build_path = 'generated'
 templates_path = 'templates'
-url_root = ""
+url_root = "/Markdown-SPA"
 
 
 def read_file(path: str) -> str:
@@ -62,7 +62,7 @@ def build_tree(template: Template, tree: FileTree, full_tree: FileTree, full_pat
 
 if __name__ == "__main__":
     if "URL_ROOT" in environ:
-        url_root = f"/{environ['URL_ROOT']}"
+        url_root = f"/{environ['URL_ROOT']}".split("/")[1]
 
     if not exists(build_path):
         makedirs(build_path, exist_ok=True)
@@ -74,7 +74,6 @@ if __name__ == "__main__":
     write_file(f"{build_path}/tree.json", dumps(tree, indent=4))
     build_tree(template, tree, tree)
 
-    if url_root:
-        system(f"cp -r {assets_path} {build_path}/")
-    elif not exists(f"{build_path}/{assets_path}/"):
-        system(f"ln -s ../{assets_path} {build_path}/")
+    if not exists(f"{build_path}/{assets_path}"):
+        system(f"cp -r {assets_path} {build_path}/" if url_root
+               else f"ln -s ../{assets_path} {build_path}/")
