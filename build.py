@@ -1,13 +1,17 @@
 from json import dump
 from string import Template
 from markdown import markdown
-from os import listdir, path, makedirs, environ, system
+from os import listdir, path, makedirs, mkdir, environ, system
 
 NestedDict = dict[str, "str | NestedDict"]
 
 
 class Generator:
     def __init__(self, src: str, dist: str, templates: str, assets: str) -> None:
+        if not path.exists(dist):
+            makedirs(dist, exist_ok=True)
+            mkdir(f"{dist}/pages")
+
         self.dist = dist
         self.assets = assets
         self.url_root = ""
@@ -17,10 +21,7 @@ class Generator:
         if 'URL_ROOT' in environ:
             self.url_root = f"/{environ['URL_ROOT'].split('/')[1]}"
 
-        if not path.exists(dist):
-            makedirs(dist, exist_ok=True)
-
-        with open("./generated/structure.json", "w") as f:
+        with open(f"{dist}/structure.json", "w") as f:
             dump(self.structure, f, indent=4)
 
         for file in listdir(templates):
