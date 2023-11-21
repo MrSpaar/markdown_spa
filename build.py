@@ -73,22 +73,23 @@ def build():
                else f"ln -s ../{assets_path} {build_path}/")
 
     print("Build complete!")
-    
+
 
 if __name__ == "__main__":
     build()
 
-    if len(argv) > 1 and argv[1] == "--watch":
-        from livereload import Server
+    if "-lr" not in argv:
+        exit()
 
-        server = Server()
+    from livereload import Server
+    server = Server()
 
-        server.watch('assets/*', build)    
-        server.watch('pages/*', build)
-        server.watch('templates/*', build)
+    server.watch('assets/*')
+    server.watch('pages/*', build)
+    server.watch('templates/*', build)
 
-        server.serve(
-            port=5000,
-            liveport=5050,
-            root="generated"
-        )
+    server.serve(
+        port=5000,
+        liveport=5050,
+        root="generated",
+    )

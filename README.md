@@ -25,7 +25,7 @@ python -m build
 ```
 
 > [!NOTE]
-> To start a local server with live reload, run `python -m build --watch` instead (requires [`livereload`](https://pypi.org/project/livereload/)).
+> To start a local server with live reload, run `python -m build -lr` instead (requires [`livereload`](https://pypi.org/project/livereload/)).
 
 ## Templating
 

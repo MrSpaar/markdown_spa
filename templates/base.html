@@ -9,14 +9,12 @@
     <link href="{{ url_root }}/assets/style.css" rel="stylesheet"/>
 </head>
 <body>
-    <nav>
-        <ul>
-            {{ render_nav(tree, "", url_root) | indent(4) -}}
-        </ul>
-    </nav>
+    <ul>
+        {{ render_nav(tree, "", url_root) }}
+    </ul>
     
     <div id="app">
-        {{ page_content | indent(8) }}
+        {{ page_content | indent(4) }}
     </div>
 
     <script>

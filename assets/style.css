@@ -1,3 +1,7 @@
+html {
+    font-family: sans-serif;
+}
+
 @media (prefers-color-scheme: dark) {
     html {
         color: white;
