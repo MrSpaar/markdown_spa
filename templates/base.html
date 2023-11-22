@@ -6,6 +6,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Markdown SPA</title>
     
+    <script src="{{ url_root }}/{{ assets_path }}/script.js" defer></script>
     <link rel="stylesheet" href="{{ url_root }}/{{ assets_path }}/style.css" />
 </head>
 <body>
@@ -13,30 +14,6 @@
         {{+ render_nav(tree, "", url_root) -}}
     </ul>
     
-    <div id="app">
-        {{- page_content }}
-    </div>
-
-    <script>
-        const app = document.getElementById('app')
-
-        function changePage(event) {
-            event.preventDefault();
-
-            fetch(`${event.target.href}`)
-                .then(resp => resp.text())
-                .then(html => {
-                    let start = html.indexOf('<div id="app">');
-                    let end = html.indexOf('</div>', start);
-                    app.innerHTML = html.substring(start, end + 6);
-                });
-
-            window.history.pushState({}, '', event.target.href);
-        }
-
-        for (a of document.querySelectorAll('a')) {
-            a.addEventListener('click', changePage)
-        }
-    </script>
+    {{- page_content }}
 </body>
 </html>
