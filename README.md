@@ -1,21 +1,16 @@
 # Markdown SPA
 
-A static website generator using:
-- [`markdown`](https://pypi.org/project/Markdown/) to parse the files
-- [`jinja2`](https://jinja.palletsprojects.com/en/2.10.x/) to generate the HTML
-- [`livereload`](https://pypi.org/project/livereload/) for local testing (optional)
-
-By default, Markdown-SPA includes:
-- A script to avoid full page reloads
-- Automatic table of contents generation
-- A workflow to automatically deploy to GitHub Pages
+A Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markdown`](https://pypi.org/project/Markdown/)) static site generator:
+- [x] No full page reloads (if JS enabled)
+- [x] Customizable automatic table of contents
+- [x] Fast and automatic deployment to GitHub Pages
 
 ## Usage
 
 By default (configurable in the [`build.py`](./build.py) script):
 - [`./pages`](./pages) contains the Markdown files (file based routing)
 - [`./templates`](./templates) contains the Jinja2 templates
-- [`./assets`](./assets) contains the static files (CSS, JS, images, etc.)
+- [`./static`](./assets) contains the static files (CSS, JS, images, etc.)
 - [`./generated`](./generated) contains the generated HTML files
 
 To build the website, install the dependencies then simply run the script:
@@ -25,11 +20,70 @@ python -m build
 ```
 
 > [!NOTE]
-> To start a local server with live reload, run `python -m build -lr` instead (requires [`livereload`](https://pypi.org/project/livereload/)).
+> To watch for modifications and incrementaly build, run `python watch.py` instead (requires [`watchdog`](https://pypi.org/project/watchdog/)).
 
 ## Templating
 
-The default template for the table of contents gives the following HTML and can be [customized](./templates/macros.html):
+
+
+### Variables and macros
+
+The following default variables and macros are available in the base templates:
+
+| Snippet                  | Description                                                         |
+| :----------------------- | :------------------------------------------------------------------ |
+| `{{ url_root }}`         | Root URL, automatically created (repository name for GitHub Pages)  |
+| `{{ page_content }}`     | HTML content of each markdown file                                  |
+| `{{ tree }}`             | File tree, automatically created and used for the table of contents |
+| `{{ render_nav(tree) }}` | Macro that renders the table of contents from the given tree        |
+
+To add your own variables, you can add attributes at the top of **each** markdown file:
+```md
+title: This is a title
+summary: This is a description
+
+This is the actual content of the rendered page.
+```
+
+Then, in the base template, variables with the same name will be available:
+```html
+<div id="app">
+    <h1>{{ title }}</h1>
+    <summary>{{ summary }}
+        <details>
+            {{ page_content }}
+        </details>
+    </summary>
+</div>
+```
+
+### Table of contents
+
+You can modify the [`render_nav`](./templates/macros.html) macro to change how the table of contents is rendered:
+```jinja
+{% macro render_nav(tree, full_path, url_root) -%}
+{% for path, item in tree.items() -%}
+    {% if item is not mapping -%}
+        <li><a href="{{ url_root }}{{ full_path }}/{{ path }}.html"">{{ item }}</a></li>
+    {%- else +%}
+        <li>{{ path.title() }}
+            <ul>
+                {{ render_nav(item, full_path+'/'+path, url_root) }}
+            </ul>
+        </li>
+    {% endif -%}
+{% endfor -%}
+{% endmacro -%}
+```
+
+Then, in the base template:
+```jinja
+<ul>
+    {{+ render_nav(tree, "", url_root) -}}
+</ul>
+```
+
+Which will render the following HTML:
 ```html
 <ul>
     <li><a href="/index.html"">Index</a></li>
@@ -40,9 +94,3 @@ The default template for the table of contents gives the following HTML and can 
     </li>
 </ul>
 ```
-
-You can modify the templates as you wish, but the following variables are available:
-- `{{ url_root }}`: root URL, automatically created (repository name for GitHub Pages)
-- `{{ page_content }}`: HTML content of each markdown file
-- `{{ tree }}`: file tree, automatically created and used for the table of contents
-- `{{ render_nav(tree) }}`: macro that renders the table of contents from the given tree

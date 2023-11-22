@@ -6,15 +6,15 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Markdown SPA</title>
     
-    <link href="{{ url_root }}/assets/style.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{ url_root }}/{{ assets_path }}/style.css" />
 </head>
 <body>
     <ul>
-        {{ render_nav(tree, "", url_root) }}
+        {{+ render_nav(tree, "", url_root) -}}
     </ul>
     
     <div id="app">
-        {{ page_content | indent(4) }}
+        {{- page_content }}
     </div>
 
     <script>

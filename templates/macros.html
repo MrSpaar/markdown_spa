@@ -2,7 +2,7 @@
 {% for path, item in tree.items() -%}
     {% if item is not mapping -%}
         <li><a href="{{ url_root }}{{ full_path }}/{{ path }}.html"">{{ item }}</a></li>
-    {% else %}
+    {%- else +%}
         <li>{{ path.title() }}
             <ul>
                 {{ render_nav(item, full_path+'/'+path, url_root) }}
