@@ -24,7 +24,10 @@ python -m build
 
 ## Templating
 
-
+You can modify the default template as much as you want, but keep in mind that the JS script:
+- Listens for clicks on `<a>` elements and fetches the href
+- Takes what's between `<div id="app">` and `</div>`
+- Replaces the content of the current page's `<div id="app">` with the fetched content
 
 ### Variables and macros
 
@@ -49,11 +52,10 @@ Then, in the base template, variables with the same name will be available:
 ```html
 <div id="app">
     <h1>{{ title }}</h1>
-    <summary>{{ summary }}
-        <details>
-            {{ page_content }}
-        </details>
-    </summary>
+    <details>
+        <summary>{{ summary }}</summary>
+        {{ page_content }}
+    </details>
 </div>
 ```
 
