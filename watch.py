@@ -53,7 +53,7 @@ class PagesHandler(FileSystemEventHandler):
             url_root=url_root, full_path=full_path, tree=tree, assets_path=assets_path
         )
 
-        dist = f"{event.src_path[len(pages_path) + 1:-3]}.html"
+        dist = f"{event.src_path[len(pages_path) + 1:-3]}/index.html"
 
         write_file(f"{build_path}/{dist}", html)
         print(f"Rebuilt {dist}")

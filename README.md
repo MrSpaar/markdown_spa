@@ -29,6 +29,16 @@ You can modify the default template as much as you want, but keep in mind that t
 - Fetches the corresponding HTML file
 - Replaces the body of the current page with the fetched HTML
 
+### Markdown attributes
+
+Markdown-SPA uses the [`attr-list`](https://python-markdown.github.io/extensions/attr_list/) extension to add kramdown-like attributes to Markdown elements:
+```md
+# This is a title
+{: .title_class #title_id }
+
+![This is an image](./image.png){: class="img center" loading="lazy" }
+```
+
 ### Variables and macros
 
 The following default variables and macros are available in the base templates:
