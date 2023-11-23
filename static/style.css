@@ -13,3 +13,8 @@ html {
         &:visited { color: #0276aa; }
     }
 }
+
+.img {
+    width: 400px;
+    height: auto;
+}
