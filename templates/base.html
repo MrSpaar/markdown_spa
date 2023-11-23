@@ -11,9 +11,10 @@
 </head>
 <body>
     <ul>
+        <li><a href="{{ url_root }}/">Home</a></li>
         {{+ render_nav(tree, "", url_root) -}}
     </ul>
     
-    {{- page_content }}
+    {{ page_content }}
 </body>
 </html>

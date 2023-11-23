@@ -65,10 +65,10 @@ You can modify the [`render_nav`](./templates/macros.html) macro to change how t
 ```jinja
 {% macro render_nav(tree, full_path, url_root) -%}
 {% for path, item in tree.items() -%}
-    {% if item is not mapping -%}
-        <li><a href="{{ url_root }}{{ full_path }}/{{ path }}.html"">{{ item }}</a></li>
-    {%- else +%}
-        <li>{{ path.title() }}
+    {% if item is not mapping and path != "index" -%}
+        <li><a href="{{ url_root }}{{ full_path }}/{{ path }}">{{ item }}</a></li>
+    {%- elif item is mapping +%}
+        <li><a href="{{ url_root }}{{ full_path }}/{{ path }}">{{ path.title() }}</a>
             <ul>
                 {{ render_nav(item, full_path+'/'+path, url_root) }}
             </ul>
@@ -81,6 +81,7 @@ You can modify the [`render_nav`](./templates/macros.html) macro to change how t
 Then, in the base template:
 ```jinja
 <ul>
+    <li><a href="{{ url_root }}/">Home</a></li>
     {{+ render_nav(tree, "", url_root) -}}
 </ul>
 ```
@@ -88,10 +89,11 @@ Then, in the base template:
 Which will render the following HTML:
 ```html
 <ul>
-    <li><a href="/index.html"">Index</a></li>
-    <li>Sub
+    <li><a href="/">Home</a></li>
+    
+    <li><a href="/sub">Sub</a>
         <ul>
-            <li><a href="/sub/index.html"">Index</a></li>
+            <li><a href="/sub/test">Test</a></li>
         </ul>
     </li>
 </ul>
