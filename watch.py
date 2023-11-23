@@ -1,6 +1,5 @@
 from build import *
 from os import chdir
-from webbrowser import open_new_tab
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 from watchdog.events import *
@@ -15,6 +14,8 @@ md = Markdown(extensions=["fenced_code", "attr_list", "meta"])
 
 
 class TemplateHandler(FileSystemEventHandler):
+    global tree, template, md
+
     def on_modified(self, event: FileModifiedEvent | DirModifiedEvent):
         if isinstance(event, DirModifiedEvent):
             return
@@ -24,6 +25,8 @@ class TemplateHandler(FileSystemEventHandler):
         print("Rebuilt entire site")
 
 class PagesHandler(FileSystemEventHandler):
+    global tree, template, md
+    
     def __init__(self):
         self.file_modified = False
         self.on_moved = self.rebuild_tree
@@ -56,17 +59,22 @@ class PagesHandler(FileSystemEventHandler):
         print(f"Rebuilt {dist}")
 
 
+class RequestHandler(SimpleHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, directory=build_path, **kwargs)
+
+
 if __name__ == "__main__":
     observer = Observer()
-    observer.schedule(TemplateHandler(), path=f"{templates_path}/base.html")
-    observer.schedule(PagesHandler(), path=f"{pages_path}/", recursive=True)
-    observer.start()
+    server = HTTPServer(("", 8000), RequestHandler)
 
-    chdir(build_path)
-    server = HTTPServer(("", 8000), SimpleHTTPRequestHandler)
+    observer.schedule(TemplateHandler(), path=f"{templates_path}")
+    observer.schedule(PagesHandler(), path=f"{pages_path}", recursive=True)
 
     try:
-        open_new_tab("http://localhost:8000")
+        print("Serving on http://localhost:8000/")
+
+        observer.start()
         server.serve_forever()
     except KeyboardInterrupt:
         observer.stop()

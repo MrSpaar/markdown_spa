@@ -45,20 +45,24 @@ def build_page(template: Template, md: Markdown, path: str, **kwargs: object) ->
 
 def build_tree(template: Template, md: Markdown, tree: FileTree, full_tree: FileTree, full_path: str = "") -> None:
     for path, child in tree.items():
-        if isinstance(child, str):
-            html = build_page(
-                template, md, f"{pages_path}/{full_path}/{path}.md",
-                url_root=url_root, full_path=full_path, tree=full_tree, assets_path=assets_path
-            )
+        if isinstance(child, dict):
+            directory = f"{build_path}/{full_path}/{path}"
+            if not exists(directory):
+                makedirs(directory, exist_ok=True)
 
-            write_file(f"{build_path}/{full_path}/{path}.html", html)
+            build_tree(template, md, child, full_tree, f"{full_path}/{path}")
             continue
         
-        directory = f"{build_path}/{full_path}/{path}"
-        if not exists(directory):
-            makedirs(directory, exist_ok=True)
+        html = build_page(
+            template, md, f"{pages_path}/{full_path}/{path}.md",
+            url_root=url_root, full_path=full_path, tree=full_tree, assets_path=assets_path
+        )
 
-        build_tree(template, md, child, full_tree, f"{full_path}/{path}")
+        if path == "index":
+            write_file(f"{build_path}/{full_path}/index.html", html)
+        else:
+            makedirs(f"{build_path}/{full_path}/{path}", exist_ok=True)
+            write_file(f"{build_path}/{full_path}/{path}/index.html", html)
 
 
 if __name__ == "__main__":
