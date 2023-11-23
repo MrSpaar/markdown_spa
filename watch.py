@@ -1,4 +1,7 @@
 from build import *
+from os import chdir
+from webbrowser import open_new_tab
+from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 from watchdog.events import *
 from watchdog.observers import Observer
@@ -55,12 +58,16 @@ class PagesHandler(FileSystemEventHandler):
 
 if __name__ == "__main__":
     observer = Observer()
-
     observer.schedule(TemplateHandler(), path=f"{templates_path}/base.html")
     observer.schedule(PagesHandler(), path=f"{pages_path}/", recursive=True)
+    observer.start()
+
+    chdir(build_path)
+    server = HTTPServer(("", 8000), SimpleHTTPRequestHandler)
 
     try:
-        observer.start()
-        observer.join()
+        open_new_tab("http://localhost:8000")
+        server.serve_forever()
     except KeyboardInterrupt:
         observer.stop()
+        server.server_close()
