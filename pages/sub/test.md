@@ -1,3 +1,3 @@
 *This is a test page*
 
-![Test Image](../../static/wallpaper.jpg){: .img }
+![Test Image]({{url_root}}/static/wallpaper.jpg){: .img }

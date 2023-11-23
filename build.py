@@ -40,7 +40,7 @@ def build_page(template: Template, md: Markdown, path: str, **kwargs: object) ->
     with open(path) as f:
         content = f.read()
     
-    html = md.convert(content)
+    html = Template(md.convert(content)).render(**kwargs)
     return template.render(page_content=str(html), **md.Meta, **kwargs)
 
 def build_tree(template: Template, md: Markdown, tree: FileTree, full_tree: FileTree, full_path: str = "") -> None:
