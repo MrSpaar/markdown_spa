@@ -1,5 +1,5 @@
 from sys import argv
-from re import compile
+from re import sub
 from os.path import isfile, exists
 from os import listdir, environ, makedirs, system
 
@@ -16,8 +16,6 @@ templates_path = 'templates'
 in_github_actions = "URL_ROOT" in environ
 url_root = f"/{environ['URL_ROOT'].split('/')[1]}" \
                 if in_github_actions else ""
-
-internal_link = compile(r'(?<=["\'])/[^"\']+')
 
 
 def write_file(path: str, content: str) -> None:
@@ -48,12 +46,10 @@ def build_page(template: Template, md: Markdown, path: str, **kwargs: object) ->
         .replace("[ ]", '<input type="checkbox" disabled>') \
         .replace("[x]", '<input type="checkbox" checked disabled>')
     
-    html = template.render(page_content=str(md.convert(content)), **md.Meta, **kwargs)
-
-    for link in internal_link.findall(html):
-        html = html.replace(link, f"{url_root}{link}")
-    
-    return html
+    return sub(
+        r'(href|src)="(/[^"]+|/)"', rf'\1="{url_root}\2"',
+        template.render(page_content=str(md.convert(content)), **md.Meta, **kwargs)
+    )
 
 
 def build_tree(template: Template, md: Markdown, tree: FileTree, full_tree: FileTree, full_path: str = "") -> None:

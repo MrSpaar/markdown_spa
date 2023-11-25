@@ -9,6 +9,7 @@ A Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markdown`](https://py
 ## Usage
 
 By default (configurable in the [`build.py`](./build.py) script):
+
 - [`./pages`](./pages) contains the Markdown files (file based routing)
 - [`./templates`](./templates) contains the Jinja2 templates
 - [`./static`](./assets) contains the static files (CSS, JS, images, etc.)

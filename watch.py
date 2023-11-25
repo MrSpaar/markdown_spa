@@ -70,11 +70,11 @@ class PagesHandler(Handler):
         )
 
         if 'index.md' in event.src_path:
-            dist = f"/{full_path}/index.html"
+            dist = f"{full_path}/index.html".removeprefix("/")
         else:
-            dist = f"/{event.src_path[len(pages_path) + 1:-3]}/index.html"
+            dist = f"{event.src_path[len(pages_path) + 1:-3]}/index.html"
 
-        write_file(f"{build_path}{dist}", html)
+        write_file(f"{build_path}/{dist}", html)
         print(f"Rebuilt {dist}")
 
 
