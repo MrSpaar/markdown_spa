@@ -47,7 +47,6 @@ The following default variables and macros are available in the base templates:
 
 | Snippet                  | Description                                                         |
 | ------------------------ | ------------------------------------------------------------------- |
-| `{{ url_root }}`         | Root URL, automatically created (repository name for GitHub Pages)  |
 | `{{ page_content }}`     | HTML content of each markdown file                                  |
 | `{{ tree }}`             | File tree, automatically created and used for the table of contents |
 | `{{ render_nav(tree) }}` | Macro that renders the table of contents from the given tree        |
