@@ -1,5 +1,4 @@
-from sys import argv
-from re import sub
+from re import Match, sub, compile
 from os.path import isfile, exists
 from os import listdir, environ, makedirs, system
 
@@ -16,6 +15,9 @@ templates_path = 'templates'
 in_github_actions = "URL_ROOT" in environ
 url_root = f"/{environ['URL_ROOT'].split('/')[1]}" \
                 if in_github_actions else ""
+
+checkbox_regex = compile(r'\[([ xX])\] (.*)')
+internal_link_regex = compile(r'(href|src)="(/[^"]+|/)"')
 
 
 def write_file(path: str, content: str) -> None:
@@ -42,12 +44,13 @@ def build_page(template: Template, md: Markdown, path: str, **kwargs: object) ->
     with open(path) as f:
         content = f.read()
     
-    content = md.convert(content) \
-        .replace("[ ]", '<input type="checkbox" disabled>') \
-        .replace("[x]", '<input type="checkbox" checked disabled>')
+    def checkbox(match: Match) -> str:
+        checked = match.group(1).lower() == 'x'
+        return f'<input type="checkbox" disabled{" checked" if checked else ""}> {match.group(2)}'
+
+    content = checkbox_regex.sub(checkbox, md.convert(content))
     
-    return sub(
-        r'(href|src)="(/[^"]+|/)"', rf'\1="{url_root}\2"',
+    return internal_link_regex.sub(rf'\1="{url_root}\2"',
         template.render(page_content=str(md.convert(content)), **md.Meta, **kwargs)
     )
 
