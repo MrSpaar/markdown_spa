@@ -14,6 +14,17 @@ html {
         color: #03a9f4;
         &:visited { color: #0276aa; }
     }
+
+    svg path {
+        fill: white;
+    }
+}
+
+svg {
+    top: -22px;
+    right: -22px;
+    scale: 0.35;
+    position: absolute;
 }
 
 .img {
