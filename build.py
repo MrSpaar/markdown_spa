@@ -3,6 +3,10 @@ from os.path import isfile, exists
 from os import listdir, environ, makedirs, system
 
 from markdown import Markdown
+from markdown.extensions.meta import MetaExtension
+from markdown.extensions.attr_list import AttrListExtension
+from markdown.extensions.fenced_code import FencedCodeExtension
+from markdown.extensions.codehilite import CodeHiliteExtension
 from jinja2 import Environment, FileSystemLoader, Template
 
 
@@ -73,7 +77,12 @@ if __name__ == "__main__":
     template = env.get_template('base.html')
 
     tree = get_file_tree(pages_path)
-    md = Markdown(extensions=["fenced_code", "attr_list", "meta"])
+    md = Markdown(extensions=[
+        MetaExtension(),
+        AttrListExtension(),
+        FencedCodeExtension(),
+        CodeHiliteExtension(css_class="highlight"),
+    ])
 
     build_tree(template, md, tree, tree)
     if not exists(f"{build_path}/{assets_path}"):

@@ -10,7 +10,12 @@ env = Environment(loader=FileSystemLoader(templates_path))
 template = env.get_template('base.html')
 
 tree = get_file_tree(pages_path)
-md = Markdown(extensions=["fenced_code", "attr_list", "meta"])
+md = Markdown(extensions=[
+    MetaExtension(),
+    AttrListExtension(),
+    FencedCodeExtension(),
+    CodeHiliteExtension(css_class="highlight"),
+])
 
 
 class TemplateHandler(FileSystemEventHandler):
@@ -53,9 +58,12 @@ class PagesHandler(FileSystemEventHandler):
             url_root=url_root, full_path=full_path, tree=tree, assets_path=assets_path
         )
 
-        dist = f"{event.src_path[len(pages_path) + 1:-3]}/index.html"
+        if 'index.md' in event.src_path:
+            dist = f"{full_path}/index.html"
+        else:
+            dist = f"{src_path[len(pages_path) + 1:-3]}/index.html"
 
-        write_file(f"{build_path}/{dist}", html)
+        write_file(f"{build_path}{dist}", html)
         print(f"Rebuilt {dist}")
 
 

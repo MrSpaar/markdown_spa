@@ -1,10 +1,19 @@
 # Hello World !
 
-Every page is fully rendered at build time and uses vanilla JS to avoid full page reloads.
+Every page is fully rendered at build time and uses vanilla JS to avoid full page reloads and has built-in syntax highlighting:
+```python
+from typing import Iterator
 
-``` html
-<div id="content">
-    <h1>Hello World !</h1>
-    <p>This is a simple example of a Markdown SPA.</p>
-</div>
+# This is an example
+class Math:
+    @staticmethod
+    def fib(n: int) -> Iterator[int]:
+        """Fibonacci series up to n."""
+        a, b = 0, 1
+        while a < n:
+            yield a
+            a, b = b, a + b
+
+result = sum(Math.fib(42))
+print("The answer is {}".format(result))
 ```
