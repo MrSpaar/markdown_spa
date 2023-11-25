@@ -1,6 +1,7 @@
 # Markdown SPA
 
 A Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markdown`](https://pypi.org/project/Markdown/)) static site generator:
+
 - [x] No full page reloads (if JS enabled)
 - [x] Customizable automatic table of contents
 - [x] Fast and automatic deployment to GitHub Pages
@@ -44,8 +45,7 @@ Markdown-SPA uses the [`attr-list`](https://python-markdown.github.io/extensions
 The following default variables and macros are available in the base templates:
 
 | Snippet                  | Description                                                         |
-| :----------------------- | :------------------------------------------------------------------ |
-| `{{ url_root }}`         | Root URL, automatically created (repository name for GitHub Pages)  |
+| ------------------------ | ------------------------------------------------------------------- |
 | `{{ page_content }}`     | HTML content of each markdown file                                  |
 | `{{ tree }}`             | File tree, automatically created and used for the table of contents |
 | `{{ render_nav(tree) }}` | Macro that renders the table of contents from the given tree        |
@@ -72,7 +72,7 @@ Then, in the base template, variables with the same name will be available:
 ### Syntax highlighting
 
 Syntax highlighting in code blocks is done using the [`codehilite`](https://python-markdown.github.io/extensions/code_hilite/) and [`fenced_code`](https://python-markdown.github.io/extensions/fenced_code_blocks/) extensions. Multiple code block syntaxes are supported::
-<pre>
+````
 ```python
 print("Hello World!")
 ```
@@ -82,7 +82,7 @@ print("Hello World!")
 
     #!python
     print("Hello World!")
-</pre>
+````
 
 Specifying the language is optional and [`Pygments`](https://pygments.org/) is used to highlight the code.
 
@@ -93,9 +93,9 @@ You can modify the [`render_nav`](./templates/macros.html) macro to change how t
 {% macro render_nav(tree, full_path, url_root) -%}
 {% for path, item in tree.items() -%}
     {% if item is not mapping and path != "index" -%}
-        <li><a href="{{ url_root }}{{ full_path }}/{{ path }}">{{ item }}</a></li>
+        <li><a href="{{ full_path }}/{{ path }}/">{{ item }}</a></li>
     {%- elif item is mapping +%}
-        <li><a href="{{ url_root }}{{ full_path }}/{{ path }}">{{ path.title() }}</a>
+        <li><a href="{{ full_path }}/{{ path }}/">{{ path.title() }}</a>
             <ul>
                 {{ render_nav(item, full_path+'/'+path, url_root) }}
             </ul>
@@ -108,7 +108,7 @@ You can modify the [`render_nav`](./templates/macros.html) macro to change how t
 Then, in the base template:
 ```jinja
 <ul>
-    <li><a href="{{ url_root }}/">Home</a></li>
+    <li><a href="/">Home</a></li>
     {{+ render_nav(tree, "", url_root) -}}
 </ul>
 ```

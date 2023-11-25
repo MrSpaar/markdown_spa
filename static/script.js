@@ -1,15 +1,17 @@
 function overrideLinks() {
-    for (let a of document.querySelectorAll('a')) {
+    for (let a of document.getElementsByTagName('a')) {
         if (a.href.startsWith(window.location.origin)) {
-            a.addEventListener('pointerdown', changePage);
+            a.addEventListener('click', e => {
+                e.preventDefault();
+                update(a.href);
+                window.history.pushState({}, '', a.href);
+            });
         }
     }
 }
 
-function changePage(event) {
-    event.preventDefault();
-
-    fetch(`${event.target.href}`)
+function update(path) {
+    fetch(path)
         .then(resp => resp.text())
         .then(html => {
             let start = html.indexOf('<body>') + 6;
@@ -18,8 +20,11 @@ function changePage(event) {
             document.body.innerHTML = html.substring(start, end);
             overrideLinks();
         });
-
-    window.history.pushState({}, '', event.target.href);
 }
+
+window.addEventListener('popstate', e => {
+    console.log("popstate");
+    update(window.location.href);
+});
 
 overrideLinks();

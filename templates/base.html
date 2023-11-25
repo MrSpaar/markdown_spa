@@ -6,8 +6,8 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Markdown SPA</title>
     
-    <script src="{{ url_root }}/{{ assets_path }}/script.js" defer></script>
-    <link rel="stylesheet" href="{{ url_root }}/{{ assets_path }}/style.css" />
+    <script src="/{{ assets_path }}/script.js" defer></script>
+    <link rel="stylesheet" href="/{{ assets_path }}/style.css" />
 </head>
 <body>
     <a href="https://github.com/MrSpaar/Markdown-SPA" target="_blank">
@@ -15,7 +15,7 @@
     </a>
 
     <ul>
-        <li><a href="{{ url_root }}/">Home</a></li>
+        <li><a href="/">Home</a></li>
         {{+ render_nav(tree, "", url_root) -}}
     </ul>
     

@@ -1,11 +1,9 @@
 from sys import argv
+from re import compile
 from os.path import isfile, exists
 from os import listdir, environ, makedirs, system
 
 from markdown import Markdown
-from markdown.extensions.meta import MetaExtension
-from markdown.extensions.attr_list import AttrListExtension
-from markdown.extensions.fenced_code import FencedCodeExtension
 from markdown.extensions.codehilite import CodeHiliteExtension
 from jinja2 import Environment, FileSystemLoader, Template
 
@@ -18,6 +16,8 @@ templates_path = 'templates'
 in_github_actions = "URL_ROOT" in environ
 url_root = f"/{environ['URL_ROOT'].split('/')[1]}" \
                 if in_github_actions else ""
+
+internal_link = compile(r'(?<=["\'])/[^"\']+')
 
 
 def write_file(path: str, content: str) -> None:
@@ -44,8 +44,17 @@ def build_page(template: Template, md: Markdown, path: str, **kwargs: object) ->
     with open(path) as f:
         content = f.read()
     
-    html = Template(md.convert(content)).render(**kwargs)
-    return template.render(page_content=str(html), **md.Meta, **kwargs)
+    content = md.convert(content) \
+        .replace("[ ]", '<input type="checkbox" disabled>') \
+        .replace("[x]", '<input type="checkbox" checked disabled>')
+    
+    html = template.render(page_content=str(md.convert(content)), **md.Meta, **kwargs)
+
+    for link in internal_link.findall(html):
+        html = html.replace(link, f"{url_root}{link}")
+    
+    return html
+
 
 def build_tree(template: Template, md: Markdown, tree: FileTree, full_tree: FileTree, full_path: str = "") -> None:
     for path, child in tree.items():
@@ -59,7 +68,7 @@ def build_tree(template: Template, md: Markdown, tree: FileTree, full_tree: File
         
         html = build_page(
             template, md, f"{pages_path}/{full_path}/{path}.md",
-            url_root=url_root, full_path=full_path, tree=full_tree, assets_path=assets_path
+            full_path=full_path, tree=full_tree, assets_path=assets_path
         )
 
         if path == "index":
@@ -78,10 +87,8 @@ if __name__ == "__main__":
 
     tree = get_file_tree(pages_path)
     md = Markdown(extensions=[
-        MetaExtension(),
-        AttrListExtension(),
-        FencedCodeExtension(),
-        CodeHiliteExtension(css_class="highlight"),
+        "meta", "tables", "attr_list", "fenced_code",
+        CodeHiliteExtension(css_class="highlight")
     ])
 
     build_tree(template, md, tree, tree)
