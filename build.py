@@ -64,7 +64,7 @@ def build_tree(template: Template, md: Markdown, tree: FileTree, full_tree: File
         
         html = build_page(
             template, md, f"{pages_path}/{full_path}/{path}.md",
-            full_path=full_path, tree=full_tree, assets_path=assets_path
+            tree=full_tree, assets_path=assets_path
         )
 
         if path == "index":

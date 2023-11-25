@@ -1,11 +1,11 @@
-{% macro render_nav(tree, full_path, url_root) -%}
+{% macro render_nav(tree, full_path) -%}
 {% for path, item in tree.items() -%}
     {% if item is not mapping and path != "index" -%}
         <li><a href="{{ full_path }}/{{ path }}/">{{ item }}</a></li>
     {%- elif item is mapping +%}
         <li><a href="{{ full_path }}/{{ path }}/">{{ path.title() }}</a>
             <ul>
-                {{ render_nav(item, full_path+'/'+path, url_root) }}
+                {{ render_nav(item, full_path+'/'+path) }}
             </ul>
         </li>
     {% endif -%}
