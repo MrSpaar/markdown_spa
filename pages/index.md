@@ -27,6 +27,7 @@ python -m build
 ## Templating
 
 You can modify the default template as much as you want, but keep in mind that the JS script:
+
 - Listens for clicks on `a` tags with the same location origin
 - Fetches the corresponding HTML file
 - Replaces the body of the current page with the fetched HTML
