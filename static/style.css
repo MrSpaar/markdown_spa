@@ -20,6 +20,10 @@ html {
     }
 }
 
+li:has(input)::marker {
+    content: none;
+}
+
 svg {
     top: -22px;
     right: -22px;
