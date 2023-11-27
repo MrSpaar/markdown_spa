@@ -1,4 +1,7 @@
-# Markdown SPA
+name: Main page
+description: This is the main page of the website
+
+# Markdown-SPA
 
 A Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markdown`](https://pypi.org/project/Markdown/)) static site generator:
 
@@ -8,18 +11,11 @@ A Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markdown`](https://py
 
 ## Usage
 
-By default (configurable in the [`build.py`](./build.py) script):
+To build your website :
 
-- [`./pages`](./pages) contains the Markdown files (file based routing)
-- [`./templates`](./templates) contains the Jinja2 templates
-- [`./static`](./assets) contains the static files (CSS, JS, images, etc.)
-- [`./generated`](./generated) contains the generated HTML files
-
-To build the website, install the dependencies then simply run the script:
-```bash
-pip install markdown jinja2 Pygments
-python -m build
-```
+- Install the dependencies: `pip install markdown jinja2 Pygments`
+- Configure the [`config.ini`](./config.ini) file (if needed)
+- Run `python -m build`
 
 > [!NOTE]
 > To watch for modifications and incrementaly build, run `python watch.py` instead (requires [`watchdog`](https://pypi.org/project/watchdog/)).
@@ -48,8 +44,8 @@ The following default variables and macros are available in the base templates:
 
 | Snippet                  | Description                                                         |
 | ------------------------ | ------------------------------------------------------------------- |
+| `{{ tree }}`             | Mapping of the markdown files directory structure                   |
 | `{{ page_content }}`     | HTML content of each markdown file                                  |
-| `{{ tree }}`             | File tree, automatically created and used for the table of contents |
 | `{{ render_nav(tree) }}` | Macro that renders the table of contents from the given tree        |
 
 To add your own variables, you can add attributes at the top of **each** markdown file:

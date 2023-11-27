@@ -14,7 +14,7 @@ td.linenos {
     &.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 }
 
-.highlight {
+.codehilite {
     background: #f8f8f8;
     border-radius: 2px;
 
@@ -99,12 +99,11 @@ td.linenos {
         &.special { color: #607A86; background-color: #263238; padding-left: 5px; padding-right: 5px; }
     }
 
-    .highlight {
+    .codehilite {
         color: #EEFFFF;
         background: #263238;
 
         & .hll { background-color: #2C3B41 }
-        & .c { color: #546E7A; font-style: italic } /* Comment */
         & .err { color: #FF5370 } /* Error */
         & .esc { color: #89DDFF } /* Escape */
         & .g { color: #EEFFFF } /* Generic */
@@ -113,6 +112,7 @@ td.linenos {
         & .n { color: #EEFFFF } /* Name */
         & .o { color: #89DDFF } /* Operator */
         & .p { color: #89DDFF } /* Punctuation */
+        & .c { color: #546E7A; font-style: italic } /* Comment */
         & .ch { color: #546E7A; font-style: italic } /* Comment.Hashbang */
         & .cm { color: #546E7A; font-style: italic } /* Comment.Multiline */
         & .cp { color: #546E7A; font-style: italic } /* Comment.Preproc */

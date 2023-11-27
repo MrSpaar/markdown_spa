@@ -1,1 +1,4 @@
-This is the **"sub/sub.md"** page
+name: Sub category
+description: This is the sub category
+
+This is the **"sub/index.md"** page

@@ -1,4 +1,4 @@
-# Markdown SPA
+# Markdown-SPA
 
 A Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markdown`](https://pypi.org/project/Markdown/)) static site generator:
 
@@ -8,24 +8,19 @@ A Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markdown`](https://py
 
 ## Usage
 
-By default (configurable in the [`build.py`](./build.py) script):
-- [`./pages`](./pages) contains the Markdown files (file based routing)
-- [`./templates`](./templates) contains the Jinja2 templates
-- [`./static`](./assets) contains the static files (CSS, JS, images, etc.)
-- [`./generated`](./generated) contains the generated HTML files
+To build your website :
 
-To build the website, install the dependencies then simply run the script:
-```bash
-pip install markdown jinja2 Pygments
-python -m build
-```
+- Install the dependencies: `pip install markdown jinja2 Pygments`
+- Configure the [`config.ini`](./config.ini) file (if needed)
+- Run `python -m build`
 
 > [!NOTE]
-> To watch for modifications and incrementaly build, run `python watch.py` instead (requires [`watchdog`](https://pypi.org/project/watchdog/)).
+> To start a test server, run `python serve.py`
 
 ## Templating
 
 You can modify the default template as much as you want, but keep in mind that the JS script:
+
 - Listens for clicks on `a` tags with the same location origin
 - Fetches the corresponding HTML file
 - Replaces the body of the current page with the fetched HTML
@@ -46,9 +41,10 @@ The following default variables and macros are available in the base templates:
 
 | Snippet                  | Description                                                         |
 | ------------------------ | ------------------------------------------------------------------- |
+| `{{ tree }}`             | Mapping of the markdown files directory structure                   |
+| `{{ meta }}`             | Mapping of the markdown file attributes                             |
+| `{{ assets_path }}`      | Path to the assets directory                                        |
 | `{{ page_content }}`     | HTML content of each markdown file                                  |
-| `{{ tree }}`             | File tree, automatically created and used for the table of contents |
-| `{{ render_nav(tree) }}` | Macro that renders the table of contents from the given tree        |
 
 To add your own variables, you can add attributes at the top of **each** markdown file:
 ```md
@@ -61,9 +57,9 @@ This is the actual content of the rendered page.
 Then, in the base template, variables with the same name will be available:
 ```html
 <div id="app">
-    <h1>{{ title }}</h1>
+    <h1>{{ meta.title }}</h1>
     <details>
-        <summary>{{ summary }}</summary>
+        <summary>{{ meta.summary }}</summary>
         {{ page_content }}
     </details>
 </div>
@@ -88,39 +84,36 @@ Specifying the language is optional and [`Pygments`](https://pygments.org/) is u
 
 ### Table of contents
 
-You can modify the [`render_nav`](./templates/macros.html) macro to change how the table of contents is rendered:
+You can modify the [`nav.html`](./templates/nav.html) template to change how the table of contents is rendered:
 ```jinja
-{% macro render_nav(tree, full_path, url_root) -%}
-{% for path, item in tree.items() -%}
-    {% if item is not mapping and path != "index" -%}
-        <li><a href="{{ full_path }}/{{ path }}/">{{ item }}</a></li>
-    {%- elif item is mapping +%}
-        <li><a href="{{ full_path }}/{{ path }}/">{{ path.title() }}</a>
-            <ul>
-                {{ render_nav(item, full_path+'/'+path, url_root) }}
-            </ul>
-        </li>
-    {% endif -%}
-{% endfor -%}
-{% endmacro -%}
-```
-
-Then, in the base template:
-```jinja
+{% macro render_nav(tree, root) %}
 <ul>
-    <li><a href="/">Home</a></li>
-    {{+ render_nav(tree, "", url_root) -}}
+    {% if root %}
+        <li><a href="/{{ tree.path }}">{{ tree.meta.name }}</a></li>
+    {% endif %}
+
+    {%- for child in tree.children %}
+        {% if child.children %}
+            <li><a href="/{{ child.path }}">{{ child.meta.name }}</a>
+                {{ render_nav(child, False) }}
+            </li>
+        {% else %}
+            <li><a href="/{{ child.path }}">{{ child.meta.name }}</a></li>
+        {% endif %}
+    {% endfor %}
 </ul>
+{% endmacro %}
+
+{{ render_nav(tree, True) }}
 ```
 
 Which will render the following HTML:
 ```html
 <ul>
-    <li><a href="/">Home</a></li>
-    
-    <li><a href="/sub">Sub</a>
+    <li><a href="/">Main page</a></li>
+    <li><a href="/sub">Sub category</a>
         <ul>
-            <li><a href="/sub/test">Test</a></li>
+            <li><a href="/sub/test">Test page</a></li>
         </ul>
     </li>
 </ul>

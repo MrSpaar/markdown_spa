@@ -1,98 +1,122 @@
-from re import Match, sub, compile
-from os.path import isfile, exists
-from os import listdir, environ, makedirs, system
+from typing import TypedDict
+from re import Match, compile
+from os.path import exists, isdir
+from configparser import ConfigParser
+from os import environ, makedirs, system, listdir
 
 from markdown import Markdown
-from markdown.extensions.codehilite import CodeHiliteExtension
-from jinja2 import Environment, FileSystemLoader, Template
+from jinja2 import Environment, FileSystemLoader
 
 
-pages_path = 'pages'
-assets_path = 'static'
-build_path = 'generated'
-templates_path = 'templates'
-
-in_github_actions = "URL_ROOT" in environ
-url_root = f"/{environ['URL_ROOT'].split('/')[1]}" \
-                if in_github_actions else ""
-
-checkbox_regex = compile(r'\[([ xX])\] (.*)')
-internal_link_regex = compile(r'(href|src)="(/[^"]+|/)"')
+class FileTree(TypedDict):
+    path: str
+    meta: dict[str, str]
+    children: list["FileTree"]
 
 
-def write_file(path: str, content: str) -> None:
-    with open(path, 'w') as f:
-        f.write(content)
+class Generator:
+    CHECKBOX_RE = compile(r'\[([ xX])\] (.*)')
+    INTERNAL_LINK_RE = compile(r'(href|src)="(/[^"]+|/)"')
+    TAG_RE = compile(r'^[ ]{0,3}(?P<key>[A-Za-z0-9_-]+):\s*(?P<value>.*)')
 
-FileTree = dict[str, "str | FileTree"]
-def get_file_tree(parent: str = "") -> FileTree:
-    tree: FileTree = {}
+    def __init__(self, ini_path: str) -> None:
+        self.config = ConfigParser()
+        self.config.read(ini_path)
 
-    for path in listdir(parent):
-        child = parent + "/" + path
+        self.dist_path = self.config["GENERATOR"]["dist_path"]
+        self.pages_path = self.config["GENERATOR"]["pages_path"]
+        self.assets_path = self.config["GENERATOR"]["assets_path"]
+        self.templates_path = self.config["GENERATOR"]["templates_path"]
 
-        if isfile(child):
-            name = path[:-3]
-            tree[name] = name.title()
-        else:
-            tree[path] = get_file_tree(child)
+        if not exists(self.dist_path):
+            makedirs(self.dist_path, exist_ok=True)
 
-    return tree
+        self.env = Environment(loader=FileSystemLoader(self.templates_path))
+        self.template = self.env.get_template("base.html")
+        self.md = Markdown(extensions=["meta", "tables", "attr_list", "fenced_code", "codehilite"])
 
+        self.url_root = self.config["GENERATOR"]["url_root"]
+        self.in_gp = "URL_ROOT" in environ
 
-def build_page(template: Template, md: Markdown, path: str, **kwargs: object) -> str:
-    with open(path) as f:
-        content = f.read()
-    
-    def checkbox(match: Match) -> str:
+        if self.in_gp:
+            self.url_root = f"/{environ['URL_ROOT'].split('/')[1]}"
+
+    @staticmethod
+    def __to_checkbox(match: Match) -> str:
         checked = match.group(1).lower() == 'x'
-        return f'<input type="checkbox" disabled{" checked" if checked else ""}> {match.group(2)}'
+        return f"<input type='checkbox' disabled{' checked' if checked else ''}> {match.group(2)}"
 
-    content = checkbox_regex.sub(checkbox, md.convert(content))
-    
-    return internal_link_regex.sub(rf'\1="{url_root}\2"',
-        template.render(page_content=str(md.convert(content)), **md.Meta, **kwargs)
-    )
+    def __prepare(self, full_path: str) -> FileTree:
+        entry = FileTree(path=full_path.removeprefix(self.pages_path).removeprefix('/'), meta={}, children=[])
 
+        for path in listdir(full_path):
+            if isdir(f"{full_path}/{path}"):
+                entry["children"].append(self.__prepare(f"{full_path}/{path}"))
+                continue
 
-def build_tree(template: Template, md: Markdown, tree: FileTree, full_tree: FileTree, full_path: str = "") -> None:
-    for path, child in tree.items():
-        if isinstance(child, dict):
-            directory = f"{build_path}/{full_path}/{path}"
-            if not exists(directory):
-                makedirs(directory, exist_ok=True)
+            is_index = path.endswith("index.md")
+            item = entry if is_index else FileTree(path=f"{entry['path']}/{path[:-3]}", meta={}, children=[])
+            
+            with open(f"{full_path}/{path}") as f:
+                while ((line := f.readline()) != "\n"):
+                    if match:= Generator.TAG_RE.match(line):
+                        item["meta"][match.group("key")] = match.group("value")
 
-            build_tree(template, md, child, full_tree, f"{full_path}/{path}")
-            continue
+            if not is_index:
+                entry["children"].append(item)
         
-        html = build_page(
-            template, md, f"{pages_path}/{full_path}/{path}.md",
-            tree=full_tree, assets_path=assets_path
-        )
+        return entry
 
-        if path == "index":
-            write_file(f"{build_path}/{full_path}/index.html", html)
+    def __build_nav(self, tree: FileTree) -> None:
+        self.nav = self.env.get_template("nav.html").render(tree=tree)
+
+    def __build(self, tree: FileTree) -> None:
+        makedirs(f"{self.dist_path}/{tree['path']}", exist_ok=True)
+
+        if tree["children"]:
+            src_path = f"{self.pages_path}/{tree['path']}/index.md"
+            dist_path = f"{self.dist_path}/{tree['path']}/index.html"
         else:
-            makedirs(f"{build_path}/{full_path}/{path}", exist_ok=True)
-            write_file(f"{build_path}/{full_path}/{path}/index.html", html)
+            src_path = f"{self.pages_path}/{tree['path']}.md"
+            dist_path = f"{self.dist_path}/{tree['path']}/index.html"
+
+        with open(dist_path, "w") as f:
+            f.write(self.build_page(src_path, nav=self.nav, assets_path=self.assets_path, meta=tree["meta"]))
+        
+        for child in tree["children"]:
+            self.__build(child)
+
+    def build_page(self, path: str, **kwargs: object) -> str:
+        with open(path) as f:
+            content = f.read()
+
+        content = Generator.CHECKBOX_RE.sub(
+            Generator.__to_checkbox, self.md.convert(content)
+        )
+        
+        return Generator.INTERNAL_LINK_RE.sub(
+            rf'\1="{self.url_root}\2"',
+            self.template.render(page_content=content, **kwargs)
+        )
+    
+    def build(self) -> None:
+        self.tree = self.__prepare(self.pages_path)
+
+        if not exists(f"{self.dist_path}/{self.assets_path}"):
+            system(
+                f"cp -r {self.assets_path} {self.dist_path}/" if self.in_gp
+                else f"ln -s ../{self.assets_path} {self.dist_path}/"
+            )
+
+        self.__build_nav(self.tree)
+        self.__build(self.tree)
+
+        print("Build complete!")
+    
+    @staticmethod
+    def build_from_ini(ini_path: str) -> None:
+        Generator(ini_path).build()
 
 
 if __name__ == "__main__":
-    if not exists(build_path):
-        makedirs(build_path, exist_ok=True)
-
-    env = Environment(loader=FileSystemLoader(templates_path))
-    template = env.get_template('base.html')
-
-    tree = get_file_tree(pages_path)
-    md = Markdown(extensions=[
-        "meta", "tables", "attr_list", "fenced_code",
-        CodeHiliteExtension(css_class="highlight")
-    ])
-
-    build_tree(template, md, tree, tree)
-    if not exists(f"{build_path}/{assets_path}"):
-        system(f"cp -r {assets_path} {build_path}/" if in_github_actions
-               else f"ln -s ../{assets_path} {build_path}/")
-
-    print("Build complete!")
+    Generator.build_from_ini("config.ini")
