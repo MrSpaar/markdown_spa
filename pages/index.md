@@ -1,3 +1,6 @@
+name: Main page
+description: This is the main page
+
 # Markdown-SPA
 
 A Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markdown`](https://pypi.org/project/Markdown/)) static site generator:
