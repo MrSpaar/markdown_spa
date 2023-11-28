@@ -71,7 +71,7 @@ pre {
 	& .nc { color: var(--content-color)} /* Name.Class */
 	& .no { color: #ffa0a0} /* Name.Constant */
 	& .nd { color: var(--content-color)} /* Name.Decorator */
-	& .ni { color: #ffdead} /* Name.Entity */
+	& .ni { color: #b89a6d} /* Name.Entity */
 	& .ne { color: var(--content-color)} /* Name.Exception */
 	& .nf { color: var(--content-color)} /* Name.Function */
 	& .nl { color: var(--content-color)} /* Name.Label */
