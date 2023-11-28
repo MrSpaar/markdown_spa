@@ -8,7 +8,7 @@
     --keyword-color: #0c728b;
     --keyword-type-color: #9b9430;
     --name-attr-color: #0c728b;
-    --bash-cmd-color: #086#9b9430
+    --bash-cmd-color: #0866aa;
 
     @media (prefers-color-scheme: dark) {
         --content-color: #fff;
