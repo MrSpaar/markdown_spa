@@ -88,7 +88,7 @@ Specifying the language is optional and [`Pygments`](https://pygments.org/) is u
 ### Table of contents
 
 You can modify the [`nav.html`](./templates/nav.html) template to change how the table of contents is rendered:
-```jinja
+```html
 {% macro render_nav(tree, root) %}
 <ul>
     {% if root %}
