@@ -44,7 +44,7 @@ class Generator:
     @staticmethod
     def __to_checkbox(match: Match) -> str:
         checked = match.group(1).lower() == 'x'
-        return f"<input type='checkbox' disabled{' checked' if checked else ''}> {match.group(2)}"
+        return f"<input type='checkbox' disabled{' checked' if checked else ''} aria-label='Checkbox'> {match.group(2)}"
 
     def __prepare(self, full_path: str) -> FileTree:
         entry = FileTree(path=full_path.removeprefix(self.pages_path).removeprefix('/'), meta={}, children=[])
