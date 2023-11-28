@@ -18,7 +18,7 @@ To build your website :
 - Run `python -m build`
 
 > [!NOTE]
-> To start a test server, run `python serve.py`
+> To start a test server and file watcher, run `python watch.py` (requires [`watchdog`](https://pypi.org/project/watchdog/))
 
 ## Templating
 
