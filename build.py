@@ -58,6 +58,8 @@ class Generator:
             item = entry if is_index else FileTree(path=f"{entry['path']}/{path[:-3]}", meta={}, children=[])
             
             with open(f"{full_path}/{path}") as f:
+                item["meta"] |= self.config["DEFAULTS"]
+
                 while ((line := f.readline()) != "\n"):
                     if match:= Generator.TAG_RE.match(line):
                         item["meta"][match.group("key")] = match.group("value")
