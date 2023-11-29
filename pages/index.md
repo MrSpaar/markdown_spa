@@ -20,11 +20,10 @@ To build your website :
 > [!NOTE]
 > To start a test server and file watcher, run `python watch.py` (requires [`watchdog`](https://pypi.org/project/watchdog/))
 
-If you want your changes to be deployed, you can push to the `gh-pages` branch (otherwise push to your main branch):
+To deploy your changes, you can merge your main branch into the `gh-pages` branch and push it:
 ```bash
-# Only if you haven't already done it
-git checkout -b gh-pages
-
+git checkout gh-pages
+git merge <main branch>
 git commit -am "<commit message>"
 git push origin gh-pages
 ```
