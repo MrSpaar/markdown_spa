@@ -1,34 +1,56 @@
-name: Main page
-description: This is the main page
-
 # Markdown-SPA
 
 A Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markdown`](https://pypi.org/project/Markdown/)) static site generator:
 
 - [x] No full page reloads (if JS enabled)
-- [x] Customizable automatic table of contents
+- [x] Powerful templating and SASS support
+- [x] Extented Markdown syntax (syntax highlight, attributes, ...)
 - [x] Fast and automatic deployment to GitHub Pages
 
 ## Usage
 
-To build your website :
-
-- Install the dependencies: `pip install markdown jinja2 Pygments libsass`
-- Configure the [`config.ini`](https://github.com/MrSpaar/Markdown-SPA/blob/master/config.ini) file (if needed)
-- Run `python -m build`
-
-> [!NOTE]
-> To start a test server and file watcher, run `python watch.py` (requires [`watchdog`](https://pypi.org/project/watchdog/))
-
-To deploy your changes, you can merge your main branch into the `gh-pages` branch and push it:
+First, you need to setup a blank project (follow the instructions):
 ```bash
-git checkout gh-pages
-git merge <main branch>
-git commit -am "<commit message>"
-git push origin gh-pages
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/MrSpaar/Markdown-SPA/master/setup.sh)"
 ```
 
-## SASS support
+Then, modify the [`config.ini`](https://github.com/MrSpaar/Markdown-SPA/blob/master/config.ini) to your liking, by default:
+```ini
+[GENERATOR] ; Generator settings
+url_root = 
+scss_path = scss
+pages_path = pages
+assets_path = static
+dist_path = generated
+templates_path = templates
+
+[DEFAULTS]  ; Default values for page attributes
+name = 
+description = 
+```
+
+And finally, to build your website you have two options:
+
+- Build the website once: `python -m build`
+- Start a test server and file watcher: `python watch.py` (requires [`watchdog`](https://pypi.org/project/watchdog/))
+
+## Deployment
+
+Github-SPA is set to automatically deploy to Github Pages using Github Actions:
+
+- Go to your repository settings
+- `Code and automation` > `Pages`
+- `Build and Deployment` > `Source` > select `Github Actions`
+
+To deploy your website, simply push your changes to your github repository:
+```bash
+git commit -am "<your commit message>"
+git push origin master
+```
+
+## Features
+
+### SASS support
 
 To use SASS, simply create a `main.scss` file in the configured `<scss_path>` directory:
 ```scss
@@ -47,7 +69,7 @@ A file named `style.css` will be generated in `<dist_path>/<assets_path>` direct
 > [!NOTE]
 > The file watcher will automatically recompile SASS files only if `<scss_path>` is set.
 
-## Markdown attributes
+### Markdown attributes
 
 Markdown-SPA uses the [`attr-list`](https://python-markdown.github.io/extensions/attr_list/) extension to add kramdown-like attributes to Markdown elements:
 ```md
@@ -57,7 +79,7 @@ Markdown-SPA uses the [`attr-list`](https://python-markdown.github.io/extensions
 ![This is an image](./image.png){: class="img center" loading="lazy" }
 ```
 
-## Syntax highlighting
+### Syntax highlighting
 
 Syntax highlighting in code blocks is done using the [`codehilite`](https://python-markdown.github.io/extensions/code_hilite/) and [`fenced_code`](https://python-markdown.github.io/extensions/fenced_code_blocks/) extensions. Multiple code block syntaxes are supported::
 ````
@@ -74,7 +96,7 @@ print("Hello World!")
 
 Specifying the language is optional and [`Pygments`](https://pygments.org/) is used to highlight the code.
 
-## Template variables and macros
+### Template variables and macros
 
 The following default variables and macros are available in the base templates:
 
@@ -104,7 +126,7 @@ Then, in the base template, variables with the same name will be available:
 </div>
 ```
 
-## Table of contents
+### Table of contents
 
 You can modify the [`nav.html`](https://github.com/MrSpaar/Markdown-SPA/blob/master/templates/nav.html) template to change how the table of contents is rendered:
 ```jinja
