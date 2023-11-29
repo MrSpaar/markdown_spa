@@ -1,10 +1,11 @@
 from typing import TypedDict
-from re import Match, compile
 from os.path import exists, isdir
 from configparser import ConfigParser
+from re import Match, compile as re_compile
 from os import environ, makedirs, system, listdir
 
 from markdown import Markdown
+from sass import compile as sass_compile
 from jinja2 import Environment, FileSystemLoader
 
 
@@ -15,14 +16,15 @@ class FileTree(TypedDict):
 
 
 class Generator:
-    CHECKBOX_RE = compile(r'\[([ xX])\] (.*)')
-    INTERNAL_LINK_RE = compile(r'(href|src)="(/[^"]+|/)"')
-    TAG_RE = compile(r'^[ ]{0,3}(?P<key>[A-Za-z0-9_-]+):\s*(?P<value>.*)')
+    CHECKBOX_RE = re_compile(r'\[([ xX])\] (.*)')
+    INTERNAL_LINK_RE = re_compile(r'(href|src)="(/[^"]+|/)"')
+    TAG_RE = re_compile(r'^[ ]{0,3}(?P<key>[A-Za-z0-9_-]+):\s*(?P<value>.*)')
 
     def __init__(self, ini_path: str) -> None:
         self.config = ConfigParser()
         self.config.read(ini_path)
 
+        self.scss_path = self.config["GENERATOR"]["scss_path"]
         self.dist_path = self.config["GENERATOR"]["dist_path"]
         self.pages_path = self.config["GENERATOR"]["pages_path"]
         self.assets_path = self.config["GENERATOR"]["assets_path"]
@@ -69,9 +71,6 @@ class Generator:
         
         return entry
 
-    def __build_nav(self, tree: FileTree) -> None:
-        self.nav = self.env.get_template("nav.html").render(tree=tree)
-
     def __build(self, tree: FileTree) -> None:
         makedirs(f"{self.dist_path}/{tree['path']}", exist_ok=True)
 
@@ -101,10 +100,21 @@ class Generator:
             self.template.render(page_content=content, **kwargs)
         )
     
+    def build_nav(self, tree: FileTree) -> None:
+        self.nav = self.env.get_template("nav.html").render(tree=tree)
+
+    def build_css(self) -> None:
+        with open(f"{self.dist_path}/{self.assets_path}/style.css", "w") as f:
+            f.write(sass_compile(
+                filename="scss/main.scss",
+                output_style="compressed",
+            ))
+
     def build(self) -> None:
         self.tree = self.__prepare(self.pages_path)
 
-        self.__build_nav(self.tree)
+        self.build_css()
+        self.build_nav(self.tree)
         self.__build(self.tree)
 
         print("Build complete!")

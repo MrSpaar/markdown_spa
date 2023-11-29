@@ -13,32 +13,60 @@ A Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markdown`](https://py
 
 To build your website :
 
-- Install the dependencies: `pip install markdown jinja2 Pygments`
-- Configure the [`config.ini`](./config.ini) file (if needed)
+- Install the dependencies: `pip install markdown jinja2 Pygments libsass`
+- Configure the [`config.ini`](https://github.com/MrSpaar/Markdown-SPA/blob/master/config.ini) file (if needed)
 - Run `python -m build`
 
 > [!NOTE]
 > To start a test server and file watcher, run `python watch.py` (requires [`watchdog`](https://pypi.org/project/watchdog/))
 
-## Templating
+## SASS support
 
-You can modify the default template as much as you want, but keep in mind that the JS script:
+To use SASS, simply create a `main.scss` file in the configured `<scss_path>` directory:
+```scss
+@import "some_other_scss_file";
+@import "another_scss_file";
 
-- Listens for clicks on `a` tags with the same location origin
-- Fetches the corresponding HTML file
-- Replaces the body of the current page with the fetched HTML
+...
+```
 
-### Markdown attributes
+A file named `style.css` will be generated in `<dist_path>/<assets_path>` directory:
+```html
+<!-- Root is 'dist_path', so if 'assets_path' is set to 'assets', the href is '/assets/style.css' -->
+<link rel="stylesheet" href="/assets/style.css" />
+```
+
+> [!NOTE]
+> The file watcher will automatically recompile SASS files only if `<scss_path>` is set.
+
+## Markdown attributes
 
 Markdown-SPA uses the [`attr-list`](https://python-markdown.github.io/extensions/attr_list/) extension to add kramdown-like attributes to Markdown elements:
 ```md
 # This is a title
-{: .title_class #title_id }
+{: .anchored-title }
 
 ![This is an image](./image.png){: class="img center" loading="lazy" }
 ```
 
-### Variables and macros
+## Syntax highlighting
+
+Syntax highlighting in code blocks is done using the [`codehilite`](https://python-markdown.github.io/extensions/code_hilite/) and [`fenced_code`](https://python-markdown.github.io/extensions/fenced_code_blocks/) extensions. Multiple code block syntaxes are supported::
+````
+```python
+print("Hello World!")
+```
+
+    :::python
+    print("Hello World!")
+
+    #!python
+    print("Hello World!")
+````
+
+Specifying the language is optional and [`Pygments`](https://pygments.org/) is used to highlight the code.
+
+## Template variables and macros
 
 The following default variables and macros are available in the base templates:
 
@@ -68,27 +96,10 @@ Then, in the base template, variables with the same name will be available:
 </div>
 ```
 
-### Syntax highlighting
+## Table of contents
 
-Syntax highlighting in code blocks is done using the [`codehilite`](https://python-markdown.github.io/extensions/code_hilite/) and [`fenced_code`](https://python-markdown.github.io/extensions/fenced_code_blocks/) extensions. Multiple code block syntaxes are supported::
-````
-```python
-print("Hello World!")
-```
-
-    :::python
-    print("Hello World!")
-
-    #!python
-    print("Hello World!")
-````
-
-Specifying the language is optional and [`Pygments`](https://pygments.org/) is used to highlight the code.
-
-### Table of contents
-
-You can modify the [`nav.html`](./templates/nav.html) template to change how the table of contents is rendered:
-```html
+You can modify the [`nav.html`](https://github.com/MrSpaar/Markdown-SPA/blob/master/templates/nav.html) template to change how the table of contents is rendered:
+```jinja
 {% macro render_nav(tree, root) %}
 <ul>
     {% if root %}
