@@ -20,6 +20,15 @@ To build your website :
 > [!NOTE]
 > To start a test server and file watcher, run `python watch.py` (requires [`watchdog`](https://pypi.org/project/watchdog/))
 
+If you want your changes to be deployed, you can push to the `gh-pages` branch (otherwise push to your main branch):
+```bash
+# Only if you haven't already done it
+git checkout -b gh-pages
+
+git commit -am "<commit message>"
+git push origin gh-pages
+```
+
 ## SASS support
 
 To use SASS, simply create a `main.scss` file in the configured `<scss_path>` directory:
