@@ -44,9 +44,10 @@ class RequestHandler(SimpleHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    server = HTTPServer(("", 8000), RequestHandler)
-
     generator = Generator("config.ini")
+    generator.build()
+
+    server = HTTPServer(("", 8000), RequestHandler)
     handler = HtmlHandler(generator)
 
     observer = Observer()
