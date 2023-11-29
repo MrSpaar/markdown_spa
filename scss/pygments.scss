@@ -52,7 +52,7 @@ pre {
 	.gr { color: #c0c0c0; font-weight: bold; background-color: #c00000 } /* Generic.Error */
 	.gh { color: var(--header-color)} /* Generic.Heading */
 	.gi { color: var(--content-color); background-color: #0000c0 } /* Generic.Inserted */
-	span.go { color: #add8e6; font-weight: bold; background-color: #4d4d4d } /* Generic.Output, qualified with span to prevent applying this style to the Go language, see #1153. */
+	span.go { color: #add8e6; font-weight: bold; background-color: #4d4d4d } /* Generic.Output */
 	.gp { color: var(--content-color)} /* Generic.Prompt */
 	.gs { color: var(--content-color)} /* Generic.Strong */
 	.gu { color: var(--header-color)} /* Generic.Subheading */
