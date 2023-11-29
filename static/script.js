@@ -1,13 +1,13 @@
 function overrideLinks() {
     for (let a of document.getElementsByTagName('a')) {
-        a.target = '_blank';
-
         if (a.href.startsWith(window.location.origin)) {
             a.addEventListener('click', e => {
                 e.preventDefault();
                 update(a.href);
                 window.history.pushState({}, '', a.href);
             });
+        } else {
+            a.target = '_blank';
         }
     }
 }
