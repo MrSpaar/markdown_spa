@@ -11,6 +11,7 @@ from jinja2 import Environment, FileSystemLoader
 
 class FileTree(TypedDict):
     path: str
+    is_dir: bool
     meta: dict[str, str]
     children: list["FileTree"]
 
@@ -49,7 +50,7 @@ class Generator:
         return f"<input type='checkbox' disabled{' checked' if checked else ''} aria-label='Checkbox'> {match.group(2)}"
 
     def __prepare(self, full_path: str) -> FileTree:
-        entry = FileTree(path=full_path.removeprefix(self.pages_path).removeprefix('/'), meta={}, children=[])
+        entry = FileTree(path=full_path.removeprefix(self.pages_path).removeprefix('/'), is_dir=True, meta={}, children=[])
 
         for path in listdir(full_path):
             if isdir(f"{full_path}/{path}"):
@@ -57,7 +58,7 @@ class Generator:
                 continue
 
             is_index = path.endswith("index.md")
-            item = entry if is_index else FileTree(path=f"{entry['path']}/{path[:-3]}", meta={}, children=[])
+            item = entry if is_index else FileTree(path=f"{entry['path']}/{path[:-3]}", is_dir=False, meta={}, children=[])
             
             with open(f"{full_path}/{path}") as f:
                 item["meta"] |= self.config["DEFAULTS"]
@@ -74,7 +75,7 @@ class Generator:
     def __build(self, tree: FileTree) -> None:
         makedirs(f"{self.dist_path}/{tree['path']}", exist_ok=True)
 
-        if tree["children"]:
+        if tree["is_dir"]:
             src_path = f"{self.pages_path}/{tree['path']}/index.md"
             dist_path = f"{self.dist_path}/{tree['path']}/index.html"
         else:
@@ -104,11 +105,15 @@ class Generator:
         self.nav = self.env.get_template("nav.html").render(tree=tree)
 
     def build_css(self) -> None:
+        makedirs(f"{self.dist_path}/{self.assets_path}", exist_ok=True)
+
         with open(f"{self.dist_path}/{self.assets_path}/style.css", "w") as f:
             f.write(sass_compile(
                 filename="scss/main.scss",
                 output_style="compressed",
             ))
+
+        print("SASS compiled!")
 
     def build(self) -> None:
         self.tree = self.__prepare(self.pages_path)
