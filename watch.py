@@ -1,4 +1,4 @@
-from build import Generator, sass_compile
+from build import Generator
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler, FileModifiedEvent, DirModifiedEvent
 
@@ -17,9 +17,11 @@ class ScssHandler(FileSystemEventHandler):
             self.file_modified = False
             return
 
-        self.generator.build_css()
-        print("CSS updated!")
         self.file_modified = True
+        try:
+            self.generator.build_css()
+        except Exception as e:
+            print(f"Build failed! ({e})")
 
 class HtmlHandler(FileSystemEventHandler):
     def __init__(self, generator: Generator) -> None:
@@ -31,8 +33,11 @@ class HtmlHandler(FileSystemEventHandler):
             self.file_modified = False
             return
         
-        self.generator.build()
         self.file_modified = True
+        try:
+            self.generator.build()
+        except Exception as e:
+            print(f"Build failed! ({e})")
 
 
 class RequestHandler(SimpleHTTPRequestHandler):
