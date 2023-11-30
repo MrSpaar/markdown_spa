@@ -3,15 +3,11 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 BOLD='\033[1m'
 
-echo -ne "${LIGHT_BLUE}${BOLD}Create a new directory? (Y/n)${NC} "
-read -n 1 -r
-echo
+echo -ne "${LIGHT_BLUE}${BOLD}Enter where to setup the project (blank for current directory): ${NC}"
+read -r
 
-if [[ $REPLY =~ ^[Yy]$ ]]
+if [[ $REPLY != "" ]]
 then
-    echo -ne "${LIGHT_BLUE}${BOLD}Enter the name of the directory: ${NC}"
-    read -r
-
     mkdir -p $REPLY
     cd $REPLY
 fi
