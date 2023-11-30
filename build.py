@@ -63,7 +63,7 @@ class Generator:
             with open(f"{full_path}/{path}") as f:
                 item["meta"] |= self.config["DEFAULTS"]
 
-                while ((line := f.readline()) != "\n"):
+                while ((line := f.readline()) != "\n" and line != ""):
                     if match:= Generator.TAG_RE.match(line):
                         item["meta"][match.group("key")] = match.group("value")
 
