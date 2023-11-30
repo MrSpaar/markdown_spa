@@ -3,7 +3,11 @@ name: Build and Deploy 🚀
 on:
   push:
     branches: ["master"]
-  workflow_dispatch:
+    paths-ignore:
+      - "README.md"
+      - ".gitignore"
+      - "watch.py"
+      - "setup.sh"
 
 permissions:
   contents: read
