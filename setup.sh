@@ -5,23 +5,27 @@ BOLD='\033[1m'
 
 echo -ne "${LIGHT_BLUE}${BOLD}Create a new directory? (Y/n)${NC} "
 read -n 1 -r
-
 echo
+
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
     echo -ne "${LIGHT_BLUE}${BOLD}Enter the name of the directory: ${NC}"
     read -r
 
-    mkdir $REPLY
+    mkdir -p $REPLY
     cd $REPLY
 fi
 
 git clone http://github.com/MrSpaar/Markdown-SPA.git .
-rm -rf .git README.md setup.sh
+rm -rf .git README.md setup.sh pages/* static/*.jpg static/*.png
+echo "name: Main Page
+
+# Hello World!" > pages/index.md
 git init
 
 echo -ne "${LIGHT_BLUE}${BOLD}Create a remote branch to your github repo? (Y/n)${NC} "
 read -n 1 -r
+echo
 
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
@@ -44,4 +48,4 @@ then
     python -m pip install watchdog
 fi
 
-echo -e "${GREEN}${BOLD}Setup complete. Use 'python -m build' to build the site or 'python watch.py' to start a local server.${NC}"
+echo -e "${GREEN}${BOLD}Setup complete. Use ${LIGHT_BLUE}${BOLD}'python -m build'${GREEN}${BOLD} to build the site or ${LIGHT_BLUE}${BOLD}'python watch.py'${GREEN}${BOLD} to start a local server.${NC}"
