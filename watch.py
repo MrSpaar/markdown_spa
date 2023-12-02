@@ -58,7 +58,10 @@ if __name__ == "__main__":
     observer = Observer()
 
     if generator.scss_path:
-        observer.schedule(ScssHandler(generator), generator.scss_path, recursive=True)
+        observer.schedule(
+            ScssHandler(generator),
+            generator.scss_path[:generator.scss_path.index('/')]
+        )
 
     observer.schedule(handler, generator.templates_path)
     observer.schedule(handler, generator.pages_path, recursive=True)

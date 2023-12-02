@@ -41,11 +41,26 @@ if [[ $REPLY != "" ]]; then
 fi
 
 git clone http://github.com/MrSpaar/Markdown-SPA.git .
-rm -rf .git README.md setup.sh pages/* static/*.jpg static/*.png
+rm -rf .git README.md setup.sh config.ini scss/main.scss pages/* static/*.jpg static/*.png
+git init
+
 echo "name: Main Page
 
 # Hello World!" > pages/index.md
-git init
+
+echo "
+[GENERATOR] ; Generator settings
+url_root = 
+pages_path = pages
+assets_path = static
+dist_path = generated
+templates_path = templates
+scss_path = scss/default.scss
+
+[DEFAULTS]  ; Default values for page attributes
+name = 
+description = 
+" > config.ini
 
 echo -ne "${BLUE}${BOLD}Create a remote branch to your github repo? (Y/n)${NC} "
 read -n 1 -r

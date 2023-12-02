@@ -109,7 +109,7 @@ class Generator:
 
         with open(f"{self.dist_path}/{self.assets_path}/style.css", "w") as f:
             f.write(sass_compile(
-                filename="scss/main.scss",
+                filename=self.scss_path,
                 output_style="compressed",
             ))
 
@@ -117,6 +117,12 @@ class Generator:
 
     def build(self) -> None:
         self.tree = self.__prepare(self.pages_path)
+
+        if not exists(f"{self.dist_path}/{self.assets_path}"):
+            system(
+                f"cp -r {self.assets_path} {self.dist_path}/" if self.in_gp
+                else f"ln -s ../{self.assets_path} {self.dist_path}/"
+            )
 
         self.build_css()
         self.build_nav(self.tree)
@@ -126,15 +132,7 @@ class Generator:
     
     @staticmethod
     def build_from_ini(ini_path: str) -> None:
-        gen = Generator(ini_path)
-
-        if not exists(f"{gen.dist_path}/{gen.assets_path}"):
-            system(
-                f"cp -r {gen.assets_path} {gen.dist_path}/" if gen.in_gp
-                else f"ln -s ../{gen.assets_path} {gen.dist_path}/"
-            )
-
-        gen.build()
+        Generator(ini_path).build()
 
 
 if __name__ == "__main__":
