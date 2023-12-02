@@ -18,11 +18,11 @@ Then, modify the [`config.ini`](https://github.com/MrSpaar/Markdown-SPA/blob/mas
 ```ini
 [GENERATOR] ; Generator settings
 url_root = 
-scss_path = scss
 pages_path = pages
 assets_path = static
 dist_path = generated
 templates_path = templates
+scss_path = scss/default.scss
 
 [DEFAULTS]  ; Default values for page attributes
 name = 
@@ -52,7 +52,7 @@ git push origin master
 
 ### SASS support
 
-To use SASS, simply create a `main.scss` file in the configured `<scss_path>` directory:
+To use SASS, simply create a file matching `<scss_path>`:
 ```scss
 @import "some_other_scss_file";
 @import "another_scss_file";
@@ -60,7 +60,7 @@ To use SASS, simply create a `main.scss` file in the configured `<scss_path>` di
 ...
 ```
 
-A file named `style.css` will be generated in `<dist_path>/<assets_path>` directory:
+A file named `style.css` will be generated in `<dist_path>/<assets_path>`:
 ```html
 <!-- Root is 'dist_path', so if 'assets_path' is set to 'assets', the href is '/assets/style.css' -->
 <link rel="stylesheet" href="/assets/style.css" />
