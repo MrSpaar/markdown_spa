@@ -40,8 +40,11 @@ if [[ $REPLY != "" ]]; then
     cd $REPLY
 fi
 
-git clone -b gh-pages http://github.com/MrSpaar/Markdown-SPA.git .
-rm -rf .git && git init
+git clone http://github.com/MrSpaar/Markdown-SPA.git .
+rm -rf .git README.md setup.sh scss/main.scss pages/* && git init
+find ./static -type f -not -name '*.js' -print0 | xargs -0 rm --
+
+sed -i 's/main.scss/default.scss/g' config.ini
 
 echo -ne "${BLUE}${BOLD}Create a remote branch to your github repo? (Y/n)${NC} "
 read -n 1 -r
