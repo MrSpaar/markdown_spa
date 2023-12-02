@@ -40,7 +40,7 @@ if [[ $REPLY != "" ]]; then
     cd $REPLY
 fi
 
-git clone -b default http://github.com/MrSpaar/Markdown-SPA.git .
+git clone -b gh-pages http://github.com/MrSpaar/Markdown-SPA.git .
 rm -rf .git && git init
 
 echo -ne "${BLUE}${BOLD}Create a remote branch to your github repo? (Y/n)${NC} "
