@@ -55,9 +55,11 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     git remote add origin $REPLY
 fi
 
-if ! $python -c 'import jinja2;import markdown;import Pygments' &>/dev/null; then
+if ! $python -c 'import jinja2;import markdown;import pygments' &>/dev/null; then
     $pip install jinja2 markdown Pygments
     echo -e "${GREEN}${BOLD}Mandatory dependencies installed.${NC}"
+else
+    echo -e "${GREEN}${BOLD}Mandatory dependencies already installed.${NC}"
 fi
 
 if ! $python -c 'import watchdog' &>/dev/null; then
@@ -70,6 +72,8 @@ if ! $python -c 'import watchdog' &>/dev/null; then
     fi
 
     echo -e "${GREEN}${BOLD}Optional dependencies installed.${NC}"
+else
+    echo -e "${GREEN}${BOLD}Optional dependencies already installed.${NC}"
 fi
 
 echo -e "${GREEN}${BOLD}Setup complete. Use ${BLUE}${BOLD}'python -m build'${GREEN}${BOLD} to build the site or ${BLUE}${BOLD}'python watch.py'${GREEN}${BOLD} to start a local server.${NC}"
