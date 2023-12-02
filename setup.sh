@@ -40,27 +40,8 @@ if [[ $REPLY != "" ]]; then
     cd $REPLY
 fi
 
-git clone http://github.com/MrSpaar/Markdown-SPA.git .
-rm -rf .git README.md setup.sh config.ini scss/main.scss pages/* static/*.jpg static/*.png
-git init
-
-echo "name: Main Page
-
-# Hello World!" > pages/index.md
-
-echo "
-[GENERATOR] ; Generator settings
-url_root = 
-pages_path = pages
-assets_path = static
-dist_path = generated
-templates_path = templates
-scss_path = scss/default.scss
-
-[DEFAULTS]  ; Default values for page attributes
-name = 
-description = 
-" > config.ini
+git clone -b default http://github.com/MrSpaar/Markdown-SPA.git .
+rm -rf .git && git init
 
 echo -ne "${BLUE}${BOLD}Create a remote branch to your github repo? (Y/n)${NC} "
 read -n 1 -r
@@ -74,15 +55,13 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     git remote add origin $REPLY
 fi
 
-
-echo -ne "${BLUE}${BOLD}Install dependencies? (Y/n)${NC} "
-read -n 1 -r
-echo
-
-if [[ $REPLY =~ ^[Yy]$ ]]; then
+if ! $python -c 'import jinja2;import markdown;import Pygments' &>/dev/null; then
     $pip install jinja2 markdown Pygments
+    echo -e "${GREEN}${BOLD}Mandatory dependencies installed.${NC}"
+fi
 
-    echo -ne "${BLUE}${BOLD}Install watchdog (test server + file watcher)? (Y/n)${NC} "
+if ! $python -c 'import watchdog' &>/dev/null; then
+    echo -ne "${BLUE}${BOLD}Install watchdog (file watcher)? (Y/n)${NC} "
     read -n 1 -r
     echo
 
@@ -90,7 +69,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         $pip install watchdog
     fi
 
-    echo -e "${GREEN}${BOLD}Dependencies installed.${NC}"
+    echo -e "${GREEN}${BOLD}Optional dependencies installed.${NC}"
 fi
 
 echo -e "${GREEN}${BOLD}Setup complete. Use ${BLUE}${BOLD}'python -m build'${GREEN}${BOLD} to build the site or ${BLUE}${BOLD}'python watch.py'${GREEN}${BOLD} to start a local server.${NC}"
