@@ -60,23 +60,17 @@ fi
 
 if ! $python -c 'import jinja2;import markdown;import pygments' &>/dev/null; then
     $pip install jinja2 markdown Pygments
-    echo -e "${GREEN}${BOLD}Mandatory dependencies installed.${NC}"
-else
-    echo -e "${GREEN}${BOLD}Mandatory dependencies already installed.${NC}"
 fi
 
-if ! $python -c 'import watchdog' &>/dev/null; then
-    echo -ne "${BLUE}${BOLD}Install watchdog (file watcher)? (Y/n)${NC} "
+if ! $python -c 'import livereload' &>/dev/null; then
+    echo -ne "${BLUE}${BOLD}Install livereload (for easy testing)? (Y/n)${NC} "
     read -n 1 -r
     echo
 
     if [[ $REPLY =~ ^[Yy]$ ]]; then
-        $pip install watchdog
+        $pip install livereload
     fi
-
-    echo -e "${GREEN}${BOLD}Optional dependencies installed.${NC}"
-else
-    echo -e "${GREEN}${BOLD}Optional dependencies already installed.${NC}"
 fi
 
+echo -e "${GREEN}${BOLD}Dependencies installed.${NC}"
 echo -e "${GREEN}${BOLD}Setup complete. Use ${BLUE}${BOLD}'python -m build'${GREEN}${BOLD} to build the site or ${BLUE}${BOLD}'python watch.py'${GREEN}${BOLD} to start a local server.${NC}"

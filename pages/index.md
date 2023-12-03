@@ -35,7 +35,7 @@ description =
 And finally, to build your website you have two options:
 
 - Build the website once: `python -m build`
-- Start a test server and file watcher: `python watch.py` (requires [`watchdog`](https://pypi.org/project/watchdog/))
+- Start a live-reload server: `python watch.py` (requires [`livereload`](https://pypi.org/project/livereload/))
 
 ## Deployment
 

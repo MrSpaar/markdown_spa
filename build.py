@@ -113,8 +113,6 @@ class Generator:
                 output_style="compressed",
             ))
 
-        print("SASS compiled!")
-
     def build(self) -> None:
         self.tree = self.__prepare(self.pages_path)
 
@@ -127,8 +125,6 @@ class Generator:
         self.build_css()
         self.build_nav(self.tree)
         self.__build(self.tree)
-
-        print("Build complete!")
     
     @staticmethod
     def build_from_ini(ini_path: str) -> None:
@@ -137,3 +133,4 @@ class Generator:
 
 if __name__ == "__main__":
     Generator.build_from_ini("config.ini")
+    print("Done!")
