@@ -4,6 +4,7 @@ from livereload import Server
 
 if __name__ == "__main__":
     generator = Generator("config.ini")
+    generator.link_assets()
     generator.build()
 
     server = Server()

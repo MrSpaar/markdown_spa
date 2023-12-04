@@ -34,8 +34,7 @@ class Generator:
         if not exists(self.dist_path):
             makedirs(self.dist_path, exist_ok=True)
 
-        self.env = Environment(loader=FileSystemLoader(self.templates_path))
-        self.template = self.env.get_template("base.html")
+        self.env = Environment(loader=FileSystemLoader(self.templates_path), auto_reload=True)
         self.md = Markdown(extensions=["meta", "tables", "attr_list", "fenced_code", "codehilite"])
 
         self.url_root = self.config["GENERATOR"]["url_root"]
@@ -100,9 +99,13 @@ class Generator:
             rf'\1="{self.url_root}\2"',
             self.template.render(page_content=content, **kwargs)
         )
-    
-    def build_nav(self, tree: FileTree) -> None:
-        self.nav = self.env.get_template("nav.html").render(tree=tree)
+
+    def link_assets(self) -> None:
+        if not exists(f"{self.dist_path}/{self.assets_path}"):
+            system(
+                f"cp -r {self.assets_path} {self.dist_path}/" if self.in_gp
+                else f"ln -s ../{self.assets_path} {self.dist_path}/"
+            )
 
     def build_css(self) -> None:
         makedirs(f"{self.dist_path}/{self.assets_path}", exist_ok=True)
@@ -115,22 +118,17 @@ class Generator:
 
     def build(self) -> None:
         self.tree = self.__prepare(self.pages_path)
+        self.template = self.env.get_template("base.html")
+        self.nav = self.env.get_template("nav.html").render(tree=self.tree)
 
-        if not exists(f"{self.dist_path}/{self.assets_path}"):
-            system(
-                f"cp -r {self.assets_path} {self.dist_path}/" if self.in_gp
-                else f"ln -s ../{self.assets_path} {self.dist_path}/"
-            )
-
-        self.build_css()
-        self.build_nav(self.tree)
         self.__build(self.tree)
-    
-    @staticmethod
-    def build_from_ini(ini_path: str) -> None:
-        Generator(ini_path).build()
 
 
 if __name__ == "__main__":
-    Generator.build_from_ini("config.ini")
+    gen = Generator("config.ini")
+
+    gen.link_assets()
+    gen.build_css()
+    gen.build()
+
     print("Done!")
