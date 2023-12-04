@@ -1,6 +1,8 @@
 function overrideLinks() {
     for (let a of document.getElementsByTagName('a')) {
-        if (a.href.startsWith(window.location.origin)) {
+        let link = a.href.baseVal || a.href;
+
+        if (link.startsWith(window.location.origin)) {
             a.addEventListener('click', e => {
                 e.preventDefault();
                 update(a.href);
@@ -25,7 +27,6 @@ function update(path) {
 }
 
 window.addEventListener('popstate', e => {
-    console.log("popstate");
     update(window.location.href);
 });
 
