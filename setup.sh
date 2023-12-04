@@ -58,8 +58,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     git remote add origin $REPLY
 fi
 
-if ! $python -c 'import jinja2;import markdown;import pygments' &>/dev/null; then
-    $pip install jinja2 markdown Pygments
+if ! $python -c 'import jinja2;import markdown;import pygments;import sass' &>/dev/null; then
+    $pip install jinja2 markdown Pygments libsass
 fi
 
 if ! $python -c 'import livereload' &>/dev/null; then
