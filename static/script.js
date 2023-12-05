@@ -15,6 +15,10 @@ function overrideLinks() {
 }
 
 function update(path) {
+    if (path === window.location.href) {
+        return;
+    }
+
     fetch(path)
         .then(resp => resp.text())
         .then(html => {
