@@ -2,10 +2,24 @@
 
 html body {
     padding-left: 240px;
+    position: relative;
 
     @media (max-width: 700px) {
         padding-left: 0;
     }
+}
+
+.loader {
+    height: 2px;
+    position: fixed;
+    background-color: #03a9f4;
+    animation: loader .8s forwards;
+}
+
+@keyframes loader {
+    0% { width: 0; }
+    99% { width: 100%; }
+    100% { opacity: 0; }
 }
 
 #content {
