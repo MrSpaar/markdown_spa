@@ -9,7 +9,7 @@ html body {
     }
 }
 
-.loader {
+#loader.active {
     height: 2px;
     position: fixed;
     background-color: #03a9f4;

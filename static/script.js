@@ -19,6 +19,11 @@ function update(path) {
         return;
     }
 
+    const loader = document.getElementById('loader');
+    if (!loader.classList.contains('active')) {
+        loader.classList.add('active');
+    }
+
     fetch(path)
         .then(resp => resp.text())
         .then(html => {
