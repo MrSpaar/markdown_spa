@@ -1,5 +1,5 @@
 name: Quick start
-description: A Python static site generator using Markdown and Jinja2, Pygments and libsass
+description: A Python static site generator using Markdown, Jinja2, Pygments and libsass
 
 Markdown-SPA is a Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markdown`](https://pypi.org/project/Markdown/)) static site generator:
 
