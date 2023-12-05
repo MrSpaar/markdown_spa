@@ -57,7 +57,9 @@ class Generator:
                 continue
 
             is_index = path.endswith("index.md")
-            item = entry if is_index else FileTree(path=f"{entry['path']}/{path[:-3]}", is_dir=False, meta={}, children=[])
+            item = entry if is_index else FileTree(
+                path=f"{entry['path']}/{path[:-3]}".removeprefix("/"), is_dir=False, meta={}, children=[]
+            )
             
             with open(f"{full_path}/{path}") as f:
                 item["meta"] |= self.config["DEFAULTS"]
