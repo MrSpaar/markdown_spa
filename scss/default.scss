@@ -11,31 +11,67 @@ html {
             color: #03a9f4;
             &:visited { color: #0276aa; }
         }
-    
-        svg path {
-            fill: white;
-        }
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
     }
 }
 
-li:has(input)::marker {
-    content: none;
+ul:has(input) {
+    padding-left: 20px;
+
+    li::marker {
+        content: none;
+    }
 }
 
-svg {
-    top: -22px;
-    right: -22px;
-    scale: 0.35;
-    position: absolute;
+.codehilite {
+    border-radius: 3px;
+
+    pre {
+        overflow: scroll;
+        padding: 10px;
+        line-height: 110%;
+        font-family: Inconsolata, Consolas, Courier, "Courier New", "Liberation Mono", monospace;
+    }
 }
 
-pre {
-    padding: 10px;
-    line-height: 110%;
-    font-family: Inconsolata, Consolas, Courier, "Courier New", "Liberation Mono", monospace;
-}
-
-.img {
-    width: 400px;
+img {
     height: auto;
+    max-width: 100%;
+    margin-top: 10px;
+    border-radius: 3px;
+}
+
+table:not(.codehilitetable) {
+    --table-border-color: #ddd;
+    --alternate-background-color: #f5f5f5;
+
+    @media (prefers-color-scheme: dark) {
+        --table-border-color: #444;
+        --alternate-background-color: #333232;
+    }
+
+    width: 100%;
+    border-collapse: collapse;
+
+    tr {
+        border: 1px solid var(--table-border-color);
+    }
+    
+    tr:nth-child(even) {
+        background: var(--alternate-background-color);
+    }
+    
+    td, th {
+        padding: 10px;
+        text-align: left;
+    }
+
+    @media (max-width: 400px) {
+        display: block;
+        overflow-x: scroll;
+    }
 }

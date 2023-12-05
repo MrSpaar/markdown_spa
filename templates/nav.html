@@ -4,7 +4,7 @@
         <li><a href="/{{ tree.path }}">{{ tree.meta.name }}</a></li>
     {% endif -%}
 
-    {%- for child in tree.children -%}
+    {%- for child in tree.children | sort(attribute='meta.order') -%}
         {% if child.children -%}
             <li><a href="/{{ child.path }}">{{ child.meta.name }}</a>
                 {{ render_nav(child, False) }}
