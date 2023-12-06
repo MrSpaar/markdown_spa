@@ -3,7 +3,7 @@ from datetime import datetime
 from os.path import exists, isdir
 from configparser import ConfigParser
 from re import Match, compile as re_compile
-from os import environ, makedirs, system, listdir, getenv
+from os import environ, makedirs, system, listdir
 
 from markdown import Markdown
 from sass import compile as sass_compile
@@ -43,7 +43,7 @@ class Generator:
         self.in_gp = "URL_ROOT" in environ
 
         if self.in_gp:
-            self.url_root = getenv("url")
+            self.url_root = environ["G_URL"]
 
     @staticmethod
     def __to_checkbox(match: Match) -> str:
