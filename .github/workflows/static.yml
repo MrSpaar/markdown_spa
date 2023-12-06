@@ -38,7 +38,7 @@ jobs:
       - name: Generate HTML 📚
         run: python -m build
         env:
-          REPO: ${{ GITHUB_REPOSITORY }}
+          REPO: ${{ github.repository }}
       - name: Setup Pages ⚙️
         uses: actions/configure-pages@v3
       - name: Upload artifact 📤
