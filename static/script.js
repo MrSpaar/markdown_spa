@@ -8,9 +8,6 @@ function overrideLinks() {
                 update(a.href);
                 window.history.pushState({}, '', a.href);
             });
-        } else {
-            a.target = '_blank';
-            a.setAttribute('aria-describedby', 'Opens in a new window');
         }
     }
 }

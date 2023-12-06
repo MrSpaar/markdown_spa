@@ -133,6 +133,9 @@ class Generator:
                 tree=self.tree, url=self.url_root, date=datetime.now().strftime("%Y-%m-%dT%H:%M:%S+00:00")
             ))
 
+        with open(f"{self.dist_path}/robots.txt", "w") as f:
+            f.write(f"Sitemap: {self.url_root}/sitemap.xml")
+
 
 if __name__ == "__main__":
     gen = Generator("config.ini")
