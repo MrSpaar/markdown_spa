@@ -6,9 +6,10 @@ Markdown-SPA is a Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markd
 
 - [x] Powerful templating
 - [x] SCSS support
+- [x] SEO optimized
 - [x] No full page reloads (if JS enabled)
 - [x] Extented Markdown syntax
-- [x] Fast and automatic deployment to GitHub Pages
+- [x] Automatic deployment to GitHub Pages
 
 <br>
 

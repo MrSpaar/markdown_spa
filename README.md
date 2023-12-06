@@ -4,9 +4,9 @@ A Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markdown`](https://py
 
 - [x] Powerful templating
 - [x] SCSS support
+- [x] SEO optimized
 - [x] No full page reloads (if JS enabled)
 - [x] Extented Markdown syntax
-- [x] Automatic site map generation
-- [x] Fast and automatic deployment to GitHub Pages
+- [x] Automatic deployment to GitHub Pages
 
 For more information, see the [documentation](https://mrspaar.github.io/Markdown-SPA/).
