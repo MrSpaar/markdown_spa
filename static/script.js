@@ -5,30 +5,27 @@ function overrideLinks() {
         if (link.startsWith(window.location.origin)) {
             a.addEventListener('click', e => {
                 e.preventDefault();
-
-                if (a.href == window.location.href) {
-                    return;
-                }
-
-                update(a.href);
-                window.history.pushState({}, '', a.href);
+                if (a.href != window.location.href)
+                    update(a.href);
             });
         }
     }
 }
 
-function update(path) {
+function update(path, push = true) {
     document.getElementById('loader').classList.add('active');;
 
     fetch(path)
         .then(resp => resp.text())
         .then(html => {
             document.documentElement.innerHTML = html;
+            if (push)
+                window.history.pushState({}, '', path);
             overrideLinks();
         });
 }
 
 overrideLinks();
 window.addEventListener('popstate', _ => {
-    update(window.location.href);
+    update(window.location.href, false);
 });
