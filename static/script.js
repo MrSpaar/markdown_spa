@@ -6,7 +6,6 @@ function overrideLinks() {
             a.addEventListener('click', e => {
                 e.preventDefault();
                 update(a.href);
-                window.history.pushState({}, '', a.href);
             });
         }
     }
@@ -17,10 +16,8 @@ function update(path) {
         return;
     }
 
-    const loader = document.getElementById('loader');
-    if (!loader.classList.contains('active')) {
-        loader.classList.add('active');
-    }
+    path = path || window.location.href;
+    document.getElementById('loader').classList.add('active');;
 
     fetch(path)
         .then(resp => resp.text())
@@ -30,11 +27,11 @@ function update(path) {
 
             document.body.innerHTML = html.substring(start, end);
             overrideLinks();
+            window.history.pushState({}, '', a.href);
         });
 }
 
-window.addEventListener('popstate', e => {
-    update(window.location.href);
-});
-
 overrideLinks();
+window.addEventListener('popstate', _ => {
+    update();
+});
