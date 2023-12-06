@@ -39,10 +39,12 @@ ul:has(input) {
 }
 
 img {
+    display: block;
     height: auto;
     max-width: 100%;
     margin-top: 10px;
     border-radius: 3px;
+    margin: 10px auto;
 }
 
 table:not(.codehilitetable) {
