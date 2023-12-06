@@ -1,4 +1,5 @@
 from typing import TypedDict
+from datetime import datetime
 from os.path import exists, isdir
 from configparser import ConfigParser
 from re import Match, compile as re_compile
@@ -37,11 +38,12 @@ class Generator:
         self.env = Environment(loader=FileSystemLoader(self.templates_path), auto_reload=True)
         self.md = Markdown(extensions=["meta", "tables", "attr_list", "fenced_code", "codehilite"])
 
-        self.url_root = self.config["GENERATOR"]["url_root"]
+        self.port = self.config["GENERATOR"].getint("port")
+        self.url_root = f"http://localhost:{self.port}"
         self.in_gp = "URL_ROOT" in environ
 
         if self.in_gp:
-            self.url_root = f"/{environ['URL_ROOT'].split('/')[1]}"
+            self.url_root = environ['url']
 
     @staticmethod
     def __to_checkbox(match: Match) -> str:
@@ -124,6 +126,11 @@ class Generator:
         self.nav = self.env.get_template("nav.html").render(tree=self.tree)
 
         self.__build(self.tree)
+        
+        with open(f"{self.dist_path}/sitemap.xml", "w") as f:
+            f.write(self.env.get_template("sitemap.xml").render(
+                tree=self.tree, url=self.url_root, date=datetime.now().strftime("%Y-%m-%dT%H:%M:%S+00:00")
+            ))
 
 
 if __name__ == "__main__":

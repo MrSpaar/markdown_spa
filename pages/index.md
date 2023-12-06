@@ -1,3 +1,4 @@
+priority: 1
 name: Quick start
 description: A Python static site generator using Markdown, Jinja2, Pygments and libsass
 
@@ -20,7 +21,7 @@ The `config.ini` file describes the project structure:
 
 | Key              | Default value | Description                               |
 | :--------------- | :-----------: | :---------------------------------------- |
-| `url_root`       | *empty*       | Start of all URIs (e.g. `/Markdown-SPA/`) |
+| `port`           | `8000`        | Port used by the live-reload server       |
 | `pages_path`     | `pages`       | Root of all markdown files                |
 | `assets_path`    | `assets`      | Root of all assets (images, css, js, ...) |
 | `scss_path`      | `scss`        | Root of all SCSS files (optionnal)        |

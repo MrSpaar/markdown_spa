@@ -10,6 +10,7 @@ function overrideLinks() {
             });
         } else {
             a.target = '_blank';
+            a.setAttribute('aria-describedby', 'Opens in a new window');
         }
     }
 }
