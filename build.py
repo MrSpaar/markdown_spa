@@ -134,7 +134,7 @@ class Generator:
             ))
 
         with open(f"{self.dist_path}/robots.txt", "w") as f:
-            f.write(f"Sitemap: {self.url_root}/sitemap.xml")
+            f.write(self.env.get_template("robots.txt").render(url=self.url_root))
 
 
 if __name__ == "__main__":
