@@ -26,6 +26,7 @@ class Generator:
         self.config = ConfigParser()
         self.config.read(ini_path)
 
+        self.port = self.config["GENERATOR"].getint("port")
         self.scss_path = self.config["GENERATOR"]["scss_path"]
         self.dist_path = self.config["GENERATOR"]["dist_path"]
         self.pages_path = self.config["GENERATOR"]["pages_path"]
@@ -38,12 +39,12 @@ class Generator:
         self.env = Environment(loader=FileSystemLoader(self.templates_path), auto_reload=True)
         self.md = Markdown(extensions=["meta", "tables", "attr_list", "fenced_code", "codehilite"])
 
-        self.port = self.config["GENERATOR"].getint("port")
+        self.in_gp = "REPO" in environ
         self.url_root = f"http://localhost:{self.port}"
-        self.in_gp = "G_URL" in environ
 
         if self.in_gp:
-            self.url_root = environ["G_URL"]
+            user, repo = environ["REPO"].split("/")
+            self.url_root = f"https://{user}.github.io/{repo}"
 
     @staticmethod
     def __to_checkbox(match: Match) -> str:
