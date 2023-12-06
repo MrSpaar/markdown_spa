@@ -80,8 +80,8 @@ nav {
         padding: 0;
         margin: 20px 0 0 20px;
 
-        > li::marker {
-            content: none;
+        > li {
+            list-style-type: none;
         }
     }
 
