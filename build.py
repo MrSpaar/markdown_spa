@@ -40,7 +40,7 @@ class Generator:
 
         self.port = self.config["GENERATOR"].getint("port")
         self.url_root = f"http://localhost:{self.port}"
-        self.in_gp = "URL_ROOT" in environ
+        self.in_gp = "G_URL" in environ
 
         if self.in_gp:
             self.url_root = environ["G_URL"]
