@@ -123,6 +123,22 @@ nav {
     }
 }
 
+html, table, pre {
+    ::-webkit-scrollbar {
+        height: 4px;
+        width: 4px;
+
+        &-track {
+            background-color: var(--alternative-background-color);
+        }
+
+        &-thumb {
+            background-color: #979393;
+            &:active {background-color: #555 }
+        }
+    }
+}
+
 #loader.active {
     height: 2px;
     position: fixed;

@@ -8,7 +8,6 @@ code {
 }
 
 .codehilite {
-	--content-color: #222;
     --header-color: #f14343;
     --string-color: #bb7d51;
     --comment-color: #817676;
@@ -21,7 +20,6 @@ code {
 	--string-color: #bb7d51;
 
     @media (prefers-color-scheme: dark) {
-        --content-color: #fff;
         --header-color: #ff834a;
         --string-color: #EAB289;
         --comment-color: #87ceeb;
@@ -42,7 +40,7 @@ code {
 	}
 
     pre {
-        overflow: scroll;
+        overflow: auto;
         padding: 10px;
         line-height: 120%;
     }
