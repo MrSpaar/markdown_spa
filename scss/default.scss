@@ -1,11 +1,13 @@
-@import "pygments";
+@import "code";
 
 html {
     font-family: sans-serif;
+	--alternative-background-color: #f5f1f1;
 
     @media (prefers-color-scheme: dark) {
         color: white;
         background-color: #1d1e22;
+		--alternative-background-color: #333232;
     
         a {
             color: #03a9f4;
@@ -27,17 +29,6 @@ ul:has(input) {
     }
 }
 
-.codehilite {
-    border-radius: 3px;
-
-    pre {
-        overflow: scroll;
-        padding: 10px;
-        line-height: 110%;
-        font-family: Inconsolata, Consolas, Courier, "Courier New", "Liberation Mono", monospace;
-    }
-}
-
 img {
     display: block;
     height: auto;
@@ -49,11 +40,9 @@ img {
 
 table:not(.codehilitetable) {
     --table-border-color: #ddd;
-    --alternate-background-color: #f5f5f5;
 
     @media (prefers-color-scheme: dark) {
         --table-border-color: #444;
-        --alternate-background-color: #333232;
     }
 
     width: 100%;
@@ -64,7 +53,7 @@ table:not(.codehilitetable) {
     }
     
     tr:nth-child(even) {
-        background: var(--alternate-background-color);
+        background: var(--alternative-background-color);
     }
     
     td, th {

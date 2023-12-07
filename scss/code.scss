@@ -1,6 +1,14 @@
+@import url('https://fonts.googleapis.com/css?family=Inconsolata&display=swap');
+
+code {
+	padding: 2px 3px;
+	border-radius: 3px;
+    font-family: Inconsolata, monospace;
+	background-color: var(--alternative-background-color)
+}
+
 .codehilite {
 	--content-color: #222;
-    --code-background-color: #f5f1f1;
     --header-color: #f14343;
     --string-color: #bb7d51;
     --comment-color: #817676;
@@ -14,7 +22,6 @@
 
     @media (prefers-color-scheme: dark) {
         --content-color: #fff;
-        --code-background-color: #333232;
         --header-color: #ff834a;
         --string-color: #EAB289;
         --comment-color: #87ceeb;
@@ -26,11 +33,23 @@
 		--highlight-color: #44475a;
     }
 
+	border-radius: 3px;
+    background-color: var(--alternative-background-color);
+
+	code {
+		padding: 0;
+		border-radius: 0;
+	}
+
+    pre {
+        overflow: scroll;
+        padding: 10px;
+        line-height: 120%;
+    }
+
 	.codehilitetable pre {
 		margin: 0;
 	}
-
-    background-color: var(--code-background-color);
 
 	.hll { background-color: var(--highlight-color) }
 	.c { color: var(--comment-color)} /* Comment */
