@@ -1,4 +1,9 @@
-function overrideLinks() {
+function prepare() {
+    document.getElementById('show-nav-label').onkeydown = e => {
+        if (e.key == 'Enter')
+            e.target.children[0].click();
+    };
+
     for (let a of document.getElementsByTagName('a')) {
         let link = a.href.baseVal || a.href;
 
@@ -31,7 +36,7 @@ function update(path, push = true) {
             document.documentElement.innerHTML = html;
             if (push)
                 window.history.pushState({}, '', path);
-            overrideLinks();
+            prepare();
         })
         .catch(_ => {
             const error = document.getElementById('error');
@@ -43,7 +48,7 @@ function update(path, push = true) {
         });
 }
 
-overrideLinks();
+prepare();
 window.addEventListener('popstate', _ => {
     update(window.location.href, false);
 });
