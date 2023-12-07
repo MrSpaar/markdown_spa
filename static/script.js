@@ -10,6 +10,16 @@ function overrideLinks() {
             });
         }
     }
+
+    for (let pre of document.getElementsByTagName('pre')) {
+        pre.setAttribute('tabindex', '0');
+        pre.setAttribute('role', 'code');
+    }
+
+    for (let table of document.getElementsByTagName('table')) {
+        table.setAttribute('tabindex', '0');
+        table.setAttribute('role', 'table');
+    }
 }
 
 function update(path, push = true) {
