@@ -6,25 +6,11 @@ html {
 
     body {
         padding-left: 240px;
-        position: relative;
     
         @media (max-width: 700px) {
             padding-left: 0;
         }
     }
-}
-
-#loader.active {
-    height: 2px;
-    position: fixed;
-    background-color: #03a9f4;
-    animation: loader .8s forwards;
-}
-
-@keyframes loader {
-    0% { width: 0; }
-    99% { width: 100%; }
-    100% { opacity: 0; }
 }
 
 #content {
@@ -72,7 +58,7 @@ nav {
 
         a:hover { color: #fff }
         a:visited:hover { color: #fff }
-        > a { margin-top: 2px; }
+        > a { margin-top: 3px; }
         
         label {
             padding: 2px;
@@ -134,5 +120,41 @@ nav {
                 }
             }
         }
+    }
+}
+
+#loader.active {
+    height: 2px;
+    position: fixed;
+    background-color: #03a9f4;
+    animation: loader .8s forwards;
+}
+
+@keyframes loader {
+    0% { width: 0; }
+    99% { width: 100%; }
+    100% { opacity: 0; }
+}
+
+#error {
+    opacity: 0;
+    &.active { opacity: 1 }
+    transition: opacity 0.3s ease-in-out;
+
+    z-index: 1;
+    top: 20px;
+    right: 20px;
+    width: 144px;
+    position: absolute;
+    text-align: center;
+    font-family: Inconsolata, monospace;
+    background-color: var(--alternative-background-color);
+    padding: 10px;
+    border-radius: 3px;
+
+    @media (max-width: 700px) {
+        top: 3px;
+        right: 50px;
+        width: auto;
     }
 }

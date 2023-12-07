@@ -22,6 +22,14 @@ function update(path, push = true) {
             if (push)
                 window.history.pushState({}, '', path);
             overrideLinks();
+        })
+        .catch(_ => {
+            const error = document.getElementById('error');
+            error.classList.add('active');
+
+            setTimeout(_ => {
+                error.classList.remove('active');
+            }, 2000);
         });
 }
 

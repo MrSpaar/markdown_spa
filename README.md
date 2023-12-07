@@ -3,9 +3,9 @@
 A Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markdown`](https://pypi.org/project/Markdown/)) static site generator:
 
 - [x] Powerful templating
-- [x] SCSS support
 - [x] SEO optimized
-- [x] No full page reloads (if JS enabled)
+- [x] No full page reloads
+- [x] SCSS support ([`libsass`](https://pypi.org/project/libsass/))
 - [x] Extented Markdown syntax
 - [x] Automatic deployment to GitHub Pages
 
