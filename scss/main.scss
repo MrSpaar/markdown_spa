@@ -56,9 +56,9 @@ nav {
         text-align: center;
         background-color: #03a9f4;
 
-        a:hover { color: #fff }
-        a:visited:hover { color: #fff }
-        > a { margin-top: 3px; }
+        a {
+            margin-top: 3px;
+        }
         
         label {
             padding: 2px;
@@ -85,11 +85,15 @@ nav {
 
     a {
         text-decoration: none;
-        color: var(--nav-color);
         transition: color 0.1s ease-in-out;
+        
+        &, &:visited {
+            color: var(--nav-color);
+        }
 
-        &:visited {color: var(--nav-color) }
-        &:hover, &:visited:hover { color: #03a9f4 }
+        &:not(#header a) {
+            &:hover, &:visited:hover { color: #03a9f4 }
+        }
     }
 
     @media (max-width: 700px) {
