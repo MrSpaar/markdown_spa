@@ -13,7 +13,10 @@ function overrideLinks() {
 }
 
 function update(path, push = true) {
-    document.getElementById('loader').classList.add('active');;
+    document.getElementById('loader').classList.add('active');
+
+    if (path[path.length - 1] != '/')
+        path += '/';
 
     fetch(path)
         .then(resp => resp.text())
