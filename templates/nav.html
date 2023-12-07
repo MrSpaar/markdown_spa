@@ -6,11 +6,11 @@
 
     {%- for child in tree.children | sort(attribute='meta.order') -%}
         {% if child.children -%}
-            <li><a href="/{{ child.path }}">{{ child.meta.name }}</a>
+            <li><a href="/{{ child.path }}/">{{ child.meta.name }}</a>
                 {{ render_nav(child, False) }}
             </li>
         {% else -%}
-            <li><a href="/{{ child.path }}">{{ child.meta.name }}</a></li>
+            <li><a href="/{{ child.path }}/">{{ child.meta.name }}</a></li>
         {% endif -%}
     {% endfor -%}
 </ul>

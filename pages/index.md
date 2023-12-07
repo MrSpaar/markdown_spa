@@ -2,7 +2,7 @@ priority: 1
 name: Quick start
 description: A Python static site generator using Markdown, Jinja2, Pygments and libsass
 
-Markdown-SPA is a Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markdown`](https://pypi.org/project/Markdown/)) static site generator:
+[Markdown-SPA](https://github.com/MrSpaar/Markdown-SPA) is a Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markdown`](https://pypi.org/project/Markdown/)) static site generator:
 
 - [x] Powerful templating
 - [x] SCSS support
