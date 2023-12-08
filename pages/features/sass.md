@@ -2,7 +2,7 @@ order: 2
 name: SASS Support
 description: How to use SASS in a Markdown-SPA project
 
-Markdown-SPA supports SASS out of the box, you just need to set the path to the main SASS file in the configuration file to enable it:
+Markdown-SPA optionally supports SASS you just need to set the path to the main SASS file in the configuration file to enable it:
 ```ini
 [GENERATOR]
 scss_path = sass/main.scss

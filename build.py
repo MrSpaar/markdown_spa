@@ -6,7 +6,6 @@ from re import Match, compile as re_compile
 from os import environ, makedirs, system, listdir
 
 from markdown import Markdown
-from sass import compile as sass_compile
 from jinja2 import Environment, FileSystemLoader
 
 
@@ -118,6 +117,7 @@ class Generator:
             )
 
     def build_css(self) -> None:
+        from sass import compile as sass_compile
         makedirs(f"{self.dist_path}/{self.assets_path}", exist_ok=True)
 
         with open(f"{self.dist_path}/{self.assets_path}/style.css", "w") as f:
@@ -142,11 +142,16 @@ class Generator:
             f.write(self.env.get_template("robots.txt").render(url=self.url_root))
 
 
+# TODO: Tailwind Support?
+
+
 if __name__ == "__main__":
     gen = Generator("config.ini")
 
     gen.link_assets()
-    gen.build_css()
     gen.build()
+
+    if gen.scss_path:
+        gen.build_css()
 
     print("Done!")

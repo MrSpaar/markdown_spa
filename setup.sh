@@ -72,5 +72,15 @@ if ! $python -c 'import livereload' &>/dev/null; then
     fi
 fi
 
+if ! $python -c 'import sass' &>/dev/null; then
+    echo -ne "${BLUE}${BOLD}Install libsass (for SASS support)? (Y/n)${NC} "
+    read -n 1 -r
+    echo
+
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        $pip install sass
+    fi
+fi
+
 echo -e "${GREEN}${BOLD}Dependencies installed.${NC}"
 echo -e "${GREEN}${BOLD}Setup complete. Use ${BLUE}${BOLD}'python -m build'${GREEN}${BOLD} to build the site or ${BLUE}${BOLD}'python watch.py'${GREEN}${BOLD} to start a local server.${NC}"
