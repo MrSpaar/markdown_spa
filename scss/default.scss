@@ -1,6 +1,7 @@
 @import "code";
 
 html {
+    font-size: 1.05em;
     font-family: sans-serif;
 	--alternative-background-color: #f5f1f1;
 
@@ -10,8 +11,8 @@ html {
 		--alternative-background-color: #333232;
     
         a {
-            color: #03a9f4;
-            &:visited { color: #0276aa; }
+            color: #87ceeb;
+            &:visited { color: #03a9f4; }
         }
     }
 
