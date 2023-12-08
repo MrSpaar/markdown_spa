@@ -1,5 +1,7 @@
-@import '../static/default.css';
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap');
+
+@import "code";
+@import "default";
 
 html {
     font-family: roboto, sans-serif;
@@ -155,4 +157,27 @@ html, table, pre {
     0% { width: 0; }
     99% { width: 100%; }
     100% { opacity: 0; }
+}
+
+#error {
+    opacity: 0;
+    &.active { opacity: 1 }
+    transition: opacity 0.3s ease-in-out;
+
+    z-index: 1;
+    top: 20px;
+    right: 20px;
+    width: 144px;
+    position: absolute;
+    text-align: center;
+    font-family: Inconsolata, monospace;
+    background-color: var(--alternative-background-color);
+    padding: 10px;
+    border-radius: 3px;
+
+    @media (max-width: 700px) {
+        top: 3px;
+        right: 50px;
+        width: auto;
+    }
 }

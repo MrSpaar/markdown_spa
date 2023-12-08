@@ -111,13 +111,15 @@ class Generator:
         )
 
     def link_assets(self) -> None:
+        if self.scss_path:
+            self.build_css()
+
         copytree(self.assets_path, f"{self.dist_path}/{self.assets_path}", dirs_exist_ok=True)
 
     def build_css(self) -> None:
         from sass import compile as sass_compile
-        makedirs(f"{self.dist_path}/{self.assets_path}", exist_ok=True)
 
-        with open(f"{self.dist_path}/{self.assets_path}/style.css", "w") as f:
+        with open(f"{self.assets_path}/style.css", "w") as f:
             f.write(sass_compile(
                 filename=self.scss_path,
                 output_style="compressed",
@@ -144,8 +146,5 @@ if __name__ == "__main__":
 
     gen.link_assets()
     gen.build()
-
-    if gen.scss_path:
-        gen.build_css()
 
     print("Done!")
