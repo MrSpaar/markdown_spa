@@ -18,6 +18,8 @@ class FileTree(TypedDict):
 
 
 class Generator:
+    PRE_RE = re_compile(r'<pre')
+    TABLE_RE = re_compile(r'<table')
     CHECKBOX_RE = re_compile(r'\[([ xX])\] (.*)')
     INTERNAL_LINK_RE = re_compile(r'(href|src)="(/[^"]+|/)"')
     TAG_RE = re_compile(r'^[ ]{0,3}(?P<key>[A-Za-z0-9_-]+):\s*(?P<value>.*)')
@@ -99,6 +101,9 @@ class Generator:
         content = Generator.CHECKBOX_RE.sub(
             Generator.__to_checkbox, self.md.convert(content)
         )
+
+        content = Generator.PRE_RE.sub('<pre tabindex="0"', content)
+        content = Generator.TABLE_RE.sub('<table tabindex="0"', content)
         
         return Generator.INTERNAL_LINK_RE.sub(
             rf'\1="{self.url_root}\2"',
