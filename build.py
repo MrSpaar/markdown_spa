@@ -1,9 +1,10 @@
+from shutil import copytree
 from typing import TypedDict
 from datetime import datetime
 from os.path import exists, isdir
 from configparser import ConfigParser
 from re import Match, compile as re_compile
-from os import environ, makedirs, system, listdir
+from os import environ, makedirs, listdir
 
 from markdown import Markdown
 from jinja2 import Environment, FileSystemLoader
@@ -110,11 +111,7 @@ class Generator:
         )
 
     def link_assets(self) -> None:
-        if not exists(f"{self.dist_path}/{self.assets_path}"):
-            system(
-                f"cp -r {self.assets_path} {self.dist_path}/" if self.in_gp
-                else f"ln -s ../{self.assets_path} {self.dist_path}/"
-            )
+        copytree(self.assets_path, f"{self.dist_path}/{self.assets_path}", dirs_exist_ok=True)
 
     def build_css(self) -> None:
         from sass import compile as sass_compile
@@ -140,9 +137,6 @@ class Generator:
 
         with open(f"{self.dist_path}/robots.txt", "w") as f:
             f.write(self.env.get_template("robots.txt").render(url=self.url_root))
-
-
-# TODO: Tailwind Support?
 
 
 if __name__ == "__main__":

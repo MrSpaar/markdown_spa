@@ -44,7 +44,7 @@ git clone http://github.com/MrSpaar/Markdown-SPA.git .
 rm -rf .git README.md setup.sh scss/main.scss pages/* && git init
 find ./static -type f -not -name '*.js' -print0 | xargs -0 rm --
 
-sed -i 's/main.scss/default.scss/g' config.ini
+sed -i 's/scss\/main.scss//g' config.ini
 
 echo -ne "${BLUE}${BOLD}Create a remote branch to your github repo? (Y/n)${NC} "
 read -n 1 -r
@@ -58,7 +58,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     git remote add origin $REPLY
 fi
 
-if ! $python -c 'import jinja2;import markdown;import pygments;import sass' &>/dev/null; then
+if ! $python -c 'import jinja2;import markdown;import pygments' &>/dev/null; then
     $pip install jinja2 markdown Pygments libsass
 fi
 
