@@ -51,6 +51,32 @@ table:not(.codehilitetable) td, th {
     text-align: left;
 }
 
+#error {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+
+    z-index: 1;
+    top: 20px;
+    right: 20px;
+    width: 144px;
+    position: absolute;
+    text-align: center;
+    font-family: Inconsolata, monospace;
+    background-color: var(--alternative-background-color);
+    padding: 10px;
+    border-radius: 3px;
+
+    @media (max-width: 700px) {
+        top: 3px;
+        right: 50px;
+        width: auto;
+    }
+}
+
+#error.active {
+    opacity: 1;
+}
+
 code {
 	padding: 2px 3px;
 	border-radius: 3px;

@@ -42,9 +42,15 @@ fi
 
 git clone http://github.com/MrSpaar/Markdown-SPA.git .
 rm -rf .git README.md setup.sh scss/main.scss pages/* && git init
-find ./static -type f -not -name '*.js' -print0 | xargs -0 rm --
+find ./static -type f -not -name '*.js' -not -name '*.css' -print0 | xargs -0 rm --
 
 sed -i 's/scss\/main.scss//g' config.ini
+sed -i 's/style.css/default.css/g' templates/base.html
+
+echo 'name: Main Page
+description: This is a test page
+
+# Hello World' > pages/index.md
 
 echo -ne "${BLUE}${BOLD}Create a remote branch to your github repo? (Y/n)${NC} "
 read -n 1 -r
