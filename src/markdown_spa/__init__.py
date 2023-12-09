@@ -1,3 +1,4 @@
+from shutil import copytree, rmtree
 from os import makedirs, system, chdir
 
 from .generator import Generator
@@ -59,11 +60,19 @@ def init(path) -> int:
     makedirs(path, exist_ok=True)
     chdir(path)
     
-    system("git init")
-    system("git remote add origin -f https://github.com/MrSpaar/Markdown-SPA.git")
-    system("git config core.sparseCheckout true")
-    system("echo 'blank' >> .git/info/sparse-checkout")
-    system("git pull origin master")
+    try:
+        system("git init")
+        system("git remote add origin -f https://github.com/MrSpaar/Markdown-SPA.git")
+        system("git config core.sparseCheckout true")
+        system("echo 'blank' >> .git/info/sparse-checkout")
+        system("git pull origin master")
+        system("git remote remove origin")
+    except Exception as e:
+        echo(style(f"Failed to initialize project: {e}", fg="red", bold=True))
+        return 1
+
+    copytree("blank", ".", dirs_exist_ok=True)
+    rmtree("blank")
 
     echo(style("Project initialized!", fg="green", bold=True))
     return 0
