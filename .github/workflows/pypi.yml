@@ -2,6 +2,7 @@ on:
   push:
     paths:
       - 'src/**'
+      - 'README.md'
       - 'pyproject.toml'
       - '.github/workflows/pypi.yml'
 

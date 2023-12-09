@@ -13,7 +13,7 @@ description: A Python static site generator using Markdown, Jinja2, Pygments and
 
 First, to setup a new project:
 
-- Install the package (once): `pip install git+https://github.com/MrSpaar/Markdown-SPA.git`
+- Install the package (once): `pip install Markdown-SPA`
 - Create a blank project: `markdown_spa init <name (optionnal)>`
 
 The `config.ini` file describes the project structure:

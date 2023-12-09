@@ -12,7 +12,7 @@ A Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markdown`](https://py
 To get started:
 ```bash
 # If not already installed
-pip install git+https://github.com/MrSpaar/Markdown-SPA.git
+pip install Markdown-SPA
 
 # Create a new project
 markdown-spa init my-project
