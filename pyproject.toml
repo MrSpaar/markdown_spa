@@ -21,7 +21,7 @@ Issues = "https://github.com/MrSpaar/Markdown-SPA/issues"
 [project.optional-dependencies]
 all = ["libsass", "livereload"]
 sass = ["libsass"]
-lr = ["livereload"]
+watch = ["livereload"]
 
 [project.scripts]
 markdown_spa = "markdown_spa:main"
