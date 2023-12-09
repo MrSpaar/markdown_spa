@@ -15,10 +15,10 @@ To get started:
 pip install Markdown-SPA
 
 # Create a new project
-markdown-spa init my-project
+markdown_spa init my-project
 
 # Start the development server
-markdown-spa watch my-project
+markdown_spa watch my-project
 ```
 
 For more information, see the [documentation](https://mrspaar.github.io/Markdown-SPA/).
