@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+version = "0.1"
+name = "Markdown-SPA"
+readme = "README.md"
+authors = [{name = "MrSpaar"}]
+keywords = ["markdown", "SPA", "SSG"]
+description = "A static site generator for Markdown files."
+requires-python = ">=3.8"
+dependencies = ["markdown", "jinja2", "pygments"]
+
+[project.urls]
+Documentation = "https://mrspaar.github.io/Markdown-SPA/"
+Source = "https://github.com/MrSpaar/Markdown-SPA"
+Issues = "https://github.com/MrSpaar/Markdown-SPA/issues"
+
+[project.optional-dependencies]
+all = ["libsass", "livereload"]
+sass = ["libsass"]
+lr = ["livereload"]
+
+[project.scripts]
+markdown_spa = "markdown_spa:main"

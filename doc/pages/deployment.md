@@ -12,12 +12,8 @@ name: Build and Deploy 🚀
 
 on:
   push:
-    branches: ["master"]
-    paths-ignore:
-      - "README.md"
-      - ".gitignore"
-      - "watch.py"
-      - "setup.sh"
+    branches:
+      - master
 
 permissions:
   contents: read
@@ -42,19 +38,17 @@ jobs:
         with:
           python-version: 3.12
       - name: Install dependencies 🧰
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install markdown jinja2 pygments libsass
+        run: python -m pip install ".[sass]"
       - name: Generate HTML 📚
-        run: python -m build
+        run: python -m markdown_spa build
         env:
-          URL_ROOT: ${{ github.repository }}
+          REPO: ${{ github.repository }}
       - name: Setup Pages ⚙️
         uses: actions/configure-pages@v3
       - name: Upload artifact 📤
         uses: actions/upload-pages-artifact@v2
         with:
-          path: './generated'
+          path: './doc/generated'
       - name: Deploy to GitHub Pages 🌍
         id: deployment
         uses: actions/deploy-pages@v2

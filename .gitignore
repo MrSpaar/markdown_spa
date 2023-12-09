@@ -1,2 +1,4 @@
-__pycache__/
+build/
+src/Markdown_SPA.egg-info/
 generated/
+__pycache__/

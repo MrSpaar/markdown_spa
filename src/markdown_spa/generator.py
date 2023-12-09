@@ -1,10 +1,10 @@
-from shutil import copytree
 from typing import TypedDict
 from datetime import datetime
 from os.path import exists, isdir
+from shutil import copytree, rmtree
 from configparser import ConfigParser
-from re import Match, compile as re_compile
 from os import environ, makedirs, listdir
+from re import Match, compile as re_compile
 
 from markdown import Markdown
 from jinja2 import Environment, FileSystemLoader
@@ -24,15 +24,15 @@ class Generator:
     INTERNAL_LINK_RE = re_compile(r'(href|src)="(/[^"]+|/)"')
     TAG_RE = re_compile(r'^[ ]{0,3}(?P<key>[A-Za-z0-9_-]+):\s*(?P<value>.*)')
 
-    def __init__(self, ini_path: str) -> None:
+    def __init__(self, root_path: str = "", ini_path: str = "config.ini") -> None:
         self.config = ConfigParser()
-        self.config.read(ini_path)
+        self.config.read(f"{root_path}/{ini_path}")
 
-        self.port = self.config["GENERATOR"].getint("port")
-        self.dist_path = self.config["GENERATOR"]["dist_path"]
-        self.pages_path = self.config["GENERATOR"]["pages_path"]
-        self.assets_path = self.config["GENERATOR"]["assets_path"]
-        self.templates_path = self.config["GENERATOR"]["templates_path"]
+        self.port: int = self.config['GENERATOR'].getint('port')
+        self.dist_path = f"{root_path}/{self.config['GENERATOR']['dist_path']}"
+        self.pages_path = f"{root_path}/{self.config['GENERATOR']['pages_path']}"
+        self.assets_path = f"{root_path}/{self.config['GENERATOR']['assets_path']}"
+        self.templates_path = f"{root_path}/{self.config['GENERATOR']['templates_path']}"
 
         if not exists(self.dist_path):
             makedirs(self.dist_path, exist_ok=True)
@@ -40,7 +40,9 @@ class Generator:
         self.env = Environment(loader=FileSystemLoader(self.templates_path), auto_reload=True)
         self.md = Markdown(extensions=["meta", "tables", "attr_list", "fenced_code", "codehilite"])
 
-        self.url_root = f"http://localhost:{self.port}"
+        self.root_path = root_path
+        self.url_root = f"http://localhost:{self.port}"    
+
         if "REPO" in environ:
             user, repo = environ["REPO"].split("/")
             self.url_root = f"https://{user}.github.io/{repo}"
@@ -86,7 +88,9 @@ class Generator:
             dist_path = f"{self.dist_path}/{tree['path']}/index.html"
 
         with open(dist_path, "w") as f:
-            f.write(self.build_page(src_path, nav=self.nav, assets_path=self.assets_path, meta=tree["meta"]))
+            f.write(self.build_page(src_path,
+                nav=self.nav, assets_path=self.assets_path[len(self.root_path)+1:], meta=tree["meta"])
+            )
         
         for child in tree["children"]:
             self.__build(child)
@@ -110,9 +114,9 @@ class Generator:
     def build_sass(self) -> None:
         from sass import compile as sass_compile
 
-        with open(f"{self.assets_path}/style.css", "w") as f:
+        with open(f"{self.dist_path}/{self.assets_path[len(self.root_path)+1:]}/style.css", "w") as f:
             f.write(sass_compile(
-                filename=self.config["SASS"]["main_path"],
+                filename=f"{self.root_path}/{self.config['SASS']['main_path']}",
                 output_style="compressed",
             ))
 
@@ -122,11 +126,14 @@ class Generator:
         self.nav = self.env.get_template("nav.html").render(tree=self.tree)
 
         self.__build(self.tree)
+
+        dist_assets_path = f"{self.dist_path}/{self.assets_path[len(self.root_path)+1:]}"
+        if exists(dist_assets_path):
+            rmtree(dist_assets_path)
+        copytree(self.assets_path, dist_assets_path, dirs_exist_ok=True)
         
         if self.config["SASS"].getboolean("enabled"):
             self.build_sass()
-
-        copytree(self.assets_path, f"{self.dist_path}/{self.assets_path}", dirs_exist_ok=True)
 
         with open(f"{self.dist_path}/sitemap.xml", "w") as f:
             f.write(self.env.get_template("sitemap.xml").render(
@@ -136,9 +143,3 @@ class Generator:
 
         with open(f"{self.dist_path}/robots.txt", "w") as f:
             f.write(self.env.get_template("robots.txt").render(url=self.url_root))
-
-
-if __name__ == "__main__":
-    gen = Generator("config.ini")
-    gen.build()
-    print("Done!")

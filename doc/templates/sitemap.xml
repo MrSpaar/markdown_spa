@@ -1,0 +1,15 @@
+{% macro sitemap(tree) %}
+  <url>
+    <loc>{{ url }}/{{ tree.path -}}</loc>
+    <lastmod>{{ date -}}</lastmod>
+    <priority>{{ tree.meta.priority -}}</priority>
+  </url>
+  {% for child in tree.children -%}
+    {{ sitemap(child) -}}
+  {% endfor -%}
+{% endmacro -%}
+
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  {{ sitemap(tree) }}
+</urlset>

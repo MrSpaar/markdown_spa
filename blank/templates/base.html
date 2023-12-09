@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Markdown SPA - {{ meta.name }}</title>
+    <meta name="description" content="{{ meta.description }}">
+    
+    <script src="/{{ assets_path }}/script.js" defer></script>
+    <link rel="stylesheet" href="/{{ assets_path }}/style.css" />
+</head>
+<body>
+    <div id="error">The requested page isn't available</div>
+    
+    <nav>        
+        {{ nav }}
+    </nav>
+
+    <div id="content">
+        <h1>{{ meta.name }}</h1>
+
+        {{+ page_content -}}
+    </div>
+</body>
+</html>
