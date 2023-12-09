@@ -9,7 +9,7 @@ Pure CSS doesn't require any setup, just put your CSS files in the `assets_path`
 
 ## SASS Support
 
-If you didn't enable it during the project creation, you can modify the `config.ini` file to enable SASS support:
+You can enable SASS support by modify the `config.ini` file:
 ```ini
 [SASS]
 enabled = true
@@ -25,7 +25,7 @@ Then in your main SASS file you can import other SASS files:
 /* Your SASS code */
 ```
 
-A file named `style.css` will be generated in `dist_path/assets_path`:
+A file named `style.css` will be generated:
 ```html
 <link rel="stylesheet" href="/assets/style.css" />
 ```

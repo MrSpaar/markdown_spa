@@ -20,6 +20,7 @@ class FileTree(TypedDict):
 class Generator:
     PRE_RE = re_compile(r'<pre')
     TABLE_RE = re_compile(r'<table')
+    QUOTE_RE = re_compile(r'> \[!([A-Z]+)\]')
     CHECKBOX_RE = re_compile(r'\[([ xX])\] (.*)')
     INTERNAL_LINK_RE = re_compile(r'(href|src)="(/[^"]+|/)"')
     TAG_RE = re_compile(r'^[ ]{0,3}(?P<key>[A-Za-z0-9_-]+):\s*(?P<value>.*)')
@@ -99,6 +100,10 @@ class Generator:
         with open(path) as f:
             content = f.read()
 
+        content = Generator.QUOTE_RE.sub(
+            r'> { .quote .quote-\1 }', content
+        )
+
         content = Generator.CHECKBOX_RE.sub(
             Generator.__to_checkbox, self.md.convert(content)
         )
@@ -143,3 +148,7 @@ class Generator:
 
         with open(f"{self.dist_path}/robots.txt", "w") as f:
             f.write(self.env.get_template("robots.txt").render(url=self.url_root))
+
+if __name__ == "__main__":
+    Generator("doc").build()
+    print("Done!")

@@ -11,12 +11,10 @@ description: A Python static site generator using Markdown, Jinja2, Pygments and
 - [x] Extented Markdown syntax
 - [x] Automatic deployment to GitHub Pages
 
-<br>
-
 First, to setup a new project:
 
-- Install the package: `pip install git+https://github.com/MrSpaar/Markdown-SPA.git`
-- Create a blank project: `python -m markdown_spa init <path (optionnal)>`
+- Install the package (once): `pip install git+https://github.com/MrSpaar/Markdown-SPA.git`
+- Create a blank project: `markdown_spa init <name (optionnal)>`
 
 The `config.ini` file describes the project structure:
 
@@ -31,5 +29,8 @@ The `config.ini` file describes the project structure:
 
 And finally, to build your website you have two options:
 
-- Standalone: `python -m markdown_spa build`
-- Live-reload: `python -m markdown_spa watch`
+- Standalone: `markdown_spa build`
+- Live-reload: `markdown_spa watch`
+
+> If scripts aren't added to `PATH`, you can use `python -m markdown_spa` instead of `markdown_spa`.
+> [!NOTE]

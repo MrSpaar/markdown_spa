@@ -2,19 +2,22 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap');
 
 html {
+    --primary-color: #03a9f4;
+    --background-color: #fff;
 	--alternative-background-color: #f5f1f1;
 
     font-size: 1.05em;
     font-family: roboto, sans-serif;
+    background-color: var(--background-color);
 
     @media (prefers-color-scheme: dark) {
+        --background-color: #1d1e22;
 		--alternative-background-color: #333232;
 
         color: white;
-        background-color: #1d1e22;
     
         a {
-            color: #03a9f4;
+            color: var(--primary-color);
             &:visited { color: #87ceeb; }
         }
     }
@@ -45,6 +48,49 @@ img {
     margin-top: 10px;
     border-radius: 3px;
     margin: 10px auto;
+}
+
+blockquote {
+    width: calc(100% - 20px);
+
+	padding: 10px 15px;
+	margin-left: -15px;
+	border-left: 5px solid;
+	background-color: var(--alternative-background-color);
+
+    p {
+        margin: 0;
+    }
+
+    code {
+        background-color: var(--background-color);
+    }
+
+	p.quote::before {
+		display: block;
+		margin: -5px 0;
+		font-size: 1.05em;
+        font-weight: bold;
+        height: 30px;
+	}
+
+    &:has(p.quote-NOTE) {
+        border-color: var(--primary-color);
+
+        p::before {
+            content: '🛈 Note ';
+            color: var(--primary-color);
+        }
+    }
+
+    &:has(p.quote-WARNING) {
+        border-color: #cd5c5c;
+
+        p::before {
+            content: '⚠ Warning ';
+            color: #cd5c5c;
+        }
+    }
 }
 
 table:not(.codehilitetable) {
@@ -117,7 +163,7 @@ nav {
         font-size: 1.4em;
         font-weight: bold;
         text-align: center;
-        background-color: #03a9f4;
+        background-color: var(--primary-color);
 
         a {
             margin-top: 3px;
@@ -155,7 +201,7 @@ nav {
         }
 
         &:not(#header a) {
-            &:hover, &:visited:hover { color: #03a9f4 }
+            &:hover, &:visited:hover { color: var(--primary-color) }
         }
     }
 
@@ -209,7 +255,7 @@ html, table, pre {
 #loader.active {
     height: 2px;
     position: fixed;
-    background-color: #03a9f4;
+    background-color: var(--primary-color);
     animation: loader .8s forwards;
 }
 
