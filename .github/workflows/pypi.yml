@@ -1,0 +1,29 @@
+on:
+  push:
+    paths:
+      - 'src/**'
+      - 'pyproject.toml'
+      - '.github/workflows/pypi.yml'
+
+jobs:
+  pypi_publish:
+    name: Publish to PyPI 📦
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/Markdown-SPA
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout 🔔
+        uses: actions/checkout@v3
+      - name: Setup Python 🐍
+        uses: actions/setup-python@v4.7.1
+        with:
+          python-version: 3.12
+      - name: Install dependencies 🧰
+        run: python -m pip install build
+      - name: Build 🏗️
+        run: python -m build
+      - name: Publish 📤
+        uses: pypa/gh-action-pypi-publish@release/v1

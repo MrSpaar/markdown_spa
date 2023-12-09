@@ -1,3 +1,11 @@
+on:
+  push:
+    paths:
+      - 'doc/**'
+      - 'src/**'
+      - 'pyproject.toml'
+      - '.github/workflows/static.yml'
+
 permissions:
   contents: read
   pages: write
@@ -9,13 +17,6 @@ concurrency:
 
 jobs:
   deploy:
-    on:
-      push:
-        paths:
-          - 'doc/**'
-          - 'src/**'
-          - 'pyproject.toml'
-          - '.github/workflows/static.yml'
     name: Deploy 🚀
     runs-on: ubuntu-latest
     environment:
@@ -43,29 +44,3 @@ jobs:
       - name: Deploy to GitHub Pages 🌍
         id: deployment
         uses: actions/deploy-pages@v2
-  pypi_publish:
-    on:
-      push:
-        paths:
-          - 'src/**'
-          - 'pyproject.toml'
-    name: Publish to PyPI 📦
-    runs-on: ubuntu-latest
-    environment:
-      name: pypi
-      url: https://pypi.org/p/Markdown-SPA
-    permissions:
-      id-token: write
-    steps:
-      - name: Checkout 🔔
-        uses: actions/checkout@v3
-      - name: Setup Python 🐍
-        uses: actions/setup-python@v4.7.1
-        with:
-          python-version: 3.12
-      - name: Install dependencies 🧰
-        run: python -m pip install build
-      - name: Build 🏗️
-        run: python -m build
-      - name: Publish 📤
-        uses: pypa/gh-action-pypi-publish@release/v1
