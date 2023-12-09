@@ -9,4 +9,16 @@ A Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markdown`](https://py
 - [x] Extented Markdown syntax
 - [x] Automatic deployment to GitHub Pages
 
+To get started:
+```bash
+# If not already installed
+pip install git+https://github.com/MrSpaar/Markdown-SPA.git
+
+# Create a new project
+markdown-spa init my-project
+
+# Start the development server
+markdown-spa watch my-project
+```
+
 For more information, see the [documentation](https://mrspaar.github.io/Markdown-SPA/).
