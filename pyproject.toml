@@ -10,7 +10,7 @@ authors = [{name = "MrSpaar"}]
 keywords = ["markdown", "SPA", "SSG"]
 description = "A static site generator for Markdown files."
 requires-python = ">=3.8"
-dependencies = ["markdown", "jinja2", "pygments"]
+dependencies = ["markdown", "jinja2", "pygments", "click"]
 
 [project.urls]
 Documentation = "https://mrspaar.github.io/Markdown-SPA/"
