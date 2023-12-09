@@ -29,7 +29,6 @@ class Generator:
         self.config.read(ini_path)
 
         self.port = self.config["GENERATOR"].getint("port")
-        self.scss_path = self.config["GENERATOR"]["scss_path"]
         self.dist_path = self.config["GENERATOR"]["dist_path"]
         self.pages_path = self.config["GENERATOR"]["pages_path"]
         self.assets_path = self.config["GENERATOR"]["assets_path"]
@@ -41,10 +40,8 @@ class Generator:
         self.env = Environment(loader=FileSystemLoader(self.templates_path), auto_reload=True)
         self.md = Markdown(extensions=["meta", "tables", "attr_list", "fenced_code", "codehilite"])
 
-        self.in_gp = "REPO" in environ
         self.url_root = f"http://localhost:{self.port}"
-
-        if self.in_gp:
+        if "REPO" in environ:
             user, repo = environ["REPO"].split("/")
             self.url_root = f"https://{user}.github.io/{repo}"
 
@@ -110,18 +107,12 @@ class Generator:
             self.template.render(page_content=content, **kwargs)
         )
 
-    def link_assets(self) -> None:
-        if self.scss_path:
-            self.build_css()
-
-        copytree(self.assets_path, f"{self.dist_path}/{self.assets_path}", dirs_exist_ok=True)
-
-    def build_css(self) -> None:
+    def build_sass(self) -> None:
         from sass import compile as sass_compile
 
         with open(f"{self.assets_path}/style.css", "w") as f:
             f.write(sass_compile(
-                filename=self.scss_path,
+                filename=self.config["SASS"]["main_path"],
                 output_style="compressed",
             ))
 
@@ -132,9 +123,15 @@ class Generator:
 
         self.__build(self.tree)
         
+        if self.config["SASS"].getboolean("enabled"):
+            self.build_sass()
+
+        copytree(self.assets_path, f"{self.dist_path}/{self.assets_path}", dirs_exist_ok=True)
+
         with open(f"{self.dist_path}/sitemap.xml", "w") as f:
             f.write(self.env.get_template("sitemap.xml").render(
-                tree=self.tree, url=self.url_root, date=datetime.now().strftime("%Y-%m-%dT%H:%M:%S+00:00")
+                tree=self.tree, url=self.url_root,
+                date=datetime.now().strftime("%Y-%m-%dT%H:%M:%S+00:00")
             ))
 
         with open(f"{self.dist_path}/robots.txt", "w") as f:
@@ -143,8 +140,5 @@ class Generator:
 
 if __name__ == "__main__":
     gen = Generator("config.ini")
-
-    gen.link_assets()
     gen.build()
-
     print("Done!")

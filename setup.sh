@@ -41,10 +41,8 @@ if [[ $REPLY != "" ]]; then
 fi
 
 git clone http://github.com/MrSpaar/Markdown-SPA.git .
-rm -rf .git README.md setup.sh scss/* pages/* && git init
+rm -rf .git README.md setup.sh pages/* && git init
 find ./static -type f -not -name '*.js' -not -name '*.css' -print0 | xargs -0 rm --
-
-sed -i 's/scss\/main.scss//g' config.ini
 
 echo 'name: Main Page
 description: The main page of the site
@@ -77,15 +75,21 @@ if ! $python -c 'import livereload' &>/dev/null; then
     fi
 fi
 
-if ! $python -c 'import sass' &>/dev/null; then
-    echo -ne "${BLUE}${BOLD}Install libsass (for SASS support)? (Y/n)${NC} "
-    read -n 1 -r
-    echo
+echo -ne "${BLUE}${BOLD}Do you want to use SASS? (Y/n)${NC} "
+read -n 1 -r
+echo
 
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        $pip install sass
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    if ! $python -c 'import sass' &>/dev/null; then
+        $pip install libsass
     fi
+
+    echo -ne "${GREEN}${BOLD}Using SASS. "
+else
+    rm -rf scss
+    sed -i 's/enabled = true/enabled = false/' config.ini
+    echo -ne "${GREEN}${BOLD}Using pure CSS. "
 fi
 
-echo -e "${GREEN}${BOLD}Dependencies installed.${NC}"
+echo -e "Dependencies installed.${NC}"
 echo -e "${GREEN}${BOLD}Setup complete. Use ${BLUE}${BOLD}'python -m build'${GREEN}${BOLD} to build the site or ${BLUE}${BOLD}'python watch.py'${GREEN}${BOLD} to start a local server.${NC}"
