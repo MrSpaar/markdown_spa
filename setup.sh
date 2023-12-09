@@ -84,12 +84,12 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         $pip install libsass
     fi
 
-    echo -ne "${GREEN}${BOLD}Using SASS. "
+    echo -ne "${GREEN}${BOLD}Using SASS, "
 else
     rm -rf scss
     sed -i 's/enabled = true/enabled = false/' config.ini
-    echo -ne "${GREEN}${BOLD}Using pure CSS. "
+    echo -ne "${GREEN}${BOLD}Using pure CSS, "
 fi
 
-echo -e "Dependencies installed.${NC}"
+echo -e "dependencies installed.${NC}"
 echo -e "${GREEN}${BOLD}Setup complete. Use ${BLUE}${BOLD}'python -m build'${GREEN}${BOLD} to build the site or ${BLUE}${BOLD}'python watch.py'${GREEN}${BOLD} to start a local server.${NC}"
