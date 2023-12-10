@@ -2,7 +2,7 @@ from shutil import copytree, rmtree
 from os import makedirs, system, chdir
 
 from .generator import Generator
-from click import Path, group, option, argument, echo, style
+from click import Path, Choice, group, option, argument, echo, style
 
 
 @group()
@@ -50,6 +50,41 @@ def build(config, path) -> int:
     except Exception as e:
         echo(style(f"Build failed: {e}", fg="red", bold=True))
         return 1
+
+
+@main.command()
+@argument("package", type=Choice(["sass", "livereload"], case_sensitive=False))
+def install(package) -> int:
+    """Install an optional Markdown-SPA dependency."""
+
+    if package == "sass":
+        try:
+            import sass
+            echo(style("Sass is already installed.", fg="yellow", bold=True))
+            return 0
+        except ImportError:
+            if system("pip install libsass"):
+                echo(style("Failed to install Sass.", fg="red", bold=True))
+                return 1
+    
+        echo(style("Sass installed!", fg="green", bold=True))
+        return 0
+    
+    if package == "livereload":
+        try:
+            import livereload
+            echo(style("Livereload is already installed.", fg="yellow", bold=True))
+            return 0
+        except ImportError:
+            if system("pip install livereload"):
+                echo(style("Failed to install Livereload.", fg="red", bold=True))
+                return 1
+    
+        echo(style("Livereload installed!", fg="green", bold=True))
+        return 0
+    
+    echo(style("Invalid package.", fg="red", bold=True))
+    return 1
 
 
 @main.command()

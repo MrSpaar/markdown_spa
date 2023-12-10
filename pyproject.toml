@@ -18,10 +18,5 @@ Documentation = "https://mrspaar.github.io/Markdown-SPA/"
 Source = "https://github.com/MrSpaar/Markdown-SPA"
 Issues = "https://github.com/MrSpaar/Markdown-SPA/issues"
 
-[project.optional-dependencies]
-all = ["libsass", "livereload"]
-sass = ["libsass"]
-watch = ["livereload"]
-
 [project.scripts]
 markdown_spa = "markdown_spa:main"
