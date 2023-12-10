@@ -14,7 +14,7 @@ description: A Python static site generator using Markdown, Jinja2, Pygments and
 First, to setup a new project:
 
 - Install the package (once): `pip install Markdown-SPA`
-- Create a blank project: `markdown_spa init <name (optionnal)>`
+- Create a blank project: `markdown_spa init <folder (optionnal)>`
 
 The `config.ini` file describes the project structure:
 
@@ -29,8 +29,8 @@ The `config.ini` file describes the project structure:
 
 And finally, to build your website you have two options:
 
-- Standalone: `markdown_spa build`
-- Live-reload: `markdown_spa watch` (requires [livereload](https://pypi.org/project/livereload/): `markdown_spa install livereload`)
+- Standalone: `markdown_spa build <folder (optionnal)>`
+- Live-reload: `markdown_spa watch <folder (optionnal)>`
 
 > If scripts aren't added to `PATH`, you can use `python -m markdown_spa` instead of `markdown_spa`.
 > [!NOTE]

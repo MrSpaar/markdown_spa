@@ -3,8 +3,8 @@ from datetime import datetime
 from os.path import exists, isdir
 from shutil import copytree, rmtree
 from configparser import ConfigParser
-from os import environ, makedirs, listdir
 from re import Match, compile as re_compile
+from os import environ, makedirs, listdir, system
 
 from markdown import Markdown
 from jinja2 import Environment, FileSystemLoader
@@ -117,6 +117,11 @@ class Generator:
         )
 
     def build_sass(self) -> None:
+        try:
+            import sass
+        except ImportError:
+            system("pip install libsass")
+            
         from sass import compile as sass_compile
 
         with open(f"{self.dist_path}/{self.assets_path[len(self.root_path)+1:]}/style.css", "w") as f:

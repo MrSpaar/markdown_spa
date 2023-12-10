@@ -9,11 +9,6 @@ Pure CSS doesn't require any setup, just put your CSS files in the `assets_path`
 
 ## SASS Support
 
-Markdown-SPA uses [`libsass`](https://pypi.org/project/libsass/) so make sure you have it installed:
-```bash
-markdown-spa install sass
-```
-
 You can enable SASS support by modifying the `config.ini` file:
 ```ini
 [SASS]
