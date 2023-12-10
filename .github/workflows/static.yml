@@ -3,7 +3,6 @@ on:
     paths:
       - 'doc/**'
       - 'src/**'
-      - 'pyproject.toml'
       - '.github/workflows/static.yml'
 
 permissions:

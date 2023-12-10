@@ -1,10 +1,8 @@
 on:
-  push:
-    paths:
-      - 'src/**'
-      - 'README.md'
-      - 'pyproject.toml'
-      - '.github/workflows/pypi.yml'
+  release:
+    types: [created]
+    branches:
+      - main
 
 jobs:
   pypi_publish:
