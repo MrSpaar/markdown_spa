@@ -1,3 +1,4 @@
+order: 1
 priority: 1
 name: Quick start
 description: A Python static site generator using Markdown, Jinja2, Pygments and libsass

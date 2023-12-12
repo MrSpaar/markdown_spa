@@ -1,4 +1,4 @@
-order: 2
+order: 1
 name: Deployment
 description: How to setup automatic Github Pages deployment
 

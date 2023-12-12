@@ -10,11 +10,9 @@ from markdown import Markdown
 from jinja2 import Environment, FileSystemLoader
 
 
-class FileTree(TypedDict):
-    path: str
-    is_dir: bool
+class Page(TypedDict):
     meta: dict[str, str]
-    children: list["FileTree"]
+    children: dict[str, "Page"]
 
 
 class Generator:
@@ -51,70 +49,73 @@ class Generator:
     @staticmethod
     def __to_checkbox(match: Match) -> str:
         checked = match.group(1).lower() == 'x'
-        return f"<input type='checkbox' disabled{' checked' if checked else ''} aria-label='Checkbox'> {match.group(2)}"
+        return f"<input type='checkbox' disabled{' checked' if checked else ''} aria-label='checkbox list item'> {match.group(2)}"
+    
+    def __read_meta(self, path: str) -> dict[str, str]:
+        meta: dict[str, str] = {**self.config["DEFAULTS"]}
 
-    def __prepare(self, full_path: str) -> FileTree:
-        entry = FileTree(path=full_path.removeprefix(self.pages_path).removeprefix('/'), is_dir=True, meta={}, children=[])
+        with open(path) as f:
+            while (len(line := f.readline()) > 2):
+                if match := Generator.TAG_RE.match(line):
+                    meta[match.group("key")] = match.group("value")
+                else:
+                    break
+        
+        return meta
+
+    def __prepare(self, full_path: str) -> dict[str, Page]:
+        entry: dict[str, Page] = {}
 
         for path in listdir(full_path):
-            if isdir(f"{full_path}/{path}"):
-                entry["children"].append(self.__prepare(f"{full_path}/{path}"))
-                continue
+            item_path = f"{full_path}/{path}"
+            uri = item_path.removeprefix(self.pages_path) \
+                            .removeprefix("/") \
+                            .removesuffix(".md") \
+                            .removeprefix("index")
 
-            is_index = path.endswith("index.md")
-            item = entry if is_index else FileTree(
-                path=f"{entry['path']}/{path[:-3]}".removeprefix("/"), is_dir=False, meta={}, children=[]
-            )
-            
-            with open(f"{full_path}/{path}") as f:
-                item["meta"] |= self.config["DEFAULTS"]
-
-                while ((line := f.readline()) != "\n" and line != ""):
-                    if match:= Generator.TAG_RE.match(line):
-                        item["meta"][match.group("key")] = match.group("value")
-
-            if not is_index:
-                entry["children"].append(item)
+            if isdir(item_path) and uri in entry:
+                entry[uri]["children"] = self.__prepare(item_path)
+            elif isdir(item_path):
+                entry[uri] = Page(
+                    meta={**self.config["DEFAULTS"]},
+                    children=self.__prepare(item_path)
+                )
+            elif uri in entry:
+                entry[uri]["meta"] = self.__read_meta(item_path)
+            else:
+                entry[uri] = Page(meta=self.__read_meta(item_path), children={})
         
         return entry
 
-    def __build(self, tree: FileTree) -> None:
-        makedirs(f"{self.dist_path}/{tree['path']}", exist_ok=True)
+    def __build(self, tree: dict[str, Page]) -> None:
+        for uri, page in tree.items():
+            makedirs(f"{self.dist_path}/{uri}", exist_ok=True)
 
-        if tree["is_dir"]:
-            src_path = f"{self.pages_path}/{tree['path']}/index.md"
-            dist_path = f"{self.dist_path}/{tree['path']}/index.html"
-        else:
-            src_path = f"{self.pages_path}/{tree['path']}.md"
-            dist_path = f"{self.dist_path}/{tree['path']}/index.html"
+            with open(f"{self.pages_path}/{uri or 'index'}.md") as f:
+                content = Generator.QUOTE_RE.sub(
+                r'> { .quote .quote-\1 }', f.read()
+                )
 
-        with open(dist_path, "w") as f:
-            f.write(self.build_page(src_path,
-                nav=self.nav, assets_path=self.assets_path[len(self.root_path)+1:], meta=tree["meta"])
+            content = Generator.CHECKBOX_RE.sub(
+                Generator.__to_checkbox, self.md.convert(content)
             )
-        
-        for child in tree["children"]:
-            self.__build(child)
 
-    def build_page(self, path: str, **kwargs: object) -> str:
-        with open(path) as f:
-            content = f.read()
+            content = Generator.PRE_RE.sub('<pre tabindex="0"', content)
+            content = Generator.TABLE_RE.sub('<table tabindex="0"', content)
+            
+            with open(f"{self.dist_path}/{uri}/index.html", "w") as f:
+                f.write(Generator.INTERNAL_LINK_RE.sub(
+                rf'\1="{self.url_root}\2"',
+                self.template.render(
+                    page_content=content,
+                    nav=self.nav,
+                    meta=page["meta"],
+                    assets_path=self.assets_path[self.assets_path.find("/")+1:]
+                )
+            ))
 
-        content = Generator.QUOTE_RE.sub(
-            r'> { .quote .quote-\1 }', content
-        )
-
-        content = Generator.CHECKBOX_RE.sub(
-            Generator.__to_checkbox, self.md.convert(content)
-        )
-
-        content = Generator.PRE_RE.sub('<pre tabindex="0"', content)
-        content = Generator.TABLE_RE.sub('<table tabindex="0"', content)
-        
-        return Generator.INTERNAL_LINK_RE.sub(
-            rf'\1="{self.url_root}\2"',
-            self.template.render(page_content=content, **kwargs)
-        )
+            if page["children"]:
+                self.__build(page["children"])
 
     def build_sass(self) -> None:
         try:
@@ -132,9 +133,9 @@ class Generator:
 
     def build(self) -> None:
         self.tree = self.__prepare(self.pages_path)
-        self.template = self.env.get_template("base.html")
         self.nav = self.env.get_template("nav.html").render(tree=self.tree)
 
+        self.template = self.env.get_template("base.html")
         self.__build(self.tree)
 
         dist_assets_path = f"{self.dist_path}/{self.assets_path[len(self.root_path)+1:]}"
