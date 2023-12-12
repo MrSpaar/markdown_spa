@@ -4,22 +4,17 @@ description: Automatically generated table of contents
 
 The table of contents at the side of the page was automatically generated from the [`nav.html`](https://github.com/MrSpaar/Markdown-SPA/blob/master/templates/nav.html) template:
 ```jinja
-{% macro render_nav(tree, root) -%}
 <ul>
-{% for uri, page in tree.items() | sort(attribute='1.meta.order') -%}
-    {% if page.children -%}
+    {% for (uri, page) in tree.items() recursive -%}
     <li><a href="/{{ uri }}">{{ page.meta.name }}</a>
-        {{ render_nav(page.children, False) }}
+        {% if page.children -%}
+        <ul>
+            {{ loop(page.children.items()) }}
+        </ul>
+        {% endif -%}
     </li>
-    {% else -%}
-    <li><a href="/{{ uri }}">{{ page.meta.name }}</a></li>
-    {% endif -%}
-{% endfor -%}
+    {% endfor -%}
 </ul>
-{% endmacro -%}
-
-{{ render_nav(tree) }}
-
 ```
 
 Which will render the following HTML:

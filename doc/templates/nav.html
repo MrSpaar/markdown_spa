@@ -1,13 +1,11 @@
-{% macro render_nav(tree) -%}
 <ul>
-{% for uri, page in tree.items() | sort(attribute='1.meta.order') -%}
+    {% for (uri, page) in tree.items() | sort(attribute='1.meta.order') recursive -%}
     <li><a href="/{{ uri }}">{{ page.meta.name }}</a>
         {% if page.children -%}
-        {{ render_nav(page.children) }}
+        <ul>
+            {{ loop(page.children.items()) }}
+        </ul>
         {% endif -%}
     </li>
-{% endfor -%}
+    {% endfor -%}
 </ul>
-{% endmacro -%}
-
-{{ render_nav(tree) }}
