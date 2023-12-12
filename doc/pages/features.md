@@ -1,3 +1,3 @@
-order: 2
+order: 3
 name: Features
 description: Features of Markdown-SPA
