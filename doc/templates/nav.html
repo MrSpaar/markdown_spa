@@ -1,9 +1,9 @@
-{% macro render_nav(tree, root) -%}
+{% macro render_nav(tree) -%}
 <ul>
 {% for uri, page in tree.items() | sort(attribute='1.meta.order') -%}
     {% if page.children -%}
     <li><a href="/{{ uri }}">{{ page.meta.name }}</a>
-        {{ render_nav(page.children, False) }}
+        {{ render_nav(page.children) }}
     </li>
     {% else -%}
     <li><a href="/{{ uri }}">{{ page.meta.name }}</a></li>
