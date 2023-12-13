@@ -53,6 +53,15 @@ module.exports = {
 }
 ```
 
+And at the beggining of your input file:
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Your CSS code */
+```
+
 A CSS file will be generated and is automatically rebuilt when using the test server:
 ```html
 <link rel="stylesheet" href="/assets/style.css" />

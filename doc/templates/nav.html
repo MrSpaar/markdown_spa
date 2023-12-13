@@ -1,5 +1,5 @@
 <ul>
-    {% for (uri, page) in tree.items() | sort(attribute='1.meta.order') recursive -%}
+    {% for uri, page in tree.items() | sort(attribute='1.meta.order') recursive -%}
     <li><a href="/{{ uri }}{% if uri %}/{% endif %}">{{ page.meta.name }}</a>
         {% if page.children -%}
         <ul>
