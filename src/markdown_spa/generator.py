@@ -27,6 +27,13 @@ class Generator:
         self.config = ConfigParser()
         self.config.read(f"{root_path}/{ini_path}")
 
+        if "GENERATOR" not in self.config:
+            raise Exception("No 'GENERATOR' section in config.ini")
+        
+        gen_params = {"port", "dist_path", "pages_path", "assets_path", "templates_path"}
+        if diff := gen_params.difference(self.config["GENERATOR"].keys()):
+            raise Exception(f"Missing parameters in 'GENERATOR' section: {', '.join(diff)}")
+
         self.port: int = self.config['GENERATOR'].getint('port')
         self.dist_path = f"{root_path}/{self.config['GENERATOR']['dist_path']}"
         self.pages_path = f"{root_path}/{self.config['GENERATOR']['pages_path']}"
@@ -120,9 +127,14 @@ class Generator:
     def build_sass(self) -> None:
         from sass import compile as sass_compile
 
+        sass_params = {"main_path", "source_path"}
+        if diff := sass_params.difference(self.config["SASS"].keys()):
+            raise Exception(f"Missing parameters in 'SASS' section: {', '.join(diff)}")
+
+
         with open(f"{self.dist_path}/{self.assets_path[len(self.root_path)+1:]}/style.css", "w") as f:
             f.write(sass_compile(
-                filename=f"{self.root_path}/{self.config['libsass']['main_path']}",
+                filename=f"{self.root_path}/{self.config['SASS']['main_path']}",
                 output_style="compressed",
             ))
 
@@ -130,10 +142,14 @@ class Generator:
         from pytailwindcss import run
         dist_assets_path = f"{self.dist_path}/{self.assets_path[len(self.root_path)+1:]}"
 
+        tailwind_params = {"config_file", "input_file", "output_file"}
+        if diff := tailwind_params.difference(self.config["TAILWIND"].keys()):
+            raise Exception(f"Missing parameters in 'TAILWIND' section: {', '.join(diff)}")
+
         run(f"""
-            -c {self.config['pytailwindcss']['config_file']}
-            -i {self.config['pytailwindcss']['input_file']}
-            -o {dist_assets_path}/{self.config['pytailwindcss']['output_file']}
+            -c {self.config['TAILWIND']['config_file']}
+            -i {self.config['TAILWIND']['input_file']}
+            -o {dist_assets_path}/{self.config['TAILWIND']['output_file']}
         """, auto_install=True)
 
     def build(self) -> None:
@@ -148,10 +164,10 @@ class Generator:
             rmtree(dist_assets_path)
         copytree(self.assets_path, dist_assets_path, dirs_exist_ok=True)
         
-        if self.config["libsass"].getboolean("enabled"):
+        if "SASS" in self.config:
             self.build_sass()
         
-        if self.config["pytailwindcss"].getboolean("enabled"):
+        if "TAILWIND" in self.config:
             self.build_tailwind()
 
         with open(f"{self.dist_path}/sitemap.xml", "w") as f:

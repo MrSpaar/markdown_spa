@@ -4,34 +4,30 @@ from shutil import copytree, rmtree
 from os import makedirs, chdir, devnull
 
 from .generator import Generator
-from click import Abort, Path, Choice, group, option, argument, echo, style, prompt
+from click import Path, Choice, group, option, argument, prompt, style, echo as _echo
 
 
 def silent_call(command: str) -> int:
     return call(command.split(" "), stdout=open(devnull, "w"), stderr=STDOUT)
 
+def echo(message: str, nl=True, **kwargs) -> None:
+    _echo(style(message, **kwargs), nl=nl)
 
-def enable(import_name: str, package: str, update_ini=True) -> int:
-    echo(style(f"Checking for {package}...", fg="yellow"))
+
+def enable(import_name: str, package: str, ini: str = "") -> int:
+    echo(f"Checking for {package}... ", nl=False)
 
     try:
         __import__(import_name)
-        echo(style(f"{package} found.", fg="green"))
+        echo(f"found.", fg="green", bold=True)
     except ImportError:
-        echo(style(f"{package} not found, installing it...", fg="yellow"))
+        echo(f"not found, installing it... ", nl=False)
 
         if silent_call(f"pip install {package}") != 0:
-            echo(style(f"Failed to install {package}.", fg="red", bold=True))
+            echo(f"failed.", fg="red", bold=True)
             return 1
         
-        echo(style(f"{package} installed.", fg="green"))
-
-    if update_ini:
-        with open("config.ini", "r") as f:
-            config = f.read().replace(f"[{package}]\nenabled = false", f"[{package}]\nenabled = true")
-        
-        with open("config.ini", "w") as f:
-            f.write(config)
+        echo(f"done.", fg="green", bold=True)
 
     return 0
 
@@ -48,10 +44,10 @@ def init(path: str) -> int:
     """Create a blank Markdown-SPA project."""
 
     if exists(path):
-        echo(style("A file or directory with that name already exists!", fg="red", bold=True))
+        echo("A file or directory with that name already exists!", fg="red", bold=True)
         return 1
 
-    echo(style("Cloning blank project...", fg="yellow"))
+    echo("Cloning blank project... ", nl=False)
     makedirs(path, exist_ok=True)
     chdir(path)
 
@@ -66,30 +62,58 @@ def init(path: str) -> int:
 
     for command in commands:
         if silent_call(command) != 0:
-            echo(style("Failed to initialize project!", fg="red", bold=True))
+            echo("failed.", fg="red", bold=True)
             return 1
-
-    try:
-        styling = prompt(
-            style("Use pure CSS, SASS or TailwindCSS? (1, 2, 3)", fg="yellow"),
-            type=Choice(["1", "2", "3"]), default="1", show_choices=False, show_default=False, prompt_suffix=" "
-        )
-    except Abort:
-        echo(style("Aborting...", fg="yellow"))
-        rmtree("blank")
-        return 1
 
     copytree("blank", ".", dirs_exist_ok=True)
     rmtree("blank")
-    echo(style("Project cloned!", fg="green"))
+    echo("done.", fg="green", bold=True)
 
-    if styling == "2" and enable("sass", "libsass") != 0:
-        return 1
+    styling = prompt(
+        "Use pure CSS, SASS or TailwindCSS? (1, 2, 3)", type=Choice(["1", "2", "3"]),
+        default="1", show_choices=False, show_default=False, prompt_suffix=" "
+    )
 
-    if styling == "3" and enable("pytailwindcss", "pytailwindcss") != 0:
-        return 1
+    if styling == "2":
+        if enable("sass", "libsass") != 0:
+            return 1
 
-    echo(style("Project initialized!", fg="green"))
+        source_path = prompt(
+            "Enter the folder containing all SASS files (default: ./sass)",
+            default="sass", prompt_suffix=": ", show_default=False
+        )
+        
+        main_path = prompt(
+            "Enter the main SASS file (default: main.scss)",
+            default="main.scss", prompt_suffix=": ", show_default=False
+        )
+
+        with open("config.ini", "a") as file:
+            file.write(f"\n[SASS]\nsource_path = {source_path}\nmain_path = {main_path}\n")
+
+    if styling == "3":
+        if enable("pytailwindcss", "pytailwindcss") != 0:
+            return 1
+
+        input_file = prompt(
+            "Enter the input file (default: tailwind.css)",
+            default="tailwind.css", prompt_suffix=": ", show_default=False
+        )
+
+        output_file = prompt(
+            "Enter the output file (default: style.css)",
+            default="style.css", prompt_suffix=": ", show_default=False
+        )
+
+        config_file = prompt(
+            "Enter the config file (default: tailwind.config.js)",
+            default="tailwind.config.js", prompt_suffix=": ", show_default=False
+        )
+
+        with open("config.ini", "a") as file:
+            file.write(f"\n[TAILWIND]\ninput_file = {input_file}\noutput_file = {output_file}\nconfig_file = {config_file}\n")
+
+    echo("Project initialized!", fg="green", bold=True)
     return 0
 
 
@@ -98,13 +122,15 @@ def init(path: str) -> int:
 @argument("path", default=".", type=Path(exists=True))
 def build(config: str, path: str) -> int:
     """Build the site."""
+    echo("Building site... ", nl=False)
 
     try:
         Generator(path, config or "config.ini").build()
-        echo(style("Build complete!", fg="green"))
+        echo("done.", fg="green", bold=True)
         return 0
     except Exception as e:
-        echo(style(f"Build failed: {e}", fg="red", bold=True))
+        echo(f"failed.\nCause: ", fg="red", bold=True, nl=False)
+        echo(str(e))
         return 1
 
 
@@ -114,23 +140,31 @@ def build(config: str, path: str) -> int:
 def watch(config: str, path: str) -> int:
     """Starts a livereload server."""
 
-    if enable("livereload", "livereload", update_ini=False) != 0:
+    if enable("livereload", "livereload") != 0:
         return 1
 
     from livereload import Server
+    echo("Building site... ", nl=False)
 
-    generator = Generator(path, config or "config.ini")
-    generator.build()
+    try:
+        generator = Generator(path, config or "config.ini")
+        generator.build()
+    except Exception as e:
+        echo(f"failed.\nCause: ", fg="red", bold=True, nl=False)
+        echo(str(e))
+        return 1
 
+    echo("done.", fg="green", bold=True)
     server = Server()
+
     server.watch(f"{generator.pages_path}/", generator.build)
     server.watch(f"{generator.templates_path}/", generator.build)
 
-    if generator.config["libsass"].getboolean("enabled"):
-        server.watch(f"{generator.root_path}/{generator.config['libsass']['source_path']}/", generator.build_sass)
+    if "SASS" in generator.config:
+        server.watch(f"{generator.root_path}/{generator.config['SASS']['source_path']}/", generator.build_sass)
 
-    if generator.config["pytailwindcss"].getboolean("enabled"):
-        server.watch(f"{generator.root_path}/{generator.config['pytailwindcss']['input_file']}", generator.build_tailwind)
+    if "TAILWIND" in generator.config:
+        server.watch(f"{generator.root_path}/{generator.config['TAILWIND']['input_file']}", generator.build_tailwind)
 
     server.serve(root=generator.dist_path, port=generator.port, open_url_delay=0)
     return 0
