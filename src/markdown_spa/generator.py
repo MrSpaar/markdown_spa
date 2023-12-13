@@ -3,8 +3,8 @@ from datetime import datetime
 from os.path import exists, isdir
 from shutil import copytree, rmtree
 from configparser import ConfigParser
+from os import environ, makedirs, listdir
 from re import Match, compile as re_compile
-from os import environ, makedirs, listdir, system
 
 from markdown import Markdown
 from jinja2 import Environment, FileSystemLoader
@@ -118,18 +118,23 @@ class Generator:
                 self.__build(page["children"])
 
     def build_sass(self) -> None:
-        try:
-            import sass
-        except ImportError:
-            system("pip install libsass")
-            
         from sass import compile as sass_compile
 
         with open(f"{self.dist_path}/{self.assets_path[len(self.root_path)+1:]}/style.css", "w") as f:
             f.write(sass_compile(
-                filename=f"{self.root_path}/{self.config['SASS']['main_path']}",
+                filename=f"{self.root_path}/{self.config['libsass']['main_path']}",
                 output_style="compressed",
             ))
+
+    def build_tailwind(self) -> None:
+        from pytailwindcss import run
+        dist_assets_path = f"{self.dist_path}/{self.assets_path[len(self.root_path)+1:]}"
+
+        run(f"""
+            -c {self.config['pytailwindcss']['config_file']}
+            -i {self.config['pytailwindcss']['input_file']}
+            -o {dist_assets_path}/{self.config['pytailwindcss']['output_file']}
+        """, auto_install=True)
 
     def build(self) -> None:
         self.tree = self.__prepare(self.pages_path)
@@ -143,8 +148,11 @@ class Generator:
             rmtree(dist_assets_path)
         copytree(self.assets_path, dist_assets_path, dirs_exist_ok=True)
         
-        if self.config["SASS"].getboolean("enabled"):
+        if self.config["libsass"].getboolean("enabled"):
             self.build_sass()
+        
+        if self.config["pytailwindcss"].getboolean("enabled"):
+            self.build_tailwind()
 
         with open(f"{self.dist_path}/sitemap.xml", "w") as f:
             f.write(self.env.get_template("sitemap.xml").render(
@@ -154,6 +162,7 @@ class Generator:
 
         with open(f"{self.dist_path}/robots.txt", "w") as f:
             f.write(self.env.get_template("robots.txt").render(url=self.url_root))
+
 
 if __name__ == "__main__":
     Generator("doc").build()
