@@ -88,6 +88,14 @@ def init(path: str) -> int:
             default="main.scss", prompt_suffix=": ", show_default=False
         )
 
+        try:
+            makedirs(source_path, exist_ok=True)
+            open(f"{source_path}/{main_path}", "w").close()
+        except Exception as e:
+            echo(f"Failed to create SASS files.\nCause: ", fg="red", bold=True, nl=False)
+            echo(str(e))
+            return 1
+
         with open("config.ini", "a") as file:
             file.write(f"\n[SASS]\nsource_path = {source_path}\nmain_path = {main_path}\n")
 
@@ -109,6 +117,18 @@ def init(path: str) -> int:
             "Enter the config file (default: tailwind.config.js)",
             default="tailwind.config.js", prompt_suffix=": ", show_default=False
         )
+
+        try:
+            for file in (input_file, output_file, config_file):
+                makedirs(f"{file[:file.rfind('/')]}", exist_ok=True)
+                open(file, "w").close()
+        except Exception as e:
+            echo(f"Failed to create TailwindCSS files.\nCause: ", fg="red", bold=True, nl=False)
+            echo(str(e))
+            return 1
+
+        with open(input_file, "w") as file:
+            file.write("@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\n")
 
         with open("config.ini", "a") as file:
             file.write(f"\n[TAILWIND]\ninput_file = {input_file}\noutput_file = {output_file}\nconfig_file = {config_file}\n")
