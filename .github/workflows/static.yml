@@ -2,8 +2,8 @@ on:
   push:
     paths:
       - 'doc/**'
-      - 'src/**'
       - '.github/workflows/static.yml'
+      - 'src/markdown_spa/generator.py'
 
 permissions:
   contents: read
