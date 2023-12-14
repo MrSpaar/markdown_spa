@@ -14,7 +14,7 @@ def check_version() -> None:
     latest = get("https://pypi.org/pypi/markdown-spa/json").json()["info"]["version"]
 
     if latest > current:
-        echo(f"Version {latest} is available, run 'pip install --U markdown-spa' to update.", fg="yellow", bold=True)
+        echo(f"Version {latest} is available, run 'pip install -U markdown-spa' to update.", fg="yellow", bold=True)
 
 def silent_call(command: str) -> int:
     return call(command, shell=True, stdout=open(devnull, "w"), stderr=STDOUT)
