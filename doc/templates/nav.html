@@ -3,7 +3,7 @@
     <li><a href="/{{ uri }}{% if uri %}/{% endif %}">{{ page.meta.name }}</a>
         {% if page.children -%}
         <ul>
-            {{ loop(page.children.items()) }}
+            {{ loop(page.children.items() | sort(attribute='1.meta.order')) }}
         </ul>
         {% endif -%}
     </li>
