@@ -1,6 +1,6 @@
 from os.path import exists
-from subprocess import call, STDOUT
 from shutil import copytree, rmtree
+from subprocess import call, STDOUT
 from os import makedirs, chdir, devnull
 
 from .generator import Generator
@@ -8,7 +8,7 @@ from click import Path, Choice, group, option, argument, prompt, style, echo as 
 
 
 def silent_call(command: str) -> int:
-    return call(command.split(" "), stdout=open(devnull, "w"), stderr=STDOUT)
+    return call(command, shell=True, stdout=open(devnull, "w"), stderr=STDOUT)
 
 def echo(message: str, nl=True, **kwargs) -> None:
     _echo(style(message, **kwargs), nl=nl)
@@ -48,16 +48,15 @@ def init(path: str) -> int:
         return 1
 
     echo("Cloning blank project... ", nl=False)
-    makedirs(path, exist_ok=True)
-    chdir(path)
+    if silent_call(f"git clone --depth=1 https://github.com/MrSpaar/Markdown-SPA.git --no-checkout {path}") != 0:
+        echo("failed.", fg="red", bold=True)
+        return 1
 
+    chdir(path)
     commands = (
-        "git init",
-        "git remote add origin -f https://github.com/MrSpaar/Markdown-SPA.git",
         "git config core.sparseCheckout true",
-        "echo 'blank' >> .git/info/sparse-checkout",
-        "git pull origin master",
-        "git remote remove origin"
+        "echo 'blank/' >> .git/info/sparse-checkout",
+        "git checkout"
     )
 
     for command in commands:
@@ -65,8 +64,7 @@ def init(path: str) -> int:
             echo("failed.", fg="red", bold=True)
             return 1
 
-    copytree("blank", ".", dirs_exist_ok=True)
-    rmtree("blank")
+    copytree("blank", ".", dirs_exist_ok=True); rmtree("blank")
     echo("done.", fg="green", bold=True)
 
     styling = prompt(
