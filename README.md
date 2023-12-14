@@ -8,7 +8,7 @@
 - [x] Powerful templating
 - [x] SEO optimized
 - [x] No full page reloads
-- [x] SCSS support ([`libsass`](https://pypi.org/project/libsass/))
+- [x] SCSS and Tailwind CSS support
 - [x] Extented Markdown syntax
 - [x] Automatic deployment to GitHub Pages
 
