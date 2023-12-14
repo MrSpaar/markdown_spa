@@ -91,6 +91,7 @@ def init(path: str) -> int:
             default="main.scss", prompt_suffix=": ", show_default=False
         )
 
+        remove("assets/style.css")
         makedirs(source_path, exist_ok=True)
         move("assets/main.scss", f"{source_path}/{main_path}")
 
