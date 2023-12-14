@@ -4,6 +4,17 @@ function prepare() {
             e.target.children[0].click();
     };
 
+    for (let h2 of document.getElementsByTagName('h2')) {
+        h2.classList.add('anchor');
+        h2.id = h2.innerText.toLowerCase().replace(/[^a-z0-9]/g, '-');
+
+        h2.addEventListener('click', e => {
+            e.target.scrollIntoView();
+            history.pushState({}, '', `#${h2.id}`);
+            navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}#${h2.id}`);
+        });
+    }
+
     for (let a of document.getElementsByTagName('a')) {
         if ((a.href.baseVal || a.href).startsWith(window.location.origin)) {
             a.addEventListener('click', e => {
@@ -37,6 +48,11 @@ function update(path, push = true) {
 }
 
 prepare();
+let curPath = window.location.pathname;
+
 window.addEventListener('popstate', _ => {
-    update(window.location.href, false);
+    if (window.location.pathname != curPath) {
+        update(window.location.href, false);
+        curPath = window.location.pathname;
+    }
 });

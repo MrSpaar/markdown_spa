@@ -5,8 +5,6 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Markdown SPA - {{ meta.name }}</title>
     <meta name="description" content="{{ meta.description }}">
-    
-    <script src="/{{ assets_path }}/script.js" defer></script>
     <link rel="stylesheet" href="/{{ assets_path }}/style.css" />
 </head>
 <body>   
@@ -32,5 +30,7 @@
 
         {{+ page_content -}}
     </div>
+
+    <script src="/{{ assets_path }}/script.js"></script>
 </body>
 </html>

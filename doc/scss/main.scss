@@ -7,6 +7,7 @@ html {
 	--alternative-background-color: #f5f1f1;
 
     font-size: 1.05em;
+    scroll-behavior: smooth;
     font-family: roboto, sans-serif;
     background-color: var(--background-color);
 
@@ -38,6 +39,18 @@ ul:has(input) {
 
     li {
         list-style-type: none;
+    }
+}
+
+h2.anchor {
+    cursor: pointer;
+
+    &:hover::before {
+        content: '#';
+        color: #aaa;
+        position: absolute;
+        margin-left: -20px;
+        padding-right: 20px;
     }
 }
 
