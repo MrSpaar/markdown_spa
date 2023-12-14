@@ -96,7 +96,7 @@ def init(path: str) -> int:
         move("assets/main.scss", f"{source_path}/{main_path}")
 
         with open("config.ini", "a") as file:
-            file.write(f"\n[SASS]\nsource_path = {main_path}/{source_path}\nmain_path = {main_path}\n")
+            file.write(f"\n[SASS]\nsource_path = {source_path}\nmain_path = {source_path}/{main_path}\n")
 
     if styling == "3":
         if enable("pytailwindcss", "pytailwindcss") != 0:
