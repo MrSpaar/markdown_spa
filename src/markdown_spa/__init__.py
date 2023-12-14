@@ -1,18 +1,23 @@
+from requests import get
 from os.path import exists
 from subprocess import call, STDOUT
+from importlib_metadata import version
 from shutil import copytree, rmtree, move
 from os import makedirs, chdir, devnull, remove
 
-from .generator import Generator
-from click import Path, Choice, group, option, argument, prompt, style, echo as _echo
+from .generator import Generator, echo, echo_wrap
+from click import Path, Choice, group, option, argument, prompt
 
+
+def check_version() -> None:
+    current = version("markdown-spa")
+    latest = get("https://pypi.org/pypi/markdown-spa/json").json()["info"]["version"]
+
+    if latest > current:
+        echo(f"Version {latest} is available, run 'pip install --U markdown-spa' to update.", fg="yellow", bold=True)
 
 def silent_call(command: str) -> int:
     return call(command, shell=True, stdout=open(devnull, "w"), stderr=STDOUT)
-
-def echo(message: str, nl=True, **kwargs) -> None:
-    _echo(style(message, **kwargs), nl=nl)
-
 
 def enable(import_name: str, package: str, ini: str = "") -> int:
     echo(f"Checking for {package}... ", nl=False)
@@ -20,21 +25,22 @@ def enable(import_name: str, package: str, ini: str = "") -> int:
     try:
         __import__(import_name)
         echo(f"found.", fg="green", bold=True)
+        return 0
     except ImportError:
         echo(f"not found, installing it... ", nl=False)
 
-        if silent_call(f"pip install {package}") != 0:
-            echo(f"failed.", fg="red", bold=True)
-            return 1
+    if silent_call(f"pip install {package}") != 0:
+        echo(f"failed.", fg="red", bold=True)
+        return 1
         
-        echo(f"done.", fg="green", bold=True)
-
+    echo(f"done.", fg="green", bold=True)
     return 0
 
 
 @group()
 def main() -> int:
     """Static site generator for Markdown files."""
+    check_version()
     return 0
 
 
@@ -130,45 +136,24 @@ def init(path: str) -> int:
 @main.command()
 @option("--config", "-c", help="Path to the config file.", is_flag=False)
 @argument("path", default=".", type=Path(exists=True))
-def build(config: str, path: str) -> int:
-    """Build the site."""
-    echo("Building site... ", nl=False)
-
-    try:
-        Generator(path, config or "config.ini").build()
-        echo("done.", fg="green", bold=True)
-        return 0
-    except Exception as e:
-        echo(f"failed.\nCause: ", fg="red", bold=True, nl=False)
-        echo(str(e))
-        return 1
-
-
-@main.command()
-@option("--config", "-c", help="Path to the config file.", is_flag=False)
-@argument("path", default=".", type=Path(exists=True))
 def watch(config: str, path: str) -> int:
     """Starts a livereload server."""
 
     if enable("livereload", "livereload") != 0:
         return 1
 
+    generator = echo_wrap(
+        "Initializing generator",
+        lambda: Generator(path, config or 'config.ini')
+    )
+
+    echo_wrap("Building project", generator.build, nl=True)
+
     from livereload import Server
-    echo("Building site... ", nl=False)
-
-    try:
-        generator = Generator(path, config or "config.ini")
-        generator.build()
-    except Exception as e:
-        echo(f"failed.\nCause: ", fg="red", bold=True, nl=False)
-        echo(str(e))
-        return 1
-
-    echo("done.", fg="green", bold=True)
     server = Server()
 
-    server.watch(f"{generator.pages_path}/", generator.build)
-    server.watch(f"{generator.templates_path}/", generator.build)
+    server.watch(f"{generator.pages_path}/", generator.render_pages)
+    server.watch(f"{generator.templates_path}/", generator.render_pages)
 
     if "SASS" in generator.config:
         server.watch(f"{generator.root_path}/{generator.config['SASS']['source_path']}/", generator.build_sass)
@@ -177,4 +162,18 @@ def watch(config: str, path: str) -> int:
         server.watch(f"{generator.root_path}/{generator.config['TAILWIND']['input_file']}", generator.build_tailwind)
 
     server.serve(root=generator.dist_path, port=generator.port, open_url_delay=0)
+    return 0
+
+
+@main.command()
+@option("--config", "-c", help="Path to the config file.", is_flag=False)
+@argument("path", default=".", type=Path(exists=True))
+def build(config: str, path: str) -> int:
+    """Build the site."""
+    
+    gen = echo_wrap(
+        "Building project",
+        lambda: Generator(path, config or 'config.ini').build(), nl=True
+    )
+
     return 0
