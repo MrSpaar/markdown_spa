@@ -30,6 +30,11 @@ function update(path, push = true) {
 }
 
 prepare();
+let curPath = window.location.pathname;
+
 window.addEventListener('popstate', _ => {
-    update(window.location.href, false);
+    if (window.location.pathname != curPath) {
+        update(window.location.href, false);
+        curPath = window.location.pathname;
+    }
 });
