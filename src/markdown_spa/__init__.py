@@ -152,6 +152,7 @@ def watch(config: str, path: str) -> int:
     from livereload import Server
     server = Server()
 
+    server.watch(f"{generator.assets_path}/", generator.copy_assets)
     server.watch(f"{generator.pages_path}/", generator.render_pages)
     server.watch(f"{generator.templates_path}/", generator.render_pages)
 

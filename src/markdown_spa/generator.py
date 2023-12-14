@@ -6,9 +6,9 @@ from os import environ, makedirs, listdir
 from re import Match, compile as re_compile
 from typing import TypedDict, Callable, TypeVar
 
-from click import style, echo as _echo
 from markdown import Markdown
-from jinja2 import Environment, FileSystemLoader, UndefinedError
+from click import style, echo as _echo
+from jinja2 import Environment, FileSystemLoader
 
 
 def echo(message: str, nl=True, **kwargs) -> None:
@@ -39,11 +39,9 @@ class Page(TypedDict):
 
 
 class Generator:
-    PRE_RE = re_compile(r'<pre')
-    TABLE_RE = re_compile(r'<table')
     QUOTE_RE = re_compile(r'> \[!([A-Z]+)\]')
     CHECKBOX_RE = re_compile(r'\[([ xX])\] (.*)')
-    INTERNAL_LINK_RE = re_compile(r'(href|src)="(/[^"]+|/)"')
+    INTERNAL_LINK_RE = re_compile(r'(href|src)=["\'](/[^"\']+|/)["\']')
     TAG_RE = re_compile(r'^[ ]{0,3}(?P<key>[A-Za-z0-9_-]+):\s*(?P<value>.*)')
 
     def __init__(self, root_path: str = "", ini_path: str = "config.ini") -> None:
@@ -140,12 +138,9 @@ class Generator:
                     Generator.QUOTE_RE.sub(r'> { .quote .quote-\1 }', f.read())
                 )
 
-            for re, repl in (
-                (Generator.TABLE_RE, '<table tabindex="0"'),
-                (Generator.PRE_RE, '<pre tabindex="0"'), 
-                (Generator.CHECKBOX_RE, Generator.__to_checkbox),
-            ):
-                content = re.sub(repl, content)
+            content = Generator.CHECKBOX_RE.sub(Generator.__to_checkbox, content) \
+                                        .replace("<table", "<table tabindex='0'") \
+                                        .replace("<pre", "<pre tabindex='0'")
 
             rendered = self.base_template.render(
                 page_content=content, nav=self.nav, meta=page["meta"],
@@ -178,14 +173,13 @@ class Generator:
 
     def copy_assets(self) -> str:
         dist_assets_path = f"{self.dist_path}/{self.assets_path[len(self.root_path)+1:]}"
-        if exists(dist_assets_path):
-            rmtree(dist_assets_path)
-
         copytree(self.assets_path, dist_assets_path, dirs_exist_ok=True)
         return dist_assets_path
 
-    def build_sass(self, dist_assets_path) -> None:
+    def build_sass(self, dist_assets_path: str = "") -> None:
         from sass import compile as sass_compile
+        if not dist_assets_path:
+            dist_assets_path = f"{self.dist_path}/{self.assets_path[len(self.root_path)+1:]}"
 
         sass_params = {"main_path", "source_path"}
         if diff := sass_params.difference(self.config["SASS"].keys()):
@@ -201,8 +195,10 @@ class Generator:
                 output_style="compressed",
             ))
 
-    def build_tailwind(self, dist_assets_path) -> None:
+    def build_tailwind(self, dist_assets_path: str = "") -> None:
         from pytailwindcss import run
+        if not dist_assets_path:
+            dist_assets_path = f"{self.dist_path}/{self.assets_path[len(self.root_path)+1:]}"
 
         tailwind_params = {"config_file", "input_file"}
         if diff := tailwind_params.difference(self.config["TAILWIND"].keys()):
