@@ -7,8 +7,9 @@ Pure CSS doesn't require any setup, just put your CSS files in the `assets_path`
 <link rel="stylesheet" href="/assets/style.css" />
 ```
 
-> In the following examples, `assets_path` is set to `assets`, `templates_path` is set to `templates` and `pages_path` is set to `pages`.
-> [!WARNING]
+> SASS and Tailwind support can be configured at initialization using `markdown_spa init` or by following the instructions below.
+> Here, `assets_path` is `assets`, `templates_path` is `templates` and `pages_path` is `pages`.
+> [!NOTE]
 
 ## SASS Support
 
@@ -41,7 +42,6 @@ To use Tailwind CSS in your project, modify the `config.ini` file:
 enabled = true
 input_file = assets/tailwind.css
 config_file = tailwind.config.js
-output_file = style.css
 ```
 
 Then, to purge unused CSS, modify the `tailwind.config.js` file:
@@ -62,7 +62,7 @@ And at the beggining of your input file:
 /* Your CSS code */
 ```
 
-A CSS file will be generated and is automatically rebuilt when using the test server:
+A file named `style.css` will be generated and is automatically rebuilt when using the test server:
 ```html
 <link rel="stylesheet" href="/assets/style.css" />
 ```

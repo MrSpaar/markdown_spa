@@ -1,7 +1,7 @@
 from os.path import exists
-from shutil import copytree, rmtree
 from subprocess import call, STDOUT
-from os import makedirs, chdir, devnull
+from shutil import copytree, rmtree, move
+from os import makedirs, chdir, devnull, remove
 
 from .generator import Generator
 from click import Path, Choice, group, option, argument, prompt, style, echo as _echo
@@ -72,6 +72,11 @@ def init(path: str) -> int:
         default="1", show_choices=False, show_default=False, prompt_suffix=" "
     )
 
+    if styling in ("1", "3"):
+        remove("assets/style.scss")
+    if styling in ("1", "2"):
+        remove("tailwind.config.js")
+
     if styling == "2":
         if enable("sass", "libsass") != 0:
             return 1
@@ -86,13 +91,8 @@ def init(path: str) -> int:
             default="main.scss", prompt_suffix=": ", show_default=False
         )
 
-        try:
-            makedirs(source_path, exist_ok=True)
-            open(f"{source_path}/{main_path}", "w").close()
-        except Exception as e:
-            echo(f"Failed to create SASS files.\nCause: ", fg="red", bold=True, nl=False)
-            echo(str(e))
-            return 1
+        makedirs(source_path, exist_ok=True)
+        move("assets/main.scss", f"{source_path}/{main_path}")
 
         with open("config.ini", "a") as file:
             file.write(f"\n[SASS]\nsource_path = {source_path}\nmain_path = {main_path}\n")
@@ -102,13 +102,8 @@ def init(path: str) -> int:
             return 1
 
         input_file = prompt(
-            "Enter the input file (default: tailwind.css)",
-            default="tailwind.css", prompt_suffix=": ", show_default=False
-        )
-
-        output_file = prompt(
-            "Enter the output file (default: style.css)",
-            default="style.css", prompt_suffix=": ", show_default=False
+            "Enter the input file (default: assets/style.css)",
+            default="assets/style.css", prompt_suffix=": ", show_default=False
         )
 
         config_file = prompt(
@@ -116,20 +111,16 @@ def init(path: str) -> int:
             default="tailwind.config.js", prompt_suffix=": ", show_default=False
         )
 
-        try:
-            for file in (input_file, output_file, config_file):
-                makedirs(f"{file[:file.rfind('/')]}", exist_ok=True)
-                open(file, "w").close()
-        except Exception as e:
-            echo(f"Failed to create TailwindCSS files.\nCause: ", fg="red", bold=True, nl=False)
-            echo(str(e))
-            return 1
+        move("assets/style.css", input_file)
+        move("tailwind.config.js", config_file)
 
-        with open(input_file, "w") as file:
-            file.write("@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\n")
+        with open(input_file, "r+") as file:
+            content = file.read()
+            file.seek(0, 0)
+            file.write("@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\n" + content)
 
         with open("config.ini", "a") as file:
-            file.write(f"\n[TAILWIND]\ninput_file = {input_file}\noutput_file = {output_file}\nconfig_file = {config_file}\n")
+            file.write(f"\n[TAILWIND]\ninput_file = {input_file}\nconfig_file = {config_file}\n")
 
     echo("Project initialized!", fg="green", bold=True)
     return 0

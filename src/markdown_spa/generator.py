@@ -124,32 +124,30 @@ class Generator:
             if page["children"]:
                 self.__build(page["children"])
 
-    def build_sass(self) -> None:
+    def build_sass(self, dist_assets_path) -> None:
         from sass import compile as sass_compile
 
         sass_params = {"main_path", "source_path"}
         if diff := sass_params.difference(self.config["SASS"].keys()):
             raise Exception(f"Missing parameters in 'SASS' section: {', '.join(diff)}")
 
-
-        with open(f"{self.dist_path}/{self.assets_path[len(self.root_path)+1:]}/style.css", "w") as f:
+        with open(f"{dist_assets_path}/style.css", "w") as f:
             f.write(sass_compile(
                 filename=f"{self.root_path}/{self.config['SASS']['main_path']}",
                 output_style="compressed",
             ))
 
-    def build_tailwind(self) -> None:
+    def build_tailwind(self, dist_assets_path) -> None:
         from pytailwindcss import run
-        dist_assets_path = f"{self.dist_path}/{self.assets_path[len(self.root_path)+1:]}"
 
-        tailwind_params = {"config_file", "input_file", "output_file"}
+        tailwind_params = {"config_file", "input_file"}
         if diff := tailwind_params.difference(self.config["TAILWIND"].keys()):
             raise Exception(f"Missing parameters in 'TAILWIND' section: {', '.join(diff)}")
 
         run(f"""
             -c {self.config['TAILWIND']['config_file']}
             -i {self.config['TAILWIND']['input_file']}
-            -o {dist_assets_path}/{self.config['TAILWIND']['output_file']}
+            -o {dist_assets_path}/style.css
         """, auto_install=True)
 
     def build(self) -> None:
@@ -165,10 +163,10 @@ class Generator:
         copytree(self.assets_path, dist_assets_path, dirs_exist_ok=True)
         
         if "SASS" in self.config:
-            self.build_sass()
+            self.build_sass(dist_assets_path)
         
         if "TAILWIND" in self.config:
-            self.build_tailwind()
+            self.build_tailwind(dist_assets_path)
 
         with open(f"{self.dist_path}/sitemap.xml", "w") as f:
             f.write(self.env.get_template("sitemap.xml").render(
