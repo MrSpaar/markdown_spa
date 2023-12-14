@@ -1,5 +1,7 @@
 on:
   push:
+    branches:
+      - master
     paths:
       - 'doc/**'
       - '.github/workflows/static.yml'
