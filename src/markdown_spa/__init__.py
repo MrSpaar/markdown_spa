@@ -73,7 +73,7 @@ def init(path: str) -> int:
     )
 
     if styling in ("1", "3"):
-        remove("assets/style.scss")
+        remove("assets/main.scss")
     if styling in ("1", "2"):
         remove("tailwind.config.js")
 
