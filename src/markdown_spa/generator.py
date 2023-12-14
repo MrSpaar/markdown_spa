@@ -145,8 +145,8 @@ class Generator:
             raise Exception(f"Missing parameters in 'TAILWIND' section: {', '.join(diff)}")
 
         run(f"""
-            -c {self.config['TAILWIND']['config_file']}
-            -i {self.config['TAILWIND']['input_file']}
+            -c {self.root_path}/{self.config['TAILWIND']['config_file']}
+            -i {self.root_path}/{self.config['TAILWIND']['input_file']}
             -o {dist_assets_path}/style.css
         """, auto_install=True)
 
@@ -179,5 +179,5 @@ class Generator:
 
 
 if __name__ == "__main__":
-    Generator("doc").build()
+    Generator("Hello").build()
     print("Done!")
