@@ -179,5 +179,5 @@ class Generator:
 
 
 if __name__ == "__main__":
-    Generator("Hello").build()
+    Generator(root_path="doc").build()
     print("Done!")
