@@ -1,9 +1,4 @@
 function prepare() {
-    document.getElementById('show-nav-label').onkeydown = e => {
-        if (e.key == 'Enter')
-            e.target.children[0].click();
-    };
-
     for (let a of document.getElementsByTagName('a')) {
         if ((a.href.baseVal || a.href).startsWith(window.location.origin)) {
             a.addEventListener('click', e => {
@@ -16,8 +11,6 @@ function prepare() {
 }
 
 function update(path, push = true) {
-    document.getElementById('loader').classList.add('active');
-
     fetch(path)
         .then(resp => resp.text())
         .then(html => {
