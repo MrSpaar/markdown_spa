@@ -191,9 +191,13 @@ class Generator:
         if diff := sass_params.difference(self.config["SASS"].keys()):
             raise Exception(f"Missing parameters in 'SASS' section: {', '.join(diff)}")
 
+        main_path = f"{self.root_path}/{self.config['SASS']['main_path']}"
+        if not exists(main_path):
+            raise Exception(f"Main SASS file '{main_path}' does not exist")
+
         with open(f"{dist_assets_path}/style.css", "w") as f:
             f.write(sass_compile(
-                filename=f"{self.root_path}/{self.config['SASS']['main_path']}",
+                filename=main_path,
                 output_style="compressed",
             ))
 
@@ -204,11 +208,15 @@ class Generator:
         if diff := tailwind_params.difference(self.config["TAILWIND"].keys()):
             raise Exception(f"Missing parameters in 'TAILWIND' section: {', '.join(diff)}")
 
-        run(f"""
-            -c {self.root_path}/{self.config['TAILWIND']['config_file']}
-            -i {self.root_path}/{self.config['TAILWIND']['input_file']}
-            -o {dist_assets_path}/style.css
-        """, auto_install=True)
+        config_path = f"{self.root_path}/{self.config['TAILWIND']['config_file']}"
+        if not exists(config_path):
+            raise Exception(f"Tailwind config file '{config_path}' does not exist")
+        
+        input_path = f"{self.root_path}/{self.config['TAILWIND']['input_file']}"
+        if not exists(input_path):
+            raise Exception(f"Tailwind input file '{input_path}' does not exist")
+
+        run(f"-c {config_path} -i {input_path} -o {dist_assets_path}/style.css", auto_install=True)
 
     def render_seo(self) -> None:
         with open(f"{self.dist_path}/sitemap.xml", "w") as f:
