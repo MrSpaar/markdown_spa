@@ -8,14 +8,35 @@ name = "Markdown-SPA"
 description = "A static site generator for Markdown files."
 readme = "README.md"
 authors = [{name = "MrSpaar"}]
-keywords = ["markdown", "SPA", "SSG"]
+keywords = ["markdown", "SPA", "SSG", "CLI"]
 license = {file = "LICENSE"}
 requires-python = ">=3.8"
 dependencies = ["markdown", "jinja2", "pygments", "click"]
+classifers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Environment :: Web Environment",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Utilities",
+    "Topic :: Documentation",
+    "Topic :: Software Development :: Documentation",
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Text Processing :: Markup :: HTML",
+    "Topic :: Internet :: WWW/HTTP :: Site Management",
+]
 
 [project.urls]
 Documentation = "https://mrspaar.github.io/Markdown-SPA/"
-Source = "https://github.com/MrSpaar/Markdown-SPA"
+Homepage = "https://github.com/MrSpaar/Markdown-SPA"
 Issues = "https://github.com/MrSpaar/Markdown-SPA/issues"
 
 [project.scripts]
