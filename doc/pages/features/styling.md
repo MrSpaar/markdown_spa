@@ -15,8 +15,7 @@ Pure CSS doesn't require any setup, just put your CSS files in the `assets_path`
 
 You can enable SASS support by modifying the `config.ini` file:
 ```ini
-[libsass]
-enabled = true
+[SASS]
 source_path = scss
 main_path = scss/main.scss
 ```
@@ -38,8 +37,7 @@ A file named `style.css` will be generated and is automatically rebuilt when usi
 
 To use Tailwind CSS in your project, modify the `config.ini` file:
 ```ini
-[pytailwindcss]
-enabled = true
+[TAILWIND]
 input_file = assets/tailwind.css
 config_file = tailwind.config.js
 ```
