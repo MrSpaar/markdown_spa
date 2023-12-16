@@ -157,10 +157,10 @@ def watch(config: str, path: str) -> int:
     server.watch(f"{generator.templates_path}/", generator.render_pages)
 
     if "SASS" in generator.config:
-        server.watch(f"{generator.root_path}/{generator.SASS_source_path}/", generator.build_sass)
+        server.watch(generator.SASS_source_path, generator.build_sass)
 
     if "TAILWIND" in generator.config:
-        server.watch(f"{generator.root_path}/{generator.TAILWIND_input_file}", generator.build_tailwind)
+        server.watch(generator.TAILWIND_input_file, generator.build_tailwind)
 
     server.serve(root=generator.dist_path, port=generator.port, open_url_delay=0)
     return 0
