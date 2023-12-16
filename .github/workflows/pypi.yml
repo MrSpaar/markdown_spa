@@ -20,7 +20,7 @@ jobs:
         with:
           python-version: 3.x
       - name: Install dependencies 🧰
-        run: python -m pip install build
+        run: python -m pip install build twine
       - name: Build 🏗️
         run: python -m build
       - name: Get API Token 🔑
