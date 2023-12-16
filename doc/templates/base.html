@@ -7,10 +7,7 @@
     <meta name="description" content="{{ meta.description }}">
     <link rel="stylesheet" href="/{{ assets_path }}/style.css" />
 </head>
-<body>   
-    <div id="loader"></div>
-    <div id="error">The requested page isn't available</div>
-    
+<body>
     <nav>
         <div id="header">
             <a href="/" id="home">Markdown-SPA</a>
@@ -24,6 +21,9 @@
         
         {{ nav }}
     </nav>
+
+    <div id="loader"></div>
+    <div id="error">The requested page isn't available</div>
 
     <div id="content">
         <h1>{{ meta.name }}</h1>
