@@ -23,11 +23,11 @@ def echo_wrap(message: str, func: Callable[..., T], *args, nl = False, indents=[
         res = func(*args, **kwargs)
 
         if nl: indents[0] -= 4
-        echo(f"done.", fg="green", bold=True)
+        echo(f"done", fg="green", bold=True)
         return res
     except Exception as e:
         if nl: indents[0] -= 4
-        echo(f"failed.\nError: ", fg="red", bold=True, nl=False)
+        echo(f"failed\nError: ", fg="red", bold=True, nl=False)
         echo(str(e))
         exit(1)
 
