@@ -157,10 +157,10 @@ def watch(config: str, path: str) -> int:
     server.watch(f"{generator.templates_path}/", generator.render_pages)
 
     if "SASS" in generator.config:
-        server.watch(f"{generator.root_path}/{generator.config['SASS']['source_path']}/", generator.build_sass)
+        server.watch(f"{generator.root_path}/{generator.SASS_source_path}/", generator.build_sass)
 
     if "TAILWIND" in generator.config:
-        server.watch(f"{generator.root_path}/{generator.config['TAILWIND']['input_file']}", generator.build_tailwind)
+        server.watch(f"{generator.root_path}/{generator.TAILWIND_input_file}", generator.build_tailwind)
 
     server.serve(root=generator.dist_path, port=generator.port, open_url_delay=0)
     return 0
@@ -173,8 +173,9 @@ def build(config: str, path: str) -> int:
     """Build the site."""
     
     gen = echo_wrap(
-        "Building project",
-        lambda: Generator(path, config or 'config.ini').build(), nl=True
+        "Initializing generator",
+        lambda: Generator(path, config or 'config.ini')
     )
 
+    echo_wrap("Building", gen.build, nl=True)
     return 0

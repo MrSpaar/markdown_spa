@@ -1,6 +1,6 @@
+from shutil import copytree
 from datetime import datetime
 from os.path import exists, isdir
-from shutil import copytree, rmtree
 from configparser import ConfigParser
 from os import environ, makedirs, listdir
 from re import Match, compile as re_compile
@@ -24,7 +24,6 @@ def echo_wrap(message: str, func: Callable[..., T], *args, nl = False, indents=[
 
         if nl: indents[0] -= 4
         echo(f"done.", fg="green", bold=True)
-        
         return res
     except Exception as e:
         if nl: indents[0] -= 4
@@ -33,68 +32,77 @@ def echo_wrap(message: str, func: Callable[..., T], *args, nl = False, indents=[
         exit(1)
 
 
-class Page(TypedDict):
-    meta: dict[str, str]
-    children: dict[str, "Page"]
-
-
 class Generator:
     QUOTE_RE = re_compile(r'> \[!([A-Z]+)\]')
     CHECKBOX_RE = re_compile(r'\[([ xX])\] (.*)')
     INTERNAL_LINK_RE = re_compile(r'(href|src)=["\'](/[^"\']+|/)["\']')
     TAG_RE = re_compile(r'^[ ]{0,3}(?P<key>[A-Za-z0-9_-]+):\s*(?P<value>.*)')
 
+    class Page(TypedDict):
+        meta: dict[str, str]
+        children: dict[str, "Generator.Page"]
+
+    __slots__ = ("config", "port",
+        "dist_path", "pages_path", "assets_path", "templates_path", "dist_assets_path",
+        "env", "md", "root_path", "url_root", "nav_template", "base_template", "tree", "nav",
+        "SASS_main_path", "SASS_source_path", "TAILWIND_config_file", "TAILWIND_input_file", 
+    )
+
     def __init__(self, root_path: str = "", ini_path: str = "config.ini") -> None:
+        if not exists(f"{root_path}/{ini_path}"):
+            raise Exception(f"Missing '{root_path}/{ini_path}' config file")
+
         self.config = ConfigParser()
         self.config.read(f"{root_path}/{ini_path}")
 
         if "GENERATOR" not in self.config:
             raise Exception("No 'GENERATOR' section in config.ini")
+
+        if "port" not in self.config["GENERATOR"]:
+            raise Exception("Missing 'port' parameter in 'GENERATOR' section")
+
+        for param in ("dist_path", "pages_path", "assets_path", "templates_path"):
+            if param not in self.config["GENERATOR"]:
+                raise Exception(f"Missing '{param}' parameter in 'GENERATOR' section")
+
+            setattr(self, param, f"{root_path}/{self.config['GENERATOR'][param]}")
         
-        gen_params = {"port", "dist_path", "pages_path", "assets_path", "templates_path"}
-        if diff := gen_params.difference(self.config["GENERATOR"].keys()):
-            raise Exception(f"Missing parameters in 'GENERATOR' section: {', '.join(diff)}")
-
-        self.port: int = self.config['GENERATOR'].getint('port')
-        self.dist_path = f"{root_path}/{self.config['GENERATOR']['dist_path']}"
-
-        self.pages_path = f"{root_path}/{self.config['GENERATOR']['pages_path']}"
-        if not exists(self.pages_path):
-            raise Exception(f"Pages path '{self.pages_path}' does not exist")
-
-        self.assets_path = f"{root_path}/{self.config['GENERATOR']['assets_path']}"
-        if not exists(self.assets_path):
-            raise Exception(f"Assets path '{self.assets_path}' does not exist")
-
-        self.templates_path = f"{root_path}/{self.config['GENERATOR']['templates_path']}"
-        if not exists(self.templates_path):
-            raise Exception(f"Templates path '{self.templates_path}' does not exist")
-
         if not exists(f"{self.templates_path}/base.html"):
             raise Exception(f"Missing '{self.templates_path}/base.html' template")
-        
+
         if not exists(f"{self.templates_path}/nav.html"):
             raise Exception(f"Missing '{self.templates_path}/nav.html' template")
 
-        self.env = Environment(loader=FileSystemLoader(self.templates_path))
-        self.md = Markdown(extensions=["meta", "tables", "attr_list", "fenced_code", "codehilite"])
+        for section, params in ("TAILWIND", ("config_file", "input_file")), ("SASS", ("main_path", "source_path")):
+            if section in self.config:
+                for param in params:
+                    if param not in self.config[section]:
+                        raise Exception(f"Missing '{param}' parameter in '{section}' section")
+
+                    if not exists(f"{root_path}/{self.config[section][param]}"):
+                        raise Exception(f"Missing '{root_path}/{self.config[section][param]}' file")
+                
+                    setattr(self, f"{section}_{param}", f"{root_path}/{self.config[section][param]}")
 
         self.root_path = root_path
-        self.url_root = f"http://localhost:{self.port}"    
+        self.port: int = self.config['GENERATOR'].getint('port')
+        self.url_root = f"http://localhost:{self.port}"
 
         if "REPO" in environ:
             user, repo = environ["REPO"].split("/")
             self.url_root = f"https://{user}.github.io/{repo}"
 
+        self.env = Environment(loader=FileSystemLoader(self.templates_path))
+        self.md = Markdown(extensions=["meta", "tables", "attr_list", "fenced_code", "codehilite"])   
+        self.dist_assets_path = f"{self.dist_path}/{self.assets_path[len(self.root_path)+1:]}"
+
     @staticmethod
-    def __to_checkbox(match: Match) -> str:
-        checked = match.group(1).lower() == 'x'
-        return f"<input type='checkbox' disabled{' checked' if checked else ''} aria-label='checkbox list item'> {match.group(2)}"
+    def __to_checkbox(m: Match) -> str:
+        checked: str = ' checked' if m.group(1).lower() == 'x' else ''
+        return f"<input type='checkbox' disabled{checked} aria-label='checkbox list item'> {m.group(2)}"
     
     def __get_defaults(self) -> dict[str, str]:
-        if not "DEFAULTS" not in self.config or not self.config["DEFAULTS"]:
-            return {}
-        return {**self.config["DEFAULTS"]}
+        return {**self.config["DEFAULTS"]} if self.config.has_section("DEFAULTS") else {}
 
     def __read_meta(self, path: str) -> dict[str, str]:
         meta: dict[str, str] = self.__get_defaults()
@@ -106,12 +114,11 @@ class Generator:
         return meta
 
     def __prepare(self, full_path: str) -> dict[str, Page]:
-        entry: dict[str, Page] = {}
+        entry: dict[str, Generator.Page] = {}
 
         for path in listdir(full_path):
             item_path = f"{full_path}/{path}"
-            uri = item_path.removeprefix(self.pages_path) \
-                                .removeprefix("/") \
+            uri = item_path.removeprefix(f"{self.pages_path}/") \
                                 .removesuffix(".md") \
                                 .removeprefix("index")
 
@@ -120,14 +127,14 @@ class Generator:
             if isdir(item_path) and uri in entry:
                 entry[uri]["children"] = self.__prepare(item_path)
             elif isdir(item_path):
-                entry[uri] = Page(
+                entry[uri] = Generator.Page(
                     meta=self.__get_defaults(),
                     children=self.__prepare(item_path)
                 )
             elif uri in entry:
                 entry[uri]["meta"] = self.__read_meta(item_path)
             else:
-                entry[uri] = Page(meta=self.__read_meta(item_path), children={})
+                entry[uri] = Generator.Page(meta=self.__read_meta(item_path), children={})
         
         return entry
 
@@ -148,9 +155,7 @@ class Generator:
             )
 
             with open(f"{self.dist_path}/{uri}/index.html", "w") as f:
-                f.write(
-                    Generator.INTERNAL_LINK_RE.sub(rf'\1="{self.url_root}\2"', rendered)
-                )
+                f.write(Generator.INTERNAL_LINK_RE.sub(rf'\1="{self.url_root}\2"', rendered))
 
             if page["children"]:
                 self.__render_tree(page["children"])
@@ -171,48 +176,21 @@ class Generator:
         makedirs(self.dist_path, exist_ok=True)
         echo_wrap("Building pages", self.__render_tree, tree=self.tree)
 
-    def copy_assets(self) -> str:
-        dist_assets_path = f"{self.dist_path}/{self.assets_path[len(self.root_path)+1:]}"
-        copytree(self.assets_path, dist_assets_path, dirs_exist_ok=True)
-        return dist_assets_path
+    def copy_assets(self) -> None:
+        copytree(self.assets_path, self.dist_assets_path, dirs_exist_ok=True)
 
-    def build_sass(self, dist_assets_path: str = "") -> None:
+    def build_sass(self) -> None:
         from sass import compile as sass_compile
-        if not dist_assets_path:
-            dist_assets_path = f"{self.dist_path}/{self.assets_path[len(self.root_path)+1:]}"
 
-        sass_params = {"main_path", "source_path"}
-        if diff := sass_params.difference(self.config["SASS"].keys()):
-            raise Exception(f"Missing parameters in 'SASS' section: {', '.join(diff)}")
+        with open(f"{self.dist_assets_path}/style.css", "w") as f:
+            f.write(sass_compile(filename=self.SASS_main_path, output_style="compressed"))
 
-        main_path = f"{self.root_path}/{self.config['SASS']['main_path']}"
-        if not exists(main_path):
-            raise Exception(f"Main SASS file '{main_path}' does not exist")
-
-        with open(f"{dist_assets_path}/style.css", "w") as f:
-            f.write(sass_compile(
-                filename=main_path,
-                output_style="compressed",
-            ))
-
-    def build_tailwind(self, dist_assets_path: str = "") -> None:
+    def build_tailwind(self) -> None:
         from pytailwindcss import run
-        if not dist_assets_path:
-            dist_assets_path = f"{self.dist_path}/{self.assets_path[len(self.root_path)+1:]}"
 
-        tailwind_params = {"config_file", "input_file"}
-        if diff := tailwind_params.difference(self.config["TAILWIND"].keys()):
-            raise Exception(f"Missing parameters in 'TAILWIND' section: {', '.join(diff)}")
-
-        config_path = f"{self.root_path}/{self.config['TAILWIND']['config_file']}"
-        if not exists(config_path):
-            raise Exception(f"Tailwind config file '{config_path}' does not exist")
-        
-        input_path = f"{self.root_path}/{self.config['TAILWIND']['input_file']}"
-        if not exists(input_path):
-            raise Exception(f"Tailwind input file '{input_path}' does not exist")
-
-        run(f"-c {config_path} -i {input_path} -o {dist_assets_path}/style.css", auto_install=True)
+        run(auto_install=True, tailwindcss_cli_args=
+            f"-c {self.TAILWIND_config_file} -i {self.TAILWIND_input_file} -o {self.dist_assets_path}/style.css"
+        )
 
     def render_seo(self) -> None:
         with open(f"{self.dist_path}/sitemap.xml", "w") as f:
@@ -226,25 +204,21 @@ class Generator:
 
     def build(self) -> None:        
         self.render_pages()
-        dist_assets_path = echo_wrap("Copying assets", self.copy_assets)
+        echo_wrap("Copying assets", self.copy_assets)
 
         if "SASS" in self.config:
-            echo_wrap(
-                "Building SASS",
-                self.build_sass, dist_assets_path
-            )
+            echo_wrap("Building SASS", self.build_sass)
         
         if "TAILWIND" in self.config:
-            echo_wrap(
-                "Building Tailwind",
-                self.build_tailwind, dist_assets_path
-            )
+            echo_wrap("Building Tailwind", self.build_tailwind)
 
         echo_wrap("Rendering SEO", self.render_seo)
 
 
 if __name__ == "__main__":
     gen = echo_wrap(
-        "Building project",
-        lambda: Generator("doc/").build(), nl=True
+        "Initializing generator",
+        lambda: Generator("doc/")
     )
+
+    echo_wrap("Building", gen.build, nl=True)
