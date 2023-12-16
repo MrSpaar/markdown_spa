@@ -12,7 +12,7 @@ keywords = ["markdown", "SPA", "SSG", "CLI"]
 license = {file = "LICENSE"}
 requires-python = ">=3.8"
 dependencies = ["markdown", "jinja2", "pygments", "click"]
-classifers = [
+classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
     "Environment :: Web Environment",
