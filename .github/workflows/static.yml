@@ -5,7 +5,10 @@ on:
     paths:
       - 'doc/**'
       - '.github/workflows/static.yml'
+      - 'src/markdown_spa/extensions/SASS/**'
+      - 'src/markdown_spa/extensions/Sitemap/**'
       - 'src/markdown_spa/generator/generator.py'
+      - 'src/markdown_spa/extensions/extensions.py'
 
 permissions:
   contents: read
