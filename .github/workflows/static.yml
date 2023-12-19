@@ -5,7 +5,7 @@ on:
     paths:
       - 'doc/**'
       - '.github/workflows/static.yml'
-      - 'src/markdown_spa/generator.py'
+      - 'src/markdown_spa/generator/generator.py'
 
 permissions:
   contents: read
