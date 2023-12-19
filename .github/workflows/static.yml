@@ -34,7 +34,9 @@ jobs:
         with:
           python-version: 3.12
       - name: Install dependencies 🧰
-        run: python -m pip install -e .
+        run: |
+          python -m pip install libsass
+          python -m pip install -e .
       - name: Generate HTML 📚
         run: python -m markdown_spa build doc
         env:
