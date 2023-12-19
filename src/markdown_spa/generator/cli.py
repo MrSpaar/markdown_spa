@@ -77,7 +77,14 @@ def init(path: str) -> int:
     ]
     
     dirs_str = "\n  - ".join(["", *dirs])
-    inp = prompt(f"Choose extensions to enable: {dirs_str}\n", type=str, prompt_suffix="> ")
+    inp = prompt(
+        f"Choose extensions to enable: {dirs_str}\n",
+        type=str, prompt_suffix="> ", default="", show_default=False
+    )
+
+    if not inp:
+        echo("Project initialized!", fg="green", bold=True)
+        return 0
 
     extensions = inp.split(" ")
     if diff := set(extensions).difference(dirs):
@@ -110,6 +117,17 @@ def watch(config: str, path: str) -> int:
 
     server = Server()
     generator = Generator(path, config or 'config.ini')
+
+    try:
+        generator.copy_assets()
+        generator.render_pages()
+
+        for extension in generator.extensions:
+            extension.render()
+    except Exception as e:
+        echo(f"Build failed:", fg="red", bold=True)
+        echo(str(e))
+        return 1
 
     server.watch(f"{generator.config.assets_path}/", generator.copy_assets)
     server.watch(f"{generator.config.pages_path}/", generator.render_pages)
