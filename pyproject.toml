@@ -11,7 +11,7 @@ authors = [{name = "MrSpaar"}]
 keywords = ["markdown", "SPA", "SSG", "CLI"]
 license = {file = "LICENSE"}
 requires-python = ">=3.8"
-dependencies = ["markdown", "jinja2", "pygments", "click", "requests"]
+dependencies = ["markdown", "jinja2", "pygments", "click", "requests", "importlib_metadata"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
