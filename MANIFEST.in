@@ -1,0 +1,4 @@
+include src/markdown_spa/extensions/Tailwind/tailwind.config.js
+include src/markdown_spa/extensions/SASS/main.scss
+include src/markdown_spa/extensions/Sitemap/sitemap.xml
+include src/markdown_spa/extensions/Sitemap/robots.txt
