@@ -1,19 +1,14 @@
-{% macro sitemap(tree) -%}
-{% for uri, page in tree.items() -%}
-<url>
-    <loc>{{ url }}/{{ uri }}</loc>
-    <lastmod>{{ date }}</lastmod>
-    <priority>{{ page.meta.priority }}</priority>
-</url>
-
-{% if page.children -%}
-{{ sitemap(page.children) }}
-{% endif -%}
-
-{% endfor -%}
-{% endmacro -%}
-
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    {{ sitemap(tree) }}
+    {% for uri, page in tree.items() recursive %}
+    <url>
+        <loc>{{ url }}/{{ uri }}</loc>
+        <lastmod>{{ date }}</lastmod>
+        <priority>{{ page.meta.priority }}</priority>
+    </url>
+
+    {% if page.children %}
+        {{ loop(page.children.items()) }}
+    {% endif %}
+    {% endfor %}
 </urlset>
