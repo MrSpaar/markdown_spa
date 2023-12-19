@@ -37,7 +37,7 @@ A file named `style.css` will be generated and is automatically rebuilt when usi
 
 To use Tailwind CSS in your project, modify the `config.ini` file:
 ```ini
-[TAILWIND]
+[Tailwind]
 input_file = assets/tailwind.css
 config_file = tailwind.config.js
 ```
