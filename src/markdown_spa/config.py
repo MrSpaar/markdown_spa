@@ -8,9 +8,11 @@ def silent_call(command: str) -> int:
     return call(command, shell=True, stdout=open(devnull, "w"), stderr=STDOUT)
 
 def ensure_lib(module: str, package: str = "") -> bool:
-    if not import_module(module) and silent_call(f"pip install {package or module}") < 0:
-        return False
-    return True
+    try:
+        import_module(module)
+        return True
+    except ModuleNotFoundError:
+        return silent_call(f"pip install {package or module}") == 0
 
 class IniConfig(ConfigParser):
     def __init__(self, root: str, ini_file: str = "config.ini") -> None:
