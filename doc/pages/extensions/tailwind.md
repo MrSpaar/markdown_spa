@@ -5,7 +5,7 @@ description: How to use Tailwind CSS in your project
 To use Tailwind CSS in your project, modify the `config.ini` file:
 ```ini
 [Tailwind]
-input_file = assets/tailwind.css
+input_file = assets/tailwind.css ; Optional
 config_file = tailwind.config.js
 ```
 
@@ -18,7 +18,8 @@ module.exports = {
 }
 ```
 
-And at the beggining of your input file:
+You can now use tailwind in your templates and markdown files.
+Optionally, you can have an input CSS file, it just needs the following content:
 ```css
 @tailwind base;
 @tailwind components;
