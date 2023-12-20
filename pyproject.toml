@@ -3,7 +3,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-version = "3.0.2"
+version = "3.0.3"
 name = "Markdown-SPA"
 description = "A static site generator for Markdown files."
 readme = "README.md"
