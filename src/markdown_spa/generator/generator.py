@@ -26,10 +26,10 @@ class Generator:
         self.config = IniConfig(root, ini_path)
 
         for name in set(self.config.sections()) - {"DEFAULTS", "GENERATOR"}:
-            try:
-                self.extensions.append(Extension.get_module(name)(self))
-            except Exception as e:
-                raise ImportError(f"Failed to load extension {name}") from e
+            if not (module := Extension.get_module(name)):
+                raise ImportError(f"Failed to load extension {name}")
+            else:
+                self.extensions.append(module(self))
 
         self.md = Markdown(extensions=["extra", "codehilite", "meta"])
         self.env = Environment(loader=FileSystemLoader(self.config.templates_path))
@@ -109,3 +109,11 @@ class Generator:
 
     def copy_assets(self) -> None:
         copytree(self.config.assets_path, self.config.dist_assets_path, dirs_exist_ok=True)
+
+
+    def build(self) -> None:
+        self.copy_assets()
+        self.render_pages()
+
+        for extension in self.extensions:
+            extension.render()

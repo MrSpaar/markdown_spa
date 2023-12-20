@@ -1,5 +1,5 @@
+from .config import silent_call
 from .generator import Generator, main
-from .packages import enable, silent_call
 from .extensions import Extension, SASS, Tailwind, Sitemap
 
 

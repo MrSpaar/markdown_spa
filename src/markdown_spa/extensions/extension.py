@@ -1,7 +1,7 @@
 from pathlib import Path
 from importlib import import_module
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Type
+from typing import TYPE_CHECKING, Type, Optional
 
 if TYPE_CHECKING:
     from ..generator import Generator
@@ -36,5 +36,8 @@ class Extension(ABC):
         return f"{Path(__file__).parent.absolute()}/{cls.__name__}"
     
     @staticmethod
-    def get_module(name: str) -> Type["Extension"]:
-        return getattr(import_module(f"markdown_spa.extensions.{name}"), name)
+    def get_module(name: str) -> Optional[Type["Extension"]]:
+        try:
+            return getattr(import_module(f"markdown_spa.extensions.{name}"), name)
+        except (ImportError, AttributeError):
+            return None

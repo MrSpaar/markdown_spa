@@ -1,9 +1,10 @@
-from ...packages import enable
+from ...config import ensure_lib
 from ..extension import Extension
 
 from shutil import copy
 from os.path import exists
 from os import makedirs, remove
+from importlib import import_module
 from typing import TYPE_CHECKING
 
 from click import prompt
@@ -25,8 +26,8 @@ class SASS(Extension):
 
     @staticmethod
     def initialize() -> None:
-        if enable("sass", "libsass") != 0:
-            return
+        if not ensure_lib("sass", "libsass"):
+            raise Exception("Failed to install lib 'libsass'")
 
         source_path = prompt(
             "Enter the folder containing all SASS files (default: ./sass)",
@@ -48,7 +49,9 @@ class SASS(Extension):
             file.write(f"\n[SASS]\nsource_path = {source_path}\nmain_path = {source_path}/{main_path}\n")
 
     def render(self) -> None:
-        from sass import compile as sass_compile
-
+        if not ensure_lib("sass", "libsass"):
+            return
+        
         with open(f"{self.config.dist_assets_path}/style.css", "w") as f:
-            f.write(sass_compile(filename=self.main_path, output_style="compressed"))
+            from sass import compile
+            f.write(compile(filename=self.main_path, output_style="compressed"))

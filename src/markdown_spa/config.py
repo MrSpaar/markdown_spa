@@ -1,7 +1,16 @@
-from os import environ
 from os.path import exists
+from os import environ, devnull
+from importlib import import_module
+from subprocess import call, STDOUT 
 from configparser import ConfigParser
 
+def silent_call(command: str) -> int:
+    return call(command, shell=True, stdout=open(devnull, "w"), stderr=STDOUT)
+
+def ensure_lib(module: str, package: str = "") -> bool:
+    if not import_module(module) and silent_call(f"pip install {package or module}") < 0:
+        return False
+    return True
 
 class IniConfig(ConfigParser):
     def __init__(self, root: str, ini_file: str = "config.ini") -> None:

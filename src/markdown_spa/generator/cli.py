@@ -1,13 +1,13 @@
 from .generator import Generator
 from ..extensions import Extension
-from ..packages import enable, silent_call
+from ..config import silent_call, ensure_lib
 
 from pathlib import Path
 from requests import get
 from os.path import exists
+from typing import Callable
 from os import listdir, chdir
 from shutil import copytree, rmtree
-from typing import Callable, TypeVar
 from importlib_metadata import version
 
 from click import Path, group, option, argument, prompt, echo as _echo, style
@@ -16,21 +16,13 @@ from click import Path, group, option, argument, prompt, echo as _echo, style
 def echo(message: str, nl=True, **kwargs) -> None:
     _echo(style(message, **kwargs), nl=nl)
 
-T = TypeVar("T")
-def echo_wrap(message: str, func: Callable[..., T], *args, **kwargs) -> T:
+def echo_wrap(message: str, func: Callable, *args, **kwargs) -> None:
     echo(f"{message}... ", nl=False)
-
-    try:
-        res = func(*args, **kwargs)
-        echo(f"done", fg="green", bold=True)
-        return res
-    except Exception as e:
-        echo(f"failed\nError: ", fg="red", bold=True, nl=False)
-        echo(str(e))
-        exit(1)
+    func(*args, **kwargs)
+    echo(f"done", fg="green", bold=True)
 
 
-@group()
+@group(context_settings=dict(help_option_names=['-h', '--help']))
 def main() -> int:
     """Static site generator for Markdown files."""
     
@@ -87,14 +79,14 @@ def add(name: str) -> int:
         echo("No config.ini found!", fg="red", bold=True)
         return 1
 
-    try:
-        Extension.get_module(name).initialize()
-    except Exception as e:
-        echo(f"Failed to initialize {name} extension:", fg="red", bold=True)
-        echo(str(e))
+    module = Extension.get_module(name)
+    if not module:
+        echo("Extension not found!", fg="red", bold=True)
         return 1
-
+    
+    module.initialize()
     echo("Extension initialized!", fg="green", bold=True)
+    
     return 0
 
 
@@ -149,12 +141,10 @@ def init(path: str) -> int:
     
     for extension in extensions:
         if module := Extension.get_module(extension):
-            try:
-                module.initialize()
-            except Exception as e:
-                echo(f"Failed to initialize {extension} extension:", fg="red", bold=True)
-                echo(str(e))
-                return 1
+            module.initialize()
+        else:
+            echo(f"Failed to load extension {extension}", fg="red", bold=True)
+            return 1
 
     echo("Project initialized!", fg="green", bold=True)
     return 0
@@ -166,24 +156,15 @@ def init(path: str) -> int:
 def watch(config: str, path: str) -> int:
     """Starts a livereload server"""
 
-    if enable("livereload", "livereload") != 0:
+    if not ensure_lib("livereload"):
+        echo("Failed to install lib 'livereload'", fg="red", bold=True)
         return 1
+
+    generator = Generator(path, config or 'config.ini')
+    generator.build()
 
     from livereload import Server
-
     server = Server()
-    generator = Generator(path, config or 'config.ini')
-
-    try:
-        generator.copy_assets()
-        generator.render_pages()
-
-        for extension in generator.extensions:
-            extension.render()
-    except Exception as e:
-        echo(f"Build failed:", fg="red", bold=True)
-        echo(str(e))
-        return 1
 
     server.watch(f"{generator.config.assets_path}/", generator.copy_assets)
     server.watch(f"{generator.config.pages_path}/", generator.render_pages)
@@ -203,18 +184,9 @@ def watch(config: str, path: str) -> int:
 def build(config: str, path: str) -> int:
     """Build a Markdown-SPA project"""
     
-    generator = echo_wrap(
-        "Initializing generator",
-        Generator, path, config or 'config.ini'
+    echo_wrap(
+        "Building project",
+        Generator(path, config or 'config.ini').build
     )
-    
-    echo_wrap("Copying assets", generator.copy_assets)
-    echo_wrap("Rendering pages", generator.render_pages)
-
-    for extension in generator.extensions:
-        echo_wrap(
-            f"Running '{extension.name}' extension",
-            extension.render
-        )
 
     return 0
