@@ -3,66 +3,80 @@ name: Extensions
 description: Documentation on Markdown-SPA's extension system
 
 Markdown-SPA has a simple extension system that allows you to add custom functionality to your site.
-
-## Install an extension
-
-To install an extension, simply run `markdown_spa install <extension-name> <git_repo_url>`.
-This will install the extension globally for your user (in `site-packages/markdown_spa/extensions`).
-
-To then use this extension in a project, add a section to your `config.ini` file:
-```ini
-[extension-name]
-; Any configuration options for the extension
+To install an extension, simply run the following command:
+```bash
+markdown_spa install <extension-name> <git_repo_url>
 ```
 
-Markdown-SPA will automatically load all extensions in the `config.ini` file.
+This will install the extension globally for your user.
+Markdown-SPA will automatically load all extensions in the `config.ini` file:
+```ini
+[extension-name]
+extension_option = value
+...
+```
 
 ## Create an extension
-
-To create an extension, the root of your git repository must contain:
-
-- A `__init__.py` that imports your extension class
-- A `requirements.txt` that contains all dependencies for your extension
 
 You can then use the `Extension` class to create an extension:
 ```python
 from markdown_spa.extension import Extension, Generator
 
-
 class MyExtension(Extension):
     def __init__(self, generator: Generator) -> None:
         super().__init__(generator)
-        # Do any setup here
+        ...
     
     @staticmethod
     def initialize() -> None:
-        # Executed during blank project creation
-        # or when 'markdown_spa add MyExtension' is run
+        # Called when the extension is added to a project
+        # either via `markdown_spa init` or `markdown_spa add`
     
     def render(self) -> None:
-        # Main logic of the extension
+        # Called when the site is generated
+        # either via `markdown_spa build` or `markdown_spa watch`
 ```
 
-If you want to validate the user's configuration, you can use the `check_options` method:
+The `__init__` function can be used to:
+
+- Validate the user's configuration
 ```python
 self.config.check_options(
-    self.name,           # Name of the extension, always self.name     
-    (
-        "option1",       # Name of the option
-        True             # True = will check if the value is a valid path
-    ),
-    (
-        "option2",       # Name of the option
-        False            # False = no path validation
-    )
+    self.name,              # Name of the extension, always self.name     
+    ("option1", True),      # True = will check if the value is a valid path
+    ("option2", False)      # False = no path validation
 )
 ```
-
-If you need your extension to render when specific files or directories are changed, you can override the `to_watch` variable:
+- Set which files or directories the extension should watch for changes
 ```python
-# In __init__
 self.to_watch = [
     "path/to/file",
     "path/to/directory"
 ]
+```
+
+## Make an extension available to the user
+
+Every Markdown-SPA extension must be a Python module that contains a class that inherits from `markdown_spa.Extension`.
+The class' name determines the name of the extension and is used to install it.
+
+Here is a minimal example of an extension:
+
+- File structure:
+```
+myRepo
+  ├── .git
+  └── __init__.py
+```
+- `__init__.py`:
+```python
+from markdown_spa import Extension, Generator
+
+
+class MyExtension(Extension):
+    ...
+```
+- User can then install the extension with :
+```bash
+markdown_spa install MyExtension <git_repo_url>
 ```
