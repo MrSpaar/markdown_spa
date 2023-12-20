@@ -40,3 +40,6 @@ Disallow:
 
 These are the default templates that comes with blank projects, you can customize them as you wish.
 A `sitemap.xml` and `robots.txt` will be generated at the root of your website.
+
+> You can skip all the configuration by running `markdown_spa add Sitemap`
+> [!NOTE]

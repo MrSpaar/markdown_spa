@@ -2,6 +2,7 @@ from ...packages import enable
 from ..extension import Extension
 
 from shutil import copy
+from os.path import exists
 from os import makedirs, remove
 from typing import TYPE_CHECKING
 
@@ -37,7 +38,8 @@ class SASS(Extension):
             default=f"main.scss", prompt_suffix=": ", show_default=False
         )
 
-        remove("./assets/style.css")
+        if exists("./assets/style.css"):
+            remove("./assets/style.css")
 
         makedirs(source_path, exist_ok=True)
         copy(f"{SASS.path}/main.scss", f"{source_path}/{main_path}")

@@ -20,3 +20,7 @@ Then in your main SASS file you can import other SASS files:
 A file named `style.css` will be generated and is automatically rebuilt when using the test server:
 ```html
 <link rel="stylesheet" href="/assets/style.css" />
+```
+
+> You can skip all the configuration by running `markdown_spa add SASS`, note that this will delete `assets/style.css` if it exists.
+> [!NOTE]

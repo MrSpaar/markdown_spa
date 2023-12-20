@@ -3,6 +3,7 @@ from ...packages import enable
 
 from shutil import copy
 from click import prompt
+from os.path import exists
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -26,7 +27,7 @@ class Tailwind(Extension):
 
         input_file = prompt(
             "Enter the input file (default: assets/style.css)",
-            default="assets/style.css", prompt_suffix=": ", show_default=False
+            default="", prompt_suffix=": ", show_default=False
         )
 
         config_file = prompt(
@@ -36,11 +37,12 @@ class Tailwind(Extension):
 
         copy(f"{Tailwind.path}/tailwind.config.js", config_file)
 
-        with open(input_file, "w") as file:
-            file.write("@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\n")
-
         with open(f"config.ini", "a") as file:
             file.write(f"\n[Tailwind]\ninput_file = {input_file}\nconfig_file = {config_file}\n")
+
+        if not input_file:
+            with open(input_file, "w") as file:
+                file.write("@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\n")
 
     def render(self) -> None:
         from pytailwindcss import run
