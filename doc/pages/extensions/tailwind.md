@@ -32,5 +32,5 @@ A file named `style.css` will be generated and is automatically rebuilt when usi
 <link rel="stylesheet" href="/assets/style.css" />
 ```
 
-> You can skip all the configuration by running `markdown_spa add Tailwind`
+> You can skip all the configuration by running `markdown_spa add Tailwind`, note that this will delete `assets/style.css` if it exists.
 > [!NOTE]

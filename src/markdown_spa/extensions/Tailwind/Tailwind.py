@@ -1,6 +1,7 @@
 from .. import Extension
 from ...packages import enable
 
+from os import remove
 from shutil import copy
 from click import prompt
 from os.path import exists
@@ -39,6 +40,9 @@ class Tailwind(Extension):
 
         with open(f"config.ini", "a") as file:
             file.write(f"\n[Tailwind]\ninput_file = {input_file}\nconfig_file = {config_file}\n")
+
+        if exists("./assets/style.css"):
+            remove("./assets/style.css")
 
         if not input_file:
             with open(input_file, "w") as file:
