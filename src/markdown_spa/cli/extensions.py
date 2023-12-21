@@ -2,6 +2,7 @@ from .utils import echo_wrap, echo, initialize_extension, silent_call
 
 from shutil import rmtree
 from os.path import exists
+from sys import executable
 from click import command, argument
 
 
@@ -19,7 +20,7 @@ def install(name: str, url: str) -> int:
     echo_wrap("Cloning repository", silent_call, f"git clone {url} {path}")
 
     if exists(f"{path}/requirements.txt"):
-        echo_wrap("Installing requirements", silent_call, f"pip install -r {name}/requirements.txt")
+        echo_wrap("Installing requirements", silent_call, f"{executable} -m pip install -r {name}/requirements.txt")
     
     echo("Extension installed!", fg="green", bold=True)
     return 0

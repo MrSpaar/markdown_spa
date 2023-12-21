@@ -1,5 +1,6 @@
 from ..generator import Generator, Dependency, get_extension
 
+from sys import executable
 from importlib.util import find_spec
 from typing import Callable, Optional
 from subprocess import PIPE, CalledProcessError, run
@@ -35,7 +36,7 @@ def silent_call(command) -> Optional[str]:
 
 def ensure_installed(dependency: Dependency) -> Optional[str]:
     if not find_spec(dependency.module):
-        return silent_call(f"pip install {dependency.pip_package}")
+        return silent_call(f"{executable} -m pip install {dependency.pip_package}")
 
 
 def initialize_extension(extension: str) -> Optional[str]:
