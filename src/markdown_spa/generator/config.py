@@ -71,8 +71,9 @@ class IniConfig:
 
         faulty_paths: list[str] = []
         for name, path in (
-                ("dist_path", self.dist_path), ("pages_path", self.pages_path),
-                ("assets_path", self.assets_path), ("templates_path", self.templates_path),
+                ("pages_path", self.pages_path),
+                ("assets_path", self.assets_path),
+                ("templates_path", self.templates_path),
                 ("base_template", f"{self.templates_path}/{self.base_template}"),
                 ("nav_template", f"{self.templates_path}/{self.nav_template}")
         ):
