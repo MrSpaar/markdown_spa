@@ -12,10 +12,13 @@ def main_group() -> int:
     """Static site generator for Markdown files."""
     
     current = version("markdown-spa")
-    latest = get("https://pypi.org/pypi/markdown-spa/json").json()
 
-    if "info" in latest and latest["info"]["version"] > current:
-        echo(f"Version {latest} is available, run 'pip install -U markdown-spa' to update.", fg="yellow", bold=True)
+    try:
+        latest = get("https://pypi.org/pypi/markdown-spa/json").json()["info"]["version"]
+        if latest > current:
+            echo(f"Version {latest} is available, run 'pip install -U markdown-spa' to update.", fg="yellow", bold=True)
+    except:
+        pass
 
     return 0
 
