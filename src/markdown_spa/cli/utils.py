@@ -14,8 +14,12 @@ def echo(message: str, nl=True, **kwargs) -> None:
 def echo_wrap(message: str, func: Callable[..., Optional[str]], *args, **kwargs) -> Optional[str]:
     echo(f"{message}... ", nl=False)
     err = func(*args, **kwargs)
+
+    if err:
+        echo("failed", fg="red", bold=True)
+        return err
+    
     echo(f"done", fg="green", bold=True)
-    return err
 
 
 def silent_call(command) -> Optional[str]:

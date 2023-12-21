@@ -69,10 +69,15 @@ class IniConfig:
             faulty_extensions_str = "\n  - ".join(faulty_extensions)
             return f"Extensions not found: \n  - {faulty_extensions_str}"
 
-        faulty_paths = [f"./{path}" for path in (
-                self.pages_path, self.assets_path, self.templates_path,
-                f"{self.templates_path}/{self.base_template}", f"{self.templates_path}/{self.nav_template}"
-        ) if not exists(path)]
+        faulty_paths: list[str] = []
+        for name, path in (
+                ("dist_path", self.dist_path), ("pages_path", self.pages_path),
+                ("assets_path", self.assets_path), ("templates_path", self.templates_path),
+                ("base_template", f"{self.templates_path}/{self.base_template}"),
+                ("nav_template", f"{self.templates_path}/{self.nav_template}")
+        ):
+            if not exists(path):
+                faulty_paths.append(f"{name} ({path}) not found")
 
         if faulty_paths:
             faulty_paths_str = "\n  - ".join(faulty_paths)
@@ -96,7 +101,7 @@ class IniConfig:
                 path = f"{self.root}/{self.parser.get(section, name)}"
 
             if option.is_path and not exists(path):
-                faulty_options.append(f"Path not found: ./{path}")
+                faulty_options.append(f"{name} ({path}) not found")
                 continue
         
         if faulty_options:
