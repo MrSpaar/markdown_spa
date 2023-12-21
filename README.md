@@ -1,9 +1,9 @@
-[![Documentation](https://img.shields.io/badge/Documentation-grey?&logo=read-the-docs)](https://mrspaar.github.io/Markdown-SPA/)
-[![PyPi Package](https://img.shields.io/badge/pip%20install-markdown_spa-blue?&logo=pypi)](https://pypi.org/project/markdown_spa/)
-[![GitHub Release](https://img.shields.io/github/v/release/mrspaar/Markdown-SPA?&logo=github)](https://github.com/mrspaar/Markdown-SPA/releases)
-[![GitHub License](https://img.shields.io/github/license/mrspaar/Markdown-SPA?&logo=github)](https://github.com/mrspaar/Markdown-SPA/blob/master/LICENSE)
+[![Documentation](https://img.shields.io/badge/Documentation-grey?&logo=read-the-docs)](https://mrspaar.github.io/markdown_spa/)
+[![PyPi Package](https://img.shields.io/badge/pip%20install-markdown__spa-blue?&logo=pypi)](https://pypi.org/project/markdown_spa/)
+[![GitHub Release](https://img.shields.io/github/v/release/mrspaar/markdown_spa?&logo=github)](https://github.com/mrspaar/markdown_spa/releases)
+[![GitHub License](https://img.shields.io/github/license/mrspaar/markdown_spa&logo=github)](https://github.com/mrspaar/markdown_spa/blob/master/LICENSE)
 
-[Markdown-SPA](https://pypi.org/project/Markdown-SPA) is a Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markdown`](https://pypi.org/project/Markdown/)) static site generator:
+[Markdown-SPA](https://pypi.org/project/markdown_spa) is a Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markdown`](https://pypi.org/project/Markdown/)) static site generator:
 
 - [x] Powerful templating
 - [x] SEO optimized
