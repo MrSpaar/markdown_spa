@@ -1,5 +1,5 @@
 build/
 Hello/
-src/Markdown_SPA.egg-info/
 generated/
 __pycache__/
+src/*.egg-info/

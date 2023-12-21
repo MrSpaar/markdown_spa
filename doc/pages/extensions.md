@@ -20,40 +20,38 @@ extension_option = value
 
 You can then use the `Extension` class to create an extension:
 ```python
-from markdown_spa.extension import Extension, Generator
+from markdown_spa.extension import Extension, Dependency, Option
 
 class MyExtension(Extension):
-    def __init__(self, generator: Generator) -> None:
-        super().__init__(generator)
+    DEPENDENCIES = (
+        Dependency("import_name", "pip_package_name"),
         ...
+    )
+    OPTIONS = {
+        "option_name": Option(default="default_value")
+    }
     
+    @property
+    def TO_WATCH(self) -> List[str]:
+        # Any changes to these files will trigger a MyExtension.render
+        return [
+            "path/to/file",                                   # Regular file
+            f"{self.root}/{self.get_option('option_name')}"   # Value of an option
+        ]
+
+    def render(self) -> None:
+        # Called either via `markdown_spa build` or `markdown_spa watch` (if TO_WATCH is not empty)
+
     @staticmethod
     def initialize() -> None:
         # Called when the extension is added to a project
         # either via `markdown_spa init` or `markdown_spa add`
-    
-    def render(self) -> None:
-        # Called when the site is generated
-        # either via `markdown_spa build` or `markdown_spa watch`
 ```
 
-The `__init__` function can be used to:
+Dependencies will be automatically installed and that part of the initialization process is automated:
 
-- Validate the user's configuration
-```python
-self.config.check_options(
-    self.name,              # Name of the extension, always self.name     
-    ("option1", True),      # True = will check if the value is a valid path
-    ("option2", False)      # False = no path validation
-)
-```
-- Set which files or directories the extension should watch for changes
-```python
-self.to_watch = [
-    "path/to/file",
-    "path/to/directory"
-]
-```
+- Option values are prompted to the user
+- The `config.ini` file is updated with the user's input
 
 ## Make an extension available to the user
 
@@ -70,8 +68,7 @@ myRepo
 ```
 - `__init__.py`:
 ```python
-from markdown_spa import Extension, Generator
-
+from markdown_spa import Extension
 
 class MyExtension(Extension):
     ...

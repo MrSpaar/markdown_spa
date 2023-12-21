@@ -1,57 +1,52 @@
-from ..extension import Extension
+from ...generator import Extension, Option
 
 from shutil import copy
 from datetime import datetime
-from typing import TYPE_CHECKING
-
-from click import prompt
-from jinja2 import Template
-
-if TYPE_CHECKING:
-    from ...generator import Generator
+from configparser import ConfigParser
 
 
 class Sitemap(Extension):
-    def __init__(self, generator: 'Generator') -> None:
-        super().__init__(generator)
-        
-        self.config.check_options(self.name, ("sitemap", True), ("robots", True))
-        self.to_watch = [
-            f"{self.config.root}/{self.config.get(self.name, 'robots')}",
-            f"{self.config.root}/{self.config.get(self.name, 'sitemap')}"
+    OPTIONS = {
+        "robots": Option(default="robots.txt", is_template=True),
+        "sitemap": Option(default="sitemap.xml", is_template=True),
+    }
+
+    @property
+    def TO_WATCH(self) -> list[str]:
+        return [
+            f"{self.config.root}/{self.get_option("robots")}",
+            f"{self.config.root}/{self.get_option("sitemap")}",
         ]
 
-        with open(self.to_watch[0]) as f:
-            self.robots_template = Template(f.read())
-
-        with open(self.to_watch[1]) as f:
-            self.sitemap_template = Template(f.read())
-
-    @staticmethod
-    def initialize() -> None:
-        robots = prompt(
-            "Enter the path to the robots template (default: ./templates/robots.txt)",
-            default="templates/robots.txt", prompt_suffix=": ", show_default=False
-        )
-
-        sitemap = prompt(
-            "Enter the path to the sitemap template (default: ./templates/sitemap.xml)",
-            default="templates/sitemap.xml", prompt_suffix=": ", show_default=False
-        )
-
-        copy(f"{Sitemap.path}/robots.txt", robots)
-        copy(f"{Sitemap.path}/sitemap.xml", sitemap)
-
-        with open("config.ini", "a") as file:
-            file.write(f"\n[Sitemap]\nrobots = {robots}\nsitemap = {sitemap}\n")
-
-
     def render(self) -> None:
+        robots_template = self.generator.env.get_template(
+            self.get_option("robots")
+        )
+
+        sitemap_template = self.generator.env.get_template(
+            self.get_option("sitemap")
+        )
+
         with open(f"{self.config.dist_path}/robots.txt", "w") as f:
-            f.write(self.robots_template.render(url=self.config.base_url))
+            f.write(robots_template.render(url=self.config.base_url))
 
         with open(f"{self.config.dist_path}/sitemap.xml", "w") as f:
-            f.write(self.sitemap_template.render(
+            f.write(sitemap_template.render(
                 tree=self.generator.tree, url=self.config.base_url,
                 date=datetime.now().strftime("%Y-%m-%dT%H:%M:%S+00:00")
             ))
+
+    @staticmethod
+    def initialize(**kwargs) -> None:
+        config = ConfigParser()
+        config.read("config.ini")
+
+        copy(
+            f"{Sitemap.PATH}/robots.txt",
+            f"{config.get('TEMPLATES', 'templates_path')}/{kwargs['robots']}"
+        )
+
+        copy(
+            f"{Sitemap.PATH}/sitemap.xml",
+            f"{config.get('TEMPLATES', 'templates_path')}/{kwargs['sitemap']}"
+        )

@@ -3,8 +3,8 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-version = "3.0.3"
-name = "Markdown-SPA"
+version = "1.0.0"
+name = "markdown_spa"
 description = "A static site generator for Markdown files."
 readme = "README.md"
 authors = [{name = "MrSpaar"}]
@@ -35,9 +35,9 @@ classifiers = [
 ]
 
 [project.urls]
-Documentation = "https://mrspaar.github.io/Markdown-SPA/"
-Homepage = "https://github.com/MrSpaar/Markdown-SPA"
-Issues = "https://github.com/MrSpaar/Markdown-SPA/issues"
+Documentation = "https://mrspaar.github.io/markdown_spa/"
+Homepage = "https://github.com/MrSpaar/markdown_spa"
+Issues = "https://github.com/MrSpaar/markdown_spa/issues"
 
 [project.scripts]
 markdown_spa = "markdown_spa:main"

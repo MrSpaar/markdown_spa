@@ -2,14 +2,23 @@ order: 3
 name: Tailwind
 description: How to use Tailwind CSS in your project
 
-To use Tailwind CSS in your project, modify the `config.ini` file:
+The Tailwind extension allows you to use Tailwind CSS in your templates and markdown files.
+
+To add it to an existing project, run `markdown_spa add Tailwind`, there are two options:
+
+- `config_file`: The path to the Tailwind config file (relative to project root)
+- `input_file`: The path to the input CSS file (optional, relative to project root)
+
+## Manual configuration
+
+First, modify your `config.ini` file to add the following section:
 ```ini
 [Tailwind]
-input_file = assets/tailwind.css ; Optional
+input_file = assets/tailwind.css
 config_file = tailwind.config.js
 ```
 
-Then, to purge unused CSS, modify the `tailwind.config.js` file:
+Then, to purge unused CSS, create a `tailwind.config.js` file:
 ```js
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -32,6 +41,3 @@ A file named `style.css` will be generated and is automatically rebuilt when usi
 ```html
 <link rel="stylesheet" href="/assets/style.css" />
 ```
-
-> You can skip all the configuration by running `markdown_spa add Tailwind`, note that this will delete `assets/style.css` if it exists.
-> [!NOTE]

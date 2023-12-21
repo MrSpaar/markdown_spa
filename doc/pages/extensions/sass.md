@@ -2,7 +2,19 @@ order: 2
 name: SASS
 description: How to use SASS in your project
 
-You can enable SASS support by modifying the `config.ini` file:
+The SASS extension allows you to use SASS in your project.
+
+To add it to an existing project, run `markdown_spa add SASS`, there are two options:
+
+- `source_path`: The path to the directory containing your SASS files
+- `main_path`: The path to the main SASS file (relative to project root)
+
+> The automatic configuration will delete `assets/style.css` if it exists.
+> [!WARNING]
+
+## Manual configuration
+
+First, modify your `config.ini` file to add the following section:
 ```ini
 [SASS]
 source_path = scss
@@ -21,6 +33,3 @@ A file named `style.css` will be generated and is automatically rebuilt when usi
 ```html
 <link rel="stylesheet" href="/assets/style.css" />
 ```
-
-> You can skip all the configuration by running `markdown_spa add SASS`, note that this will delete `assets/style.css` if it exists.
-> [!NOTE]

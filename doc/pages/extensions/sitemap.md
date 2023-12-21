@@ -4,14 +4,21 @@ description: Automatic sitemap and robots.txt generation
 
 `Sitemap` comes with `Markdown-SPA` by default, it allows you to generate a `sitemap.xml` and `robots.txt` files for your website.
 
-First, add the following to your `config.ini`:
+To add it to an existing project, run `markdown_spa add Sitemap`, there are two options:
+
+- `sitemap`: The path to the `sitemap.xml` template (relative to templates directory)
+- `robots`: The path to the `robots.txt` template (relative to templates directory)
+
+## Manual configuration
+
+First, modify your `config.ini` file to add the following section:
 ```ini
 [Sitemap]
-sitemap = templates/sitemap.xml
-robots = templates/robots.txt
+sitemap = sitemap.xml
+robots = robots.txt
 ```
 
-You can then create the `sitemap.xml` and `robots.txt` files in the `templates` directory:
+You can then create the `sitemap.xml` and `robots.txt` files in your templates directory:
 
 - `robots.txt` :
 ```
@@ -40,6 +47,3 @@ Disallow:
 
 These are the default templates that comes with blank projects, you can customize them as you wish.
 A `sitemap.xml` and `robots.txt` will be generated at the root of your website.
-
-> You can skip all the configuration by running `markdown_spa add Sitemap`
-> [!NOTE]

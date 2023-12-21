@@ -1,49 +1,45 @@
-from ..config import IniConfig
-from ..extensions import Extension
+from .config import IniConfig
+from .extension import Extension, get_extension
 
 from os.path import isdir
 from shutil import copytree
-from typing import TypedDict
 from os import makedirs, listdir
+from typing import TypedDict, Optional
 from re import Match, compile as re_compile
 
 from markdown import Markdown
 from jinja2 import Environment, FileSystemLoader
 
 
+class Page(TypedDict):
+    """Represents a markdown page"""
+
+    meta: dict[str, str]
+    children: dict[str, "Page"]
+
+
 class Generator:
+    """Generates the project"""
+
     QUOTE_RE = re_compile(r'> \[!([A-Z]+)\]')
     CHECKBOX_RE = re_compile(r'\[([ xX])\] (.*)')
     INTERNAL_LINK_RE = re_compile(r'(href|src)=["\'](/[^"\']+|/)["\']')
     TAG_RE = re_compile(r'^[ ]{0,3}(?P<key>[A-Za-z0-9_-]+):\s*(?P<value>.*)')
 
-    class Page(TypedDict):
-        meta: dict[str, str]
-        children: dict[str, "Generator.Page"]
-
     def __init__(self, root: str = "", ini_path: str = "config.ini") -> None:
         self.extensions: list[Extension] = []
         self.config = IniConfig(root, ini_path)
 
-        for name in set(self.config.sections()) - {"DEFAULTS", "GENERATOR"}:
-            if not (module := Extension.get_module(name)):
-                raise ImportError(f"Failed to load extension {name}")
-            else:
-                self.extensions.append(module(self))
-
         self.md = Markdown(extensions=["extra", "codehilite", "meta"])
-        self.env = Environment(loader=FileSystemLoader(self.config.templates_path))
+        self.env = Environment()
 
     @staticmethod
     def __to_checkbox(m: Match) -> str:
         checked: str = ' checked' if m.group(1).lower() == 'x' else ''
         return f"<input type='checkbox' disabled{checked} aria-label='checkbox list item'> {m.group(2)}"
     
-    def __get_defaults(self) -> dict[str, str]:
-        return {**self.config["DEFAULTS"]} if self.config.has_section("DEFAULTS") else {}
-
     def __read_meta(self, path: str) -> dict[str, str]:
-        meta: dict[str, str] = self.__get_defaults()
+        meta: dict[str, str] = self.config.defaults()
 
         with open(path) as f:
             while (len(line := f.readline()) > 2 and (match := Generator.TAG_RE.match(line))):
@@ -51,8 +47,8 @@ class Generator:
         
         return meta
 
-    def __prepare(self, full_path: str) -> dict[str, Page]:
-        entry: dict[str, Generator.Page] = {}
+    def __prepare(self, full_path: str) -> dict[str, Page] :
+        entry: dict[str, Page] = {}
 
         for path in listdir(full_path):
             item_path = f"{full_path}/{path}"
@@ -65,14 +61,14 @@ class Generator:
             if isdir(item_path) and uri in entry:
                 entry[uri]["children"] = self.__prepare(item_path)
             elif isdir(item_path):
-                entry[uri] = Generator.Page(
-                    meta=self.__get_defaults(),
+                entry[uri] = Page(
+                    meta=self.config.defaults(),
                     children=self.__prepare(item_path)
                 )
             elif uri in entry:
                 entry[uri]["meta"] = self.__read_meta(item_path)
             else:
-                entry[uri] = Generator.Page(meta=self.__read_meta(item_path), children={})
+                entry[uri] = Page(meta=self.__read_meta(item_path), children={})
         
         return entry
 
@@ -98,22 +94,47 @@ class Generator:
             if page["children"]:
                 self.__render_tree(page["children"])
 
-    def render_pages(self) -> None:
+    def load_config(self) -> Optional[str]:
+        """Loads config from config_path"""
+
+        if error := self.config.load_config():
+            return error
+        
+        for extension in self.config.extensions:
+            instance = get_extension(extension)(self)
+
+            if err := self.config.check_options(extension, instance.OPTIONS):
+                return err
+
+            self.extensions.append(instance)
+
+        self.env.loader = FileSystemLoader(self.config.templates_path)
+
+    def render_pages(self) -> Optional[str]:
+        """Renders pages from pages_path to dist_path"""
+
         makedirs(self.config.dist_path, exist_ok=True)
 
-        self.tree = self.__prepare(self.config.pages_path)
-        self.nav = self.env.get_template("nav.html").render(tree=self.tree)
+        try:
+            self.tree = self.__prepare(self.config.pages_path)
+        except Exception as e:
+            return f"Error while preparing pages: {e}"
 
-        self.base_template = self.env.get_template("base.html")
-        self.__render_tree(self.tree)
+        try:
+            self.nav = self.env.get_template(self.config.nav_template).render(tree=self.tree)
+        except Exception as e:
+            return f"Error while rendering nav template: {e}"
+        
+        try:
+            self.base_template = self.env.get_template(self.config.base_template)
+            self.__render_tree(self.tree)
+        except Exception as e:
+            return f"Error while rendering pages: {e}"
 
-    def copy_assets(self) -> None:
-        copytree(self.config.assets_path, self.config.dist_assets_path, dirs_exist_ok=True)
+    def copy_assets(self) -> Optional[str]:
+        """Copies assets from assets_path to dist_assets_path"""
 
-
-    def build(self) -> None:
-        self.copy_assets()
-        self.render_pages()
-
-        for extension in self.extensions:
-            extension.render()
+        try:
+            copytree(self.config.assets_path, self.config.dist_assets_path, dirs_exist_ok=True)
+        except Exception as e:
+            return f"Error while copying assets: {e}"

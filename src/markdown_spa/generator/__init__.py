@@ -1,2 +1,3 @@
-from .cli import main
-from .generator import Generator, Extension
+from .generator import Generator
+from .extension import Extension, get_extension
+from .config import Option, Dependency, IniConfig, T

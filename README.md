@@ -1,5 +1,5 @@
 [![Documentation](https://img.shields.io/badge/Documentation-grey?&logo=read-the-docs)](https://mrspaar.github.io/Markdown-SPA/)
-[![PyPi Package](https://img.shields.io/badge/pip%20install-Markdown--SPA-blue?&logo=pypi)](https://pypi.org/project/Markdown-SPA/)
+[![PyPi Package](https://img.shields.io/badge/pip%20install-markdown_spa-blue?&logo=pypi)](https://pypi.org/project/markdown_spa/)
 [![GitHub Release](https://img.shields.io/github/v/release/mrspaar/Markdown-SPA?&logo=github)](https://github.com/mrspaar/Markdown-SPA/releases)
 [![GitHub License](https://img.shields.io/github/license/mrspaar/Markdown-SPA?&logo=github)](https://github.com/mrspaar/Markdown-SPA/blob/master/LICENSE)
 
