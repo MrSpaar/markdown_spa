@@ -10,8 +10,8 @@ class SASS(Extension):
         Dependency("sass", "libsass"),
     )
     OPTIONS = {
-        "source_path": Option(default="sass", is_path=True),
-        "main_path": Option(default="main.scss", is_path=True)
+        "source_path": Option(default="scss", is_path=True),
+        "main_path": Option(default="scss/main.scss", is_path=True)
     }
 
     @property
