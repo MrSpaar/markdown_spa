@@ -29,6 +29,8 @@ class MyExtension(Extension):
     )
     OPTIONS = {
         "option_name": Option(default="default_value")
+        # if is_path=True, os.path.exists will be called on the value
+        # if is_template=True, the template path will be prepended to the checked path
     }
     
     @property
@@ -40,7 +42,8 @@ class MyExtension(Extension):
         ]
 
     def render(self) -> None:
-        # Called either via `markdown_spa build` or `markdown_spa watch` (if TO_WATCH is not empty)
+        # Called either via `markdown_spa build`
+        # or `markdown_spa watch` (if TO_WATCH is not empty)
 
     @staticmethod
     def initialize() -> None:
