@@ -5,22 +5,18 @@ from importlib.util import find_spec
 from typing import Callable, Optional
 from subprocess import PIPE, CalledProcessError, run
 
-from click import echo as _echo, style, prompt
-
-
-def echo(message: str, nl=True, **kwargs) -> None:
-    _echo(style(message, **kwargs), nl=nl)
+from click import secho, style, prompt
 
 
 def echo_wrap(message: str, func: Callable[..., Optional[str]], *args, **kwargs) -> Optional[str]:
-    echo(f"{message}... ", nl=False)
+    secho(f"{message}... ", nl=False)
     err = func(*args, **kwargs)
 
     if err:
-        echo("failed", fg="red", bold=True)
+        secho("failed", fg="red", bold=True)
         return err
     
-    echo(f"done", fg="green", bold=True)
+    secho(f"done", fg="green", bold=True)
 
 
 def silent_call(command) -> Optional[str]:
@@ -53,13 +49,9 @@ def initialize_extension(extension: str) -> Optional[str]:
 
     for pip_package in module.DEPENDENCIES:
         if err := ensure_installed(pip_package):
-            echo("failed.", fg="red", bold=True)
-            echo(err)
-            return
-        
-    echo("done", fg="green", bold=True)
-    module.initialize(**values)
-    
+            return err
+
+    module.initialize(**values)    
     with open("config.ini", "a") as file:
         file.write(f"\n[{extension}]\n")
         for key, value in values.items():
@@ -68,27 +60,27 @@ def initialize_extension(extension: str) -> Optional[str]:
 
 def build_project(generator: Generator) -> int:
     if err := echo_wrap("Loading config", generator.load_config):
-        echo(err)
+        secho(err)
         return 1
 
     for extension in generator.extensions:
         for dependency in extension.DEPENDENCIES:
             if err := echo_wrap(f"Searching for {dependency}", ensure_installed, dependency):
-                echo(err)
+                secho(err)
                 return 1
 
     if err := echo_wrap("Copying assets", generator.copy_assets):
-        echo(err)
+        secho(err)
         return 1
 
     if err := echo_wrap("Rendering pages", generator.render_pages):
-        echo(err)
+        secho(err)
         return 1
 
     for extension in generator.extensions:
         if err := echo_wrap(f"Rendering '{extension.__class__.__name__}' extension", extension.render):
-            echo(err)
+            secho(err)
             return 1
 
-    echo("Project built!", fg="green", bold=True)
+    secho("Project built!", fg="green", bold=True)
     return 0

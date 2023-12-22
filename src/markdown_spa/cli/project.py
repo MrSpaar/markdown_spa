@@ -1,13 +1,12 @@
 from ..generator import Generator, Dependency
-from .utils import echo, initialize_extension, echo_wrap, ensure_installed, build_project
-
+from .utils import initialize_extension, ensure_installed, build_project
 
 from os.path import exists
 from shutil import copytree
 from os import listdir, chdir
 from pathlib import Path as PPath
 
-from click import Path, command, option, argument, prompt
+from click import Path, command, option, argument, prompt, secho
 
 
 @command()
@@ -16,11 +15,17 @@ def init(path: str) -> int:
     """Create a blank Markdown-SPA project"""
 
     if exists(path):
-        echo("A file or directory with that name already exists!", fg="red", bold=True)
+        secho("A file or directory with that name already exists!", fg="red", bold=True)
         return 1
 
-    echo_wrap("Copying blank project... ", 
-              copytree, PPath(__file__).parent/"blank", path, dirs_exist_ok=True)
+    try:
+        secho("Copying blank project... ", nl=False)
+        copytree(PPath(__file__).parent/"blank", path)
+        secho("done", fg="green", bold=True)
+    except Exception as e:
+        secho("failed.", fg="red", bold=True)
+        secho(str(e))
+        return 1
 
     dirs = [
         path for path in listdir(PPath(__file__).parent.parent/"extensions")
@@ -34,21 +39,23 @@ def init(path: str) -> int:
     )
 
     if not inp:
-        echo("Project initialized!", fg="green", bold=True)
+        secho("Project initialized!", fg="green", bold=True)
         return 0
 
     extensions = inp.split(" ")
     if diff := set(extensions).difference(dirs):
-        echo(f"Unknown extensions: {', '.join(diff)}", fg="red", bold=True)
+        secho(f"Unknown extensions: {', '.join(diff)}", fg="red", bold=True)
         return 1
     
     chdir(path)
     for extension in extensions:
+        secho(f"Initializing {extension}... ", fg="yellow", bold=True)
+
         if err := initialize_extension(extension):
-            echo(err, fg="red", bold=True)
+            secho(err, fg="red", bold=True)
             return 1
 
-    echo("Project initialized!", fg="green", bold=True)
+    secho("Project initialized!", fg="green", bold=True)
     return 0
 
 
@@ -59,8 +66,8 @@ def watch(config: str, path: str) -> int:
     """Starts a livereload server"""
 
     if err := ensure_installed(Dependency("livereload")):
-        echo(err)
-        echo("Failed to install livereload!", fg="red", bold=True)
+        secho(err)
+        secho("Failed to install livereload!", fg="red", bold=True)
         return 1
 
     generator = Generator(path, config or 'config.ini')

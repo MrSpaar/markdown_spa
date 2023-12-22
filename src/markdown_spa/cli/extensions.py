@@ -1,4 +1,4 @@
-from .utils import echo_wrap, echo, initialize_extension, silent_call
+from .utils import echo_wrap, initialize_extension, silent_call
 
 from os import listdir
 from pathlib import Path
@@ -6,7 +6,7 @@ from shutil import rmtree
 from os.path import exists
 from sys import executable
 
-from click import command, argument
+from click import command, argument, secho
 
 
 @command()
@@ -16,7 +16,7 @@ def install(name: str, url: str) -> int:
     """Install an extension from a git repository"""
 
     if not url.endswith(".git"):
-        echo("Invalid git repository URL!", fg="red", bold=True)
+        secho("Invalid git repository URL!", fg="red", bold=True)
         return 1
 
     path = f"{Path(__file__).parent.parent}/extensions/{name}"
@@ -25,7 +25,7 @@ def install(name: str, url: str) -> int:
     if exists(f"{path}/requirements.txt"):
         echo_wrap("Installing requirements", silent_call, f"{executable} -m pip install -r {name}/requirements.txt")
     
-    echo("Extension installed!", fg="green", bold=True)
+    secho("Extension installed!", fg="green", bold=True)
     return 0
 
 
@@ -36,11 +36,11 @@ def uninstall(name: str) -> int:
 
     path = f"{Path(__file__).parent.parent}/extensions/{name}"
     if not exists(path):
-        echo("Extension not found!", fg="red", bold=True)
+        secho("Extension not found!", fg="red", bold=True)
         return 1
 
     rmtree(path)
-    echo("Extension removed!", fg="green", bold=True)
+    secho("Extension removed!", fg="green", bold=True)
     return 0
 
 
@@ -50,7 +50,7 @@ def list() -> int:
 
     modules_path = f"{Path(__file__).parent.parent}/extensions"
     if not exists(modules_path):
-        echo("No extensions found!", fg="red", bold=True)
+        secho("No extensions found!", fg="red", bold=True)
         return 1
 
     extensions = [
@@ -59,11 +59,11 @@ def list() -> int:
     ]
 
     if not extensions:
-        echo("No extensions found!", fg="red", bold=True)
+        secho("No extensions found!", fg="red", bold=True)
         return 1
 
-    echo(f"Installed extensions: ", fg="green", bold=True, nl=False)
-    echo(', '.join(extensions))
+    secho(f"Installed extensions: ", fg="green", bold=True, nl=False)
+    secho(', '.join(extensions))
 
     return 0
 
@@ -74,12 +74,12 @@ def add(name: str) -> int:
     """Add an extension to the project"""
 
     if not exists("./config.ini"):
-        echo("No config.ini found!", fg="red", bold=True)
+        secho("No config.ini found!", fg="red", bold=True)
         return 1
 
     if err := initialize_extension(name):
-        echo(err, fg="red", bold=True)
+        secho(err, fg="red", bold=True)
         return 1
     
-    echo("Extension initialized!", fg="green", bold=True)
+    secho("Extension initialized!", fg="green", bold=True)
     return 0
