@@ -3,15 +3,30 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-version = "1.0.3"
+version = "1.0.4"
 name = "markdown_spa"
 description = "A static site generator for Markdown files."
 readme = "README.md"
-authors = [{name = "MrSpaar"}]
-keywords = ["markdown", "SPA", "SSG", "CLI"]
+authors = [
+    {name = "MrSpaar"}
+]
+keywords = [
+    "markdown", 
+    "SPA", 
+    "SSG",
+    "CLI"
+]
 license = {file = "LICENSE"}
 requires-python = ">=3.8"
-dependencies = ["markdown", "jinja2", "pygments", "click", "requests", "importlib_metadata"]
+dependencies = [
+    "markdown",
+    "jinja2",
+    "pygments",
+    "click",
+    "requests",
+    "importlib_metadata",
+    "colorama; platform_system == 'Windows'"
+]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Console",

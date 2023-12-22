@@ -1,8 +1,11 @@
 from .utils import echo_wrap, echo, initialize_extension, silent_call
 
+from os import listdir
+from pathlib import Path
 from shutil import rmtree
 from os.path import exists
 from sys import executable
+
 from click import command, argument
 
 
@@ -16,7 +19,7 @@ def install(name: str, url: str) -> int:
         echo("Invalid git repository URL!", fg="red", bold=True)
         return 1
 
-    path = f"{__file__[:-7]}/../extensions/{name}"
+    path = f"{Path(__file__).parent.parent}/extensions/{name}"
     echo_wrap("Cloning repository", silent_call, f"git clone {url} {path}")
 
     if exists(f"{path}/requirements.txt"):
@@ -31,13 +34,37 @@ def install(name: str, url: str) -> int:
 def uninstall(name: str) -> int:
     """Uninstall an extension"""
 
-    path = f"{__file__[:-7]}/../extensions/{name}"
+    path = f"{Path(__file__).parent.parent}/extensions/{name}"
     if not exists(path):
         echo("Extension not found!", fg="red", bold=True)
         return 1
 
     rmtree(path)
     echo("Extension removed!", fg="green", bold=True)
+    return 0
+
+
+@command()
+def list() -> int:
+    """List installed extensions"""
+
+    modules_path = f"{Path(__file__).parent.parent}/extensions"
+    if not exists(modules_path):
+        echo("No extensions found!", fg="red", bold=True)
+        return 1
+
+    extensions = [
+        path for path in listdir(modules_path)
+        if path not in ("__pycache__", "__init__.py") and exists (f"{modules_path}/{path}/__init__.py")
+    ]
+
+    if not extensions:
+        echo("No extensions found!", fg="red", bold=True)
+        return 1
+
+    echo(f"Installed extensions: ", fg="green", bold=True, nl=False)
+    echo(', '.join(extensions))
+
     return 0
 
 
@@ -55,5 +82,4 @@ def add(name: str) -> int:
         return 1
     
     echo("Extension initialized!", fg="green", bold=True)
-    
     return 0

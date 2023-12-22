@@ -1,6 +1,6 @@
 from .utils import echo
 from .project import init, watch, build
-from .extensions import install, uninstall, add
+from .extensions import install, uninstall, add, list
 
 from click import group
 from requests import get
@@ -32,5 +32,6 @@ def main() -> None:
     main_group.add_command(install)
     main_group.add_command(uninstall)
     main_group.add_command(add)
+    main_group.add_command(list)
 
     main_group()
