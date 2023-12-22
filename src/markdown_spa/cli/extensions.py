@@ -6,13 +6,14 @@ from shutil import rmtree
 from os.path import exists
 from sys import executable
 
-from click import command, argument, secho
+from click import command, argument, option, secho
 
 
 @command()
+@option("--upgrade", "-U", is_flag=True, help="Upgrade or install an extension", default=False)
 @argument("name", type=str)
 @argument("url", type=str)
-def install(name: str, url: str) -> int:
+def install(upgrade: bool, name: str, url: str) -> int:
     """Install an extension from a git repository"""
 
     if not url.endswith(".git"):
@@ -20,7 +21,11 @@ def install(name: str, url: str) -> int:
         return 1
 
     path = f"{Path(__file__).parent.parent}/extensions/{name}"
-    echo_wrap("Cloning repository", silent_call, f"git clone {url} {path}")
+
+    if upgrade and exists(path):
+        echo_wrap("Updating repository", silent_call, f"git -C {path} pull")
+    else:
+        echo_wrap("Cloning repository", silent_call, f"git clone {url} {path}")
 
     if exists(f"{path}/requirements.txt"):
         echo_wrap("Installing requirements", silent_call, f"{executable} -m pip install -r {name}/requirements.txt")
