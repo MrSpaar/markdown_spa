@@ -1,10 +1,11 @@
 from ..generator import Generator, Dependency
-from .utils import echo, initialize_extension, silent_call, ensure_installed, build_project
+from .utils import echo, initialize_extension, echo_wrap, ensure_installed, build_project
+
 
 from os.path import exists
+from shutil import copytree
 from os import listdir, chdir
 from pathlib import Path as PPath
-from shutil import copytree, rmtree
 
 from click import Path, command, option, argument, prompt
 
@@ -18,30 +19,11 @@ def init(path: str) -> int:
         echo("A file or directory with that name already exists!", fg="red", bold=True)
         return 1
 
-    echo("Cloning blank project... ", nl=False)
-    if err := silent_call(f"git clone --depth=1 https://github.com/MrSpaar/markdown_spa.git --no-checkout {path}"):
-        echo("failed.", fg="red", bold=True)
-        echo(err)
-        return 1
-
-    chdir(path)
-    commands = (
-        "git config core.sparseCheckout true",
-        "echo 'blank/' >> .git/info/sparse-checkout",
-        "git checkout"
-    )
-
-    for command in commands:
-        if err := silent_call(command):
-            echo("failed.", fg="red", bold=True)
-            echo(err)
-            return 1
-
-    copytree("blank", ".", dirs_exist_ok=True); rmtree("blank")
-    echo("done.", fg="green", bold=True)
+    echo_wrap("Copying blank project... ", 
+              copytree, PPath(__file__).parent/"blank", path, dirs_exist_ok=True)
 
     dirs = [
-        path for path in listdir(PPath(__file__).parent.parent / "extensions")
+        path for path in listdir(PPath(__file__).parent.parent/"extensions")
         if not path.endswith(".py") and not path.startswith("__")
     ]
     
@@ -60,6 +42,7 @@ def init(path: str) -> int:
         echo(f"Unknown extensions: {', '.join(diff)}", fg="red", bold=True)
         return 1
     
+    chdir(path)
     for extension in extensions:
         if err := initialize_extension(extension):
             echo(err, fg="red", bold=True)
