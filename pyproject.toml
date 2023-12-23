@@ -18,10 +18,6 @@ description = "A static site generator for Markdown files."
 dynamic = ["version"]
 license = {file = "LICENSE"}
 authors = [{name = "MrSpaar"}]
-keywords = [
-    "markdown", "SPA", 
-    "SSG", "CLI"
-]
 dependencies = [
     "markdown", "jinja2",
     "pygments", "click",
