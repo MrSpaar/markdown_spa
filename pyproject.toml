@@ -1,30 +1,31 @@
 [build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
+requires = ['flit_core>=3.2,<4']
+build-backend = 'flit_core.buildapi'
+
+[project.urls]
+Homepage = "https://github.com/MrSpaar/markdown_spa"
+Documentation = "https://mrspaar.github.io/markdown_spa/"
+Issues = "https://github.com/MrSpaar/markdown_spa/issues"
+
+[project.scripts]
+markdown_spa = "markdown_spa:main"
 
 [project]
-version = "1.1.1"
 name = "markdown_spa"
-description = "A static site generator for Markdown files."
 readme = "README.md"
-authors = [
-    {name = "MrSpaar"}
-]
-keywords = [
-    "markdown", 
-    "SPA", 
-    "SSG",
-    "CLI"
-]
-license = {file = "LICENSE"}
 requires-python = ">=3.8"
+description = "A static site generator for Markdown files."
+dynamic = ["version"]
+license = {file = "LICENSE"}
+authors = [{name = "MrSpaar"}]
+keywords = [
+    "markdown", "SPA", 
+    "SSG", "CLI"
+]
 dependencies = [
-    "markdown",
-    "jinja2",
-    "pygments",
-    "click",
-    "requests",
-    "importlib_metadata",
+    "markdown", "jinja2",
+    "pygments", "click",
+    "requests", "importlib_metadata",
     "colorama; platform_system == 'Windows'"
 ]
 classifiers = [
@@ -48,11 +49,3 @@ classifiers = [
     "Topic :: Text Processing :: Markup :: HTML",
     "Topic :: Internet :: WWW/HTTP :: Site Management",
 ]
-
-[project.urls]
-Documentation = "https://mrspaar.github.io/markdown_spa/"
-Homepage = "https://github.com/MrSpaar/markdown_spa"
-Issues = "https://github.com/MrSpaar/markdown_spa/issues"
-
-[project.scripts]
-markdown_spa = "markdown_spa:main"
