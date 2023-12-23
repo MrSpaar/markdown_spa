@@ -6,12 +6,12 @@ Markdown-SPA uses [jinja2](https://jinja.palletsprojects.com/en/2.11.x/) as a te
 
 | Default variable         | Description                                                         |
 | ------------------------ | ------------------------------------------------------------------- |
-| `{{ tree }}`             | Mapping of the markdown files directory structure                   |
-| `{{ meta }}`             | Mapping of the markdown file attributes                             |
+| `{{ tree }}`             | Mapping of the directory structure                                  |
+| `{{ meta }}`             | Mapping of the page's attributes                                    |
 | `{{ assets_path }}`      | Path to the assets directory                                        |
 | `{{ page_content }}`     | HTML content of each markdown file                                  |
 
-To add your own variables, you can add attributes at the top of **each** markdown file:
+To add your own variables, you can add attributes at the top of **each** file:
 ```markdown
 title: This is a title
 summary: This is a description
@@ -40,3 +40,6 @@ Which will render as:
     </details>
 </div>
 ```
+
+> Pages can be HTML files in which case they will be rendered as a standalone template.
+> [!NOTE]
