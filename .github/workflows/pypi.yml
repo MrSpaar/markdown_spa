@@ -25,10 +25,10 @@ jobs:
         with:
           python-version: 3.x
       - name: Build 🏗️
-        env:
-          MARKDOWN_SPA_VERSION: ${{ github.event_name == 'release' && github.event.release.tag_name || github.event.inputs.version }}
         run: |
           python -m pip install flit
           python -m flit build
+        env:
+          MARKDOWN_SPA_VERSION: ${{ github.event_name == 'release' && github.event.release.tag_name || github.event.inputs.version }}
       - name: Publish 🚀
         uses: pypa/gh-action-pypi-publish@release/v1
