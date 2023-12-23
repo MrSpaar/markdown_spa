@@ -2,6 +2,12 @@ on:
   release:
     types:
       - published
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish'
+        required: true
+        default: '0.0.0'
 
 jobs:
   pypi_publish:

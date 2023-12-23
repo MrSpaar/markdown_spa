@@ -1,9 +1,11 @@
 on:
+  workflow_dispatch
   push:
     branches:
       - master
     paths:
       - 'doc/**'
+      - 'CNAME'
       - '.github/workflows/static.yml'
       - 'src/markdown_spa/generator/**'
       - 'src/markdown_spa/extensions/SASS/**'
