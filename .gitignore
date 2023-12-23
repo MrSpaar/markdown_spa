@@ -1,4 +1,4 @@
-build/
+dist/
 Hello/
 generated/
 __pycache__/
