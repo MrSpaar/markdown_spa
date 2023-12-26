@@ -1,12 +1,12 @@
 from ..generator import Generator, Dependency
-from .utils import initialize_extension, ensure_installed, build_project
+from .utils import initialize_extension, ensure_installed, build_project, check_dir
 
 from os.path import exists
 from shutil import copytree
 from os import listdir, chdir
 from pathlib import Path as PPath
 
-from click import Path, command, option, argument, prompt, secho
+from click import command, option, argument, prompt, secho
 
 
 @command()
@@ -60,17 +60,22 @@ def init(path: str) -> int:
 
 
 @command()
+@option("--full-traceback", "-ft", help="Show full traceback on error.", is_flag=True)
 @option("--config", "-c", help="Path to the config file.", is_flag=False)
-@argument("path", default=".", type=Path(exists=True))
-def watch(config: str, path: str) -> int:
+@argument("path", default=".")
+def watch(full_traceback: bool, config: str, path: str) -> int:
     """Starts a livereload server"""
+
+    if err := check_dir(path):
+        secho(err, fg="red", bold=True)
+        return 1
 
     if err := ensure_installed(Dependency("livereload")):
         secho(err)
         secho("Failed to install livereload!", fg="red", bold=True)
         return 1
 
-    generator = Generator(path, config or 'config.ini')
+    generator = Generator(path, config or 'config.ini', full_tb=full_traceback)
     if build_project(generator) != 0:
         return 1
 
@@ -90,8 +95,16 @@ def watch(config: str, path: str) -> int:
 
 
 @command()
+@option("--full-traceback", "-ft", help="Show full traceback on error.", is_flag=True)
 @option("--config", "-c", help="Path to the config file.", is_flag=False)
-@argument("path", default=".", type=Path(exists=True))
-def build(config: str, path: str) -> int:
+@argument("path", default=".")
+def build(full_traceback: bool, config: str, path: str) -> int:
     """Build a Markdown-SPA project"""
-    return build_project(Generator(path, config or 'config.ini'))
+
+    if err := check_dir(path):
+        secho(err, fg="red", bold=True)
+        return 1
+
+    return build_project(
+        Generator(path, config or 'config.ini', full_tb=full_traceback)
+    )

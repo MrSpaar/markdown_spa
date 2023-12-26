@@ -1,11 +1,13 @@
 from ..generator import Generator, Dependency, get_extension
 
+from os.path import isdir
 from sys import executable
+from os import access, W_OK, R_OK
 from importlib.util import find_spec
 from typing import Callable, Optional
 from subprocess import PIPE, CalledProcessError, run
 
-from click import secho, style, prompt
+from click import secho, prompt
 
 
 def echo_wrap(message: str, func: Callable[..., Optional[str]], *args, **kwargs) -> Optional[str]:
@@ -28,6 +30,14 @@ def silent_call(command) -> Optional[str]:
         )
     except CalledProcessError as e:
         return e.stderr.decode('utf-8')
+
+
+def check_dir(path: str) -> Optional[str]:
+    if not isdir(path):
+        return f"Directory '{path}' not found!"
+
+    if not access(path, W_OK) or not access(path, R_OK):
+        return f"Directory '{path}' not accessible!"
 
 
 def ensure_installed(dependency: Dependency) -> Optional[str]:

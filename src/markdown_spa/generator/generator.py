@@ -4,6 +4,7 @@ from .extension import Extension, get_extension
 from os.path import isdir
 from shutil import copytree
 from os import makedirs, listdir
+from traceback import format_exc
 from re import Match, compile as re_compile
 from typing import TypedDict, Optional, Union, Literal
 
@@ -27,7 +28,8 @@ class Generator:
     INTERNAL_LINK_RE = re_compile(r'(href|src)=["\'](/[^"\']+|/)["\']')
     TAG_RE = re_compile(r'^[ ]{0,3}(?P<key>[A-Za-z0-9_-]+):\s*(?P<value>.*)')
 
-    def __init__(self, root: str = "", ini_path: str = "config.ini") -> None:
+    def __init__(self, root: str = "", ini_path: str = "config.ini", full_tb: bool = False) -> None:
+        self.full_tb = full_tb
         self.extensions: list[Extension] = []
         self.config = IniConfig(root, ini_path)
 
@@ -122,7 +124,10 @@ class Generator:
             return error
         
         for extension in self.config.extensions:
-            instance = get_extension(extension)(self)
+            try:
+                instance = get_extension(extension)(self)
+            except Exception as e:
+                return format_exc() if self.full_tb else f"Error while initializing {extension}: {e}"
 
             if err := self.config.check_options(extension, instance.OPTIONS):
                 return err
@@ -138,22 +143,22 @@ class Generator:
         try:
             self.tree = self.__prepare(self.config.pages_path)
         except Exception as e:
-            return f"Error while preparing pages: {e}"
+            return format_exc() if self.full_tb else f"Error while preparing pages: {e}"
 
         try:
             self.nav = self.env.get_template(self.config.nav_template).render(tree=self.tree)
         except Exception as e:
-            return f"Error while rendering nav template: {e}"
+            return format_exc() if self.full_tb else f"Error while rendering nav template: {e}"
         
         try:
             self.base_template = self.env.get_template(self.config.base_template)
             self.__render_tree(self.tree)
         except Exception as e:
-            return f"Error while rendering pages: {e}"
+            return format_exc() if self.full_tb else f"Error while rendering pages: {e}"
 
     def copy_assets(self) -> Optional[str]:
         """Copies assets from assets_path to dist_assets_path"""
         try:
             copytree(self.config.assets_path, self.config.dist_assets_path, dirs_exist_ok=True)
         except Exception as e:
-            return f"Error while copying assets: {e}"
+            return format_exc() if self.full_tb else f"Error while copying assets: {e}"
