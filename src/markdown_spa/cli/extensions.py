@@ -85,15 +85,16 @@ def list() -> int:
 
 
 @command()
+@option("--full-traceback", "-ft", help="Show full traceback on error.", is_flag=True, default=False)
 @argument("name", type=str)
-def add(name: str) -> int:
+def add(full_traceback: bool, name: str) -> int:
     """Add an extension to the project"""
 
     if not exists("./config.ini"):
         secho("No config.ini found!", fg="red", bold=True)
         return 1
 
-    if err := initialize_extension(name):
+    if err := initialize_extension(name, full_traceback):
         secho(err, fg="red", bold=True)
         return 1
     
