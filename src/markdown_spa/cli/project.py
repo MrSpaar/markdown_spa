@@ -4,14 +4,16 @@ from .utils import initialize_extension, ensure_installed, build_project, check_
 from os.path import exists
 from shutil import copytree
 from os import listdir, chdir
+from traceback import format_exc
 from pathlib import Path as PPath
 
 from click import command, option, argument, prompt, secho
 
 
 @command()
+@option("--full-traceback", "-ft", help="Show full traceback on error.", is_flag=True, default=False)
 @argument("path", default=".")
-def init(path: str) -> int:
+def init(full_traceback: bool, path: str) -> int:
     """Create a blank Markdown-SPA project"""
 
     if exists(path):
@@ -24,7 +26,7 @@ def init(path: str) -> int:
         secho("done", fg="green", bold=True)
     except Exception as e:
         secho("failed.", fg="red", bold=True)
-        secho(str(e))
+        secho(format_exc() if full_traceback else str(e))
         return 1
 
     dirs = [
@@ -51,7 +53,7 @@ def init(path: str) -> int:
     for extension in extensions:
         secho(f"Initializing {extension}... ", fg="yellow", bold=True)
 
-        if err := initialize_extension(extension):
+        if err := initialize_extension(extension, full_traceback):
             secho(err, fg="red", bold=True)
             return 1
 
@@ -60,7 +62,7 @@ def init(path: str) -> int:
 
 
 @command()
-@option("--full-traceback", "-ft", help="Show full traceback on error.", is_flag=True)
+@option("--full-traceback", "-ft", help="Show full traceback on error.", is_flag=True, default=False)
 @option("--config", "-c", help="Path to the config file.", is_flag=False)
 @argument("path", default=".")
 def watch(full_traceback: bool, config: str, path: str) -> int:
@@ -95,7 +97,7 @@ def watch(full_traceback: bool, config: str, path: str) -> int:
 
 
 @command()
-@option("--full-traceback", "-ft", help="Show full traceback on error.", is_flag=True)
+@option("--full-traceback", "-ft", help="Show full traceback on error.", is_flag=True, default=False)
 @option("--config", "-c", help="Path to the config file.", is_flag=False)
 @argument("path", default=".")
 def build(full_traceback: bool, config: str, path: str) -> int:

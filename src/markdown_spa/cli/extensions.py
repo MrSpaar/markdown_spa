@@ -1,4 +1,4 @@
-from .utils import echo_wrap, initialize_extension, silent_call
+from .utils import echo_wrap, initialize_extension, call
 
 from os import listdir
 from pathlib import Path
@@ -10,10 +10,11 @@ from click import command, argument, option, secho
 
 
 @command()
+@option("--full-trackback", "-ft", is_flag=True, help="Show full trackback on error", default=False)
 @option("--upgrade", "-U", is_flag=True, help="Upgrade or install an extension", default=False)
 @argument("name", type=str)
 @argument("url", type=str)
-def install(upgrade: bool, name: str, url: str) -> int:
+def install(full_traceback: bool, upgrade: bool, name: str, url: str) -> int:
     """Install an extension from a git repository"""
 
     if not url.endswith(".git"):
@@ -22,13 +23,23 @@ def install(upgrade: bool, name: str, url: str) -> int:
 
     path = f"{Path(__file__).parent.parent}/extensions/{name}"
 
-    if upgrade and exists(path):
-        echo_wrap("Updating repository", silent_call, f"git -C {path} pull")
-    else:
-        echo_wrap("Cloning repository", silent_call, f"git clone {url} {path}")
-
-    if exists(f"{path}/requirements.txt"):
-        echo_wrap("Installing requirements", silent_call, f"{executable} -m pip install -r {name}/requirements.txt")
+    if upgrade and exists(path) and (
+        err := echo_wrap("Updating repository", call, f"git -C {path} pull", full_tb=full_traceback)
+    ):
+        secho(err, fg="red", bold=True)
+        return 1
+    
+    if not upgrade and (
+        err := echo_wrap("Cloning repository", call, f"git clone {url} {path}", full_tb=full_traceback)
+    ):
+        secho(err, fg="red", bold=True)
+        return 1
+        
+    if exists(f"{path}/requirements.txt") and (
+        err := echo_wrap("Installing requirements", call, f"{executable} -m pip install -r {name}/requirements.txt", full_tb=full_traceback)
+    ):
+        secho(err, fg="red", bold=True)
+        return 1
     
     secho("Extension installed!", fg="green", bold=True)
     return 0

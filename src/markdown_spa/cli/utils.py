@@ -2,6 +2,7 @@ from ..generator import Generator, Dependency, get_extension
 
 from os.path import isdir
 from sys import executable
+from traceback import format_exc
 from os import access, W_OK, R_OK
 from importlib.util import find_spec
 from typing import Callable, Optional
@@ -10,9 +11,13 @@ from subprocess import PIPE, CalledProcessError, run
 from click import secho, prompt
 
 
-def echo_wrap(message: str, func: Callable[..., Optional[str]], *args, **kwargs) -> Optional[str]:
+def echo_wrap(message: str, func: Callable[..., Optional[str]], *args, full_tb: bool = False, **kwargs) -> Optional[str]:
     secho(f"{message}... ", nl=False)
-    err = func(*args, **kwargs)
+
+    try:
+        err = func(*args, **kwargs)
+    except Exception as e:
+        err = format_exc() if full_tb else str(e)
 
     if err:
         secho("failed", fg="red", bold=True)
@@ -21,7 +26,7 @@ def echo_wrap(message: str, func: Callable[..., Optional[str]], *args, **kwargs)
     secho(f"done", fg="green", bold=True)
 
 
-def silent_call(command) -> Optional[str]:
+def call(command) -> Optional[str]:
     try:
         run(
             command,
@@ -29,7 +34,10 @@ def silent_call(command) -> Optional[str]:
             stdout=PIPE, stderr=PIPE
         )
     except CalledProcessError as e:
-        return e.stderr.decode('utf-8')
+        try:
+            return e.stderr.decode('utf-8')
+        except UnicodeDecodeError:
+            return "Could not error output to utf-8"
 
 
 def check_dir(path: str) -> Optional[str]:
@@ -42,13 +50,14 @@ def check_dir(path: str) -> Optional[str]:
 
 def ensure_installed(dependency: Dependency) -> Optional[str]:
     if not find_spec(dependency.module):
-        return silent_call(f"{executable} -m pip install {dependency.pip_package}")
+        return call(f"{executable} -m pip install {dependency.pip_package}")
 
 
-def initialize_extension(extension: str) -> Optional[str]:
-    module = get_extension(extension)
-    if not module:
-        return f"Extension {extension} not found!"
+def initialize_extension(extension: str, full_tb: bool = False) -> Optional[str]:
+    try:
+        module = get_extension(extension)
+    except Exception as e:
+        return format_exc() if full_tb else f"Extension {extension} not found!"
 
     values = {
         name: prompt(
@@ -61,7 +70,11 @@ def initialize_extension(extension: str) -> Optional[str]:
         if err := ensure_installed(pip_package):
             return err
 
-    module.initialize(**values)    
+    try:
+        module.initialize(**values)
+    except Exception as e:
+        return format_exc() if full_tb else f"Failed to initialize {extension}: {e}"
+
     with open("config.ini", "a") as file:
         file.write(f"\n[{extension}]\n")
         for key, value in values.items():
