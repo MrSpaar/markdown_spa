@@ -28,7 +28,7 @@ jobs:
         with:
           python-version: 3.12
       - name: Install dependencies 🧰
-        run: python -m pip install Markdown-SPA
+        run: python -m pip install markdown_spa
       - name: Generate HTML 📚
         run: python -m markdown_spa build
         env:
@@ -38,7 +38,7 @@ jobs:
       - name: Upload artifact 📤
         uses: actions/upload-pages-artifact@v2
         with:
-          path: './doc/generated'
+          path: './generated'
       - name: Deploy to GitHub Pages 🌍
         id: deployment
         uses: actions/deploy-pages@v2
