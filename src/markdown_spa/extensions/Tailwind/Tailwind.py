@@ -30,6 +30,6 @@ class Tailwind(Extension):
         if exists("./assets/style.css"):
             remove("./assets/style.css")
 
-        if not kwargs["input_file"]:
+        if kwargs["input_file"]:
             with open(kwargs["input_file"], "w") as file:
                 file.write("@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\n")
