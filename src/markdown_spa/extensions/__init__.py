@@ -1,3 +1,3 @@
-from .SASS.SASS import SASS
-from .Sitemap.Sitemap import Sitemap
-from .Tailwind.Tailwind import Tailwind
+from .SASS import SASS
+from .Sitemap import Sitemap
+from .Tailwind import Tailwind

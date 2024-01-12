@@ -52,4 +52,4 @@ class Extension(ABC):
 
 
 def get_extension(name: str) -> Type[Extension]:
-    return getattr(import_module(f"markdown_spa.extensions.{name}.{name}"), name)
+    return getattr(import_module(f"markdown_spa.extensions.{name}"), name)
