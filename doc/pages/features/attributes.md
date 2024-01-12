@@ -2,7 +2,7 @@ order: 4
 name: Attributes
 description: How to add attributes to Markdown elements
 
-Markdown-SPA uses the [attr-list](https://python-markdown.github.io/extensions/attr_list/) to add HTML to Markdown elements:
+`markdown_spa` uses the [attr-list](https://python-markdown.github.io/extensions/attr_list/) to add HTML to Markdown elements:
 ```md
 # This is a title
 {: .anchored-title }

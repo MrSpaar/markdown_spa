@@ -3,7 +3,7 @@
 [![GitHub Release](https://img.shields.io/github/v/release/mrspaar/markdown_spa?&logo=github)](https://github.com/mrspaar/markdown_spa/releases)
 [![GitHub License](https://img.shields.io/github/license/MrSpaar/markdown_spa?logo=github)](https://github.com/mrspaar/markdown_spa/blob/master/LICENSE)
 
-[Markdown-SPA](https://pypi.org/project/markdown_spa) is a Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markdown`](https://pypi.org/project/Markdown/)) static site generator:
+[markdown_spa](https://pypi.org/project/markdown_spa) is a Python ([`jinja2`](https://pypi.org/project/Jinja2/) + [`markdown`](https://pypi.org/project/Markdown/)) static site generator:
 
 - [x] Powerful templating
 - [x] SEO optimized

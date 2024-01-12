@@ -1,3 +1,3 @@
 order: 3
 name: Features
-description: Features of Markdown-SPA
+description: Features of markdown_spa

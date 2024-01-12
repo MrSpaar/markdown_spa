@@ -2,7 +2,7 @@ order: 1
 name: Sitemap
 description: Automatic sitemap and robots.txt generation
 
-`Sitemap` comes with `Markdown-SPA` by default, it allows you to generate a `sitemap.xml` and `robots.txt` files for your website.
+`Sitemap` comes with `markdown_spa` by default, it allows you to generate a `sitemap.xml` and `robots.txt` files for your website.
 
 To add it to an existing project, run `markdown_spa add Sitemap`, there are two options:
 

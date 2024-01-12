@@ -2,7 +2,8 @@ order: 5
 name: Table of Contents
 description: Automatically generated table of contents
 
-The table of contents at the side of the page was automatically generated from the [`nav.html`](https://github.com/MrSpaar/Markdown-SPA/blob/master/templates/nav.html) template:
+The table of contents at the side of this page was automatically generated from the `nav_template` in the `config.ini` file.
+In blank projects, the template is the following:
 ```jinja
 <ul>
     {% for (uri, page) in tree.items() recursive -%}
@@ -28,5 +29,3 @@ Which will render the following HTML:
     </li>
 </ul>
 ```
-
-You can modify the template as long as the name of the file is `nav.html` and it is located in the `templates` directory.

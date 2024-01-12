@@ -1,8 +1,8 @@
 order: 1
 name: Templating
-description: How to use jinja2 templates in a Markdown-SPA project
+description: How to use jinja2 templates in a markdown_spa project
 
-Markdown-SPA uses [jinja2](https://jinja.palletsprojects.com/en/2.11.x/) as a templating engine. This allows you to create a base template that will be used for all pages, and to add custom variables to each page:
+`markdown_spa` uses [jinja2](https://jinja.palletsprojects.com/en/2.11.x/) as a templating engine. This allows you to create a base template that will be used for all pages, and to add custom variables to each page:
 
 | Default variable         | Description                                                         |
 | ------------------------ | ------------------------------------------------------------------- |

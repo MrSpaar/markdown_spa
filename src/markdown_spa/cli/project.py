@@ -14,7 +14,7 @@ from click import command, option, argument, prompt, secho
 @option("--full-traceback", "-ft", help="Show full traceback on error.", is_flag=True, default=False)
 @argument("path", default=".")
 def init(full_traceback: bool, path: str) -> int:
-    """Create a blank Markdown-SPA project"""
+    """Create a blank markdown_spa project"""
 
     if exists(path):
         secho("A file or directory with that name already exists!", fg="red", bold=True)
@@ -101,7 +101,7 @@ def watch(full_traceback: bool, config: str, path: str) -> int:
 @option("--config", "-c", help="Path to the config file.", is_flag=False)
 @argument("path", default=".")
 def build(full_traceback: bool, config: str, path: str) -> int:
-    """Build a Markdown-SPA project"""
+    """Build a markdown_spa project"""
 
     if err := check_dir(path):
         secho(err, fg="red", bold=True)

@@ -3,7 +3,7 @@ priority: 1
 name: Quick start
 description: A Python static site generator using Markdown, Jinja2, Pygments and libsass
 
-[Markdown-SPA](https://github.com/MrSpaar/Markdown-SPA) is a Python ([jinja2](https://pypi.org/project/Jinja2/) + [markdown](https://pypi.org/project/Markdown/)) static site generator:
+[`markdown_spa`](https://github.com/MrSpaar/markdown_spa) is a Python ([jinja2](https://pypi.org/project/Jinja2/) + [markdown](https://pypi.org/project/Markdown/)) static site generator:
 
 - [x] Powerful templating
 - [x] SEO optimized
@@ -14,7 +14,7 @@ description: A Python static site generator using Markdown, Jinja2, Pygments and
 
 First, to setup a new project:
 
-- Install the package (once): `pip install Markdown-SPA`
+- Install the package (once): `pip install markdown_spa`
 - Create a blank project: `markdown_spa init <folder (optionnal)>`
 
 The `config.ini` file describes the project structure:

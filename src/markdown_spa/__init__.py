@@ -9,7 +9,7 @@ from .extensions import SASS, Sitemap, Tailwind
 __all__ = ["Generator", "Extension", "SASS", "Sitemap", "Tailwind"]
 __version__ = environ.get(
     "MARKDOWN_SPA_VERSION",
-    get("https://pypi.org/pypi/markdown-spa/json").json()["info"]["version"]
+    get("https://pypi.org/pypi/markdown_spa/json").json()["info"]["version"]
 ).removeprefix("v")
 
 
