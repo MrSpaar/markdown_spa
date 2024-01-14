@@ -1,6 +1,6 @@
-order: 3
-name: Tailwind
-description: How to use Tailwind CSS in your project
+[order]:       # (3)
+[name]:        # (Tailwind)
+[description]: # (How to use Tailwind CSS in your project)
 
 The Tailwind extension allows you to use Tailwind CSS in your templates and markdown files.
 

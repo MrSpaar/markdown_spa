@@ -1,6 +1,6 @@
-order: 4
-name: Extensions
-description: Documentation on markdown_spa's extension system
+[order]:       # (4)
+[name]:        # (Extensions)
+[description]: # (Documentation on markdown_spa's extension system)
 
 `markdown_spa` has a simple extension system that allows you to add custom functionality to your site.
 To install an extension, simply run the following command:

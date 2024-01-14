@@ -1,6 +1,6 @@
-order: 2
-name: SASS
-description: How to use SASS in your project
+[order]:       # (2)
+[name]:        #(SASS)
+[description]: # (How to use SASS in your project)
 
 The SASS extension allows you to use SASS in your project.
 

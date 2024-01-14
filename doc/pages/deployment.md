@@ -1,6 +1,6 @@
-order: 2
-name: Deployment
-description: How to setup automatic Github Pages deployment
+[order]:       # (2)
+[name]:        # (Deployment)
+[description]: # (How to setup automatic Github Pages deployment)
 
 Github-SPA includes a Github Actions workflow to automatically deploy a static website to Github Pages.
 To enable it, go to your repository's settings and choose `Github Actions` as source in the `Pages` section:

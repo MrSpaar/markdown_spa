@@ -26,7 +26,7 @@ class Generator:
     QUOTE_RE = re_compile(r'> \[!([A-Z]+)\]')
     CHECKBOX_RE = re_compile(r'\[([ xX])\] (.*)')
     INTERNAL_LINK_RE = re_compile(r'(href|src)=["\'](/[^"\']+|/)["\']')
-    TAG_RE = re_compile(r'^[ ]{0,3}(?P<key>[A-Za-z0-9_-]+):\s*(?P<value>.*)')
+    TAG_RE = re_compile(r'\s*\[(?P<key>[^\]]+)\]:\s*# \((?P<value>.*)\)')
 
     def __init__(self, root: str = "", ini_path: str = "config.ini", full_tb: bool = False) -> None:
         self.full_tb = full_tb
@@ -57,22 +57,34 @@ class Generator:
             item_path = f"{full_path}/{path}"
             ext = item_path[item_path.rfind(".")+1:]
 
+            if ext not in ("md", "html"):
+                continue
+
             uri = item_path.removeprefix(f"{self.config.pages_path}/") \
                                 .removesuffix(f".{ext}") \
                                 .removesuffix("index")
 
+            # File already processed, processing dir
             if isdir(item_path) and uri in entry:
                 entry[uri]["children"] = self.__prepare(item_path)
                 continue
 
+            # Dir already processed, processing file
             if uri in entry:
                 entry[uri]["meta"] = self.__read_meta(item_path)
                 continue
 
-            if not isdir(item_path) and ext in ("html", "md"):
-                entry[uri] = Page(meta=self.__read_meta(item_path), ext=ext, children={})
+            # New HTML page
+            if not isdir(item_path) and ext == "html":
+                entry[uri] = Page(meta={}, ext=ext, children={})
                 continue
 
+            # New markdown page
+            if not isdir(item_path):
+                entry[uri] = Page(meta=self.__read_meta(item_path), ext="md", children={})
+                continue
+
+            # New dir
             entry[uri] = Page(
                 ext="md",
                 meta=self.config.defaults(),
@@ -86,15 +98,12 @@ class Generator:
             makedirs(f"{self.config.dist_path}/{uri}", exist_ok=True)
 
             with open(f"{self.config.pages_path}/{uri or 'index'}.{page['ext']}") as f:
-                for _ in range(len(page["meta"].keys())):
-                    f.readline()
                 content = f.read()
 
             if page["ext"] == "html":
                 with open(f"{self.config.dist_path}/{uri}/index.html", "w") as f:
                     f.write(Template(content).render(
-                        nav=self.nav, meta=page["meta"],
-                        assets_path=self.config.assets_path[self.config.assets_path.find("/")+1:]
+                        nav=self.nav, assets_path=self.config.assets_path.removeprefix(self.config.root+"/")
                     ))
                 
                 continue
@@ -103,13 +112,14 @@ class Generator:
                 Generator.QUOTE_RE.sub(r'> { .quote .quote-\1 }', content)
             )
 
-            content = Generator.CHECKBOX_RE.sub(Generator.__to_checkbox, content) \
-                                        .replace("<table", "<table tabindex='0'") \
-                                        .replace("<pre", "<pre tabindex='0'")
+            content = Generator.CHECKBOX_RE \
+                .sub(Generator.__to_checkbox, content) \
+                .replace("<table", "<table tabindex='0'") \
+                .replace("<pre", "<pre tabindex='0'")
 
             rendered = self.base_template.render(
                 page_content=content, nav=self.nav, meta=page["meta"],
-                assets_path=self.config.assets_path[self.config.assets_path.find("/")+1:]
+                assets_path=self.config.assets_path.removeprefix(self.config.root+"/")
             )
 
             with open(f"{self.config.dist_path}/{uri}/index.html", "w") as f:

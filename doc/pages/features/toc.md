@@ -1,6 +1,6 @@
-order: 5
-name: Table of Contents
-description: Automatically generated table of contents
+[order]: # (4)
+[name]:  # (Table of Contents)
+[description]: # (Automatically generated table of contents)
 
 The table of contents at the side of this page was automatically generated from the `nav_template` in the `config.ini` file.
 In blank projects, the template is the following:

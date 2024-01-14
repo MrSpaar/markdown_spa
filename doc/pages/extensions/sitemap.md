@@ -1,6 +1,6 @@
-order: 1
-name: Sitemap
-description: Automatic sitemap and robots.txt generation
+[order]:       # (1)
+[name]:        # (Sitemap)
+[description]: # (Automatic sitemap and robots.txt generation)
 
 `Sitemap` comes with `markdown_spa` by default, it allows you to generate a `sitemap.xml` and `robots.txt` files for your website.
 

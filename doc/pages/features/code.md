@@ -1,6 +1,6 @@
-order: 3
-name: Syntax Highlighting
-description: Syntax highlighting in code blocks
+[order]:       # (2)
+[name]:        # (Syntax Highlighting)
+[description]: # (Syntax highlighting in code blocks)
 
 Syntax highlighting in code blocks is done using the [codehilite](https://python-markdown.github.io/extensions/code_hilite/) and [fenced_code](https://python-markdown.github.io/extensions/fenced_code_blocks/) extensions. You can create code blocks (language name can be deduced):
 
