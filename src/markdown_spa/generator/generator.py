@@ -57,9 +57,6 @@ class Generator:
             item_path = f"{full_path}/{path}"
             ext = item_path[item_path.rfind(".")+1:]
 
-            if ext not in ("md", "html"):
-                continue
-
             uri = item_path.removeprefix(f"{self.config.pages_path}/") \
                                 .removesuffix(f".{ext}") \
                                 .removesuffix("index")
@@ -80,7 +77,7 @@ class Generator:
                 continue
 
             # New markdown page
-            if not isdir(item_path):
+            if not isdir(item_path) and ext == "md":
                 entry[uri] = Page(meta=self.__read_meta(item_path), ext="md", children={})
                 continue
 
