@@ -14,8 +14,8 @@ class Sitemap(Extension):
     @property
     def TO_WATCH(self) -> list[str]:
         return [
-            f"{self.config.root}/{self.get_option("robots")}",
-            f"{self.config.root}/{self.get_option("sitemap")}",
+            f"{self.config.root}/{self.get_option('robots')}",
+            f"{self.config.root}/{self.get_option('sitemap')}",
         ]
 
     def render(self) -> None:

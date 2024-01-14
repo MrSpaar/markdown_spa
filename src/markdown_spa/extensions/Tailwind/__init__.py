@@ -15,7 +15,7 @@ class Tailwind(Extension):
     }
 
     def render(self) -> None:
-        cli_args = f"-c {self.get_option("config_file")} -o {self.config.dist_assets_path}/style.css"
+        cli_args = f"-c {self.get_option('config_file')} -o {self.config.dist_assets_path}/style.css"
 
         if input_file := self.get_option("input_file"):
             cli_args += f" -i {self.config.root+'/'}{input_file}"

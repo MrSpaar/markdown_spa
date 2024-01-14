@@ -17,7 +17,7 @@ class SASS(Extension):
     @property
     def TO_WATCH(self) -> list:
         return [
-            f"{self.config.root}/{self.get_option("source_path")}"
+            f"{self.config.root}/{self.get_option('source_path')}"
         ]
 
     def render(self) -> None:
@@ -26,7 +26,7 @@ class SASS(Extension):
         with open(f"{self.config.dist_assets_path}/style.css", "w") as f:
             f.write(compile(
                 output_style="compressed",
-                filename=f"{self.config.root}/{self.get_option("main_path")}"
+                filename=f"{self.config.root}/{self.get_option('main_path')}"
             ))
 
     @staticmethod
