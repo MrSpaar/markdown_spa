@@ -221,6 +221,16 @@ img {
     margin: 10px auto;
 }
 
+p {
+    ~ ul {
+        margin-top: 0;
+    }
+
+    &:has(+ul) {
+        margin-bottom: 5px;
+    }
+}
+
 blockquote {
     width: calc(100% - 35px);
 
@@ -231,10 +241,6 @@ blockquote {
 
     p {
         margin: 0;
-    }
-
-    code {
-        background-color: var(--background-color);
     }
 
 	p.quote::before {

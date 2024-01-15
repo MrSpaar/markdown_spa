@@ -2,19 +2,23 @@
 [name]:        # (Templating)
 [description]: # (How to use jinja2 templates in a markdown_spa project)
 
-`markdown_spa` uses [jinja2](https://jinja.palletsprojects.com/en/2.11.x/) as a templating engine. This allows you to create a base template that will be used for all pages, and to add custom variables to each page:
+`markdown_spa` uses [jinja2](https://jinja.palletsprojects.com/en/3.0.x/), allowing you to create a base template that will be used for all pages.
+By default, the following variables are available:
 
-| Default variable         | Description                                                         |
-| ------------------------ | ------------------------------------------------------------------- |
-| `{{ tree }}`             | Mapping of the directory structure                                  |
-| `{{ meta }}`             | Mapping of the page's attributes                                    |
-| `{{ assets_path }}`      | Path to the assets directory                                        |
-| `{{ page_content }}`     | HTML content of each markdown file                                  |
+| Variable                 | Available in                       | Description                        |
+| :----------------------- | :--------------------------------- | :--------------------------------- |
+| `{{ uri }}`              | Base and nav templates, HTML pages | URI of the page                    |
+| `{{ meta }}`             | Base and nav templates, HTML pages | Mapping of the page's attributes   |
+| `{{ assets_path }}`      | Base and nav templates, HTML pages | Path to the assets directory       |
+| `{{ page_content }}`     | Base template                      | HTML content of each markdown file |
+
+> Pages can be HTML or Markdown files, but the variables are only available in HTML files.
+> [!WARNING]
 
 To add your own variables, you can add attributes at the top of **each** file:
-```markdown
-title: This is a title
-summary: This is a description
+```md
+[title]:   # (This is a title)
+[summary]: # (This is a description)
 
 This is the actual content of the rendered page.
 ```
@@ -40,6 +44,3 @@ Which will render as:
     </details>
 </div>
 ```
-
-> Pages can be HTML files in which case they will be rendered as a standalone template.
-> [!NOTE]

@@ -18,7 +18,7 @@ extension_option = value
 
 ## Create an extension
 
-You can then use the `Extension` class to create an extension:
+`markdown_spa` has an `Extension` abstract class that you can use:
 ```python
 from markdown_spa.extension import Extension, Dependency, Option
 
@@ -58,8 +58,8 @@ Dependencies will be automatically installed and that part of the initialization
 
 ## Make an extension available to the user
 
-Every `markdown_spa` extension must be a Python module that contains a class that inherits from `markdown_spa.Extension`.
-The class' name determines the name of the extension and is used to install it.
+Every `markdown_spa` extension must be a Python module that contains a class that inherits from `markdown_spa.Extension` 
+(class name = extension name).
 
 Here is a minimal example of an extension:
 
@@ -76,7 +76,7 @@ from markdown_spa import Extension
 class MyExtension(Extension):
     ...
 ```
-- User can then install the extension with :
+- Users can then install the extension with :
 ```bash
 markdown_spa install MyExtension <git_repo_url>
 ```

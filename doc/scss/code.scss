@@ -4,10 +4,15 @@ code {
 	padding: 2px 3px;
 	border-radius: 3px;
     font-family: Inconsolata, monospace;
-	background-color: var(--alternative-background-color)
+	background-color: #f1e9e9;
+
+	@media (prefers-color-scheme: dark) {
+		background-color: #404145;
+	}
 }
 
 .codehilite {
+	--content-color: black;
     --header-color: #f14343;
     --string-color: #d3671a;
     --comment-color: #817676;
@@ -20,6 +25,7 @@ code {
 	--string-color: #bb7d51;
 
     @media (prefers-color-scheme: dark) {
+		--content-color: white;
         --header-color: #ff834a;
         --string-color: #EAB289;
         --comment-color: #87ceeb;
@@ -37,6 +43,7 @@ code {
 	code {
 		padding: 0;
 		border-radius: 0;
+		background-color: var(--alternative-background-color);
 	}
 
     pre {
@@ -118,4 +125,19 @@ code {
 	.vi { color: var(--variable-color)} /* Name.Variable.Instance */
 	.il { color: var(--content-color)} /* Literal.Number.Integer.Long */
 	.language-bash & .nb { color: var(--bash-cmd-color) }
+}
+
+.codehilitetable {
+	overflow: scroll;
+	display: grid;
+
+	.linenos {
+		font-size: 1.2em;
+
+		pre {
+			gap: 1px;
+			display: grid;
+			margin-top: 5px;
+		}
+	}
 }

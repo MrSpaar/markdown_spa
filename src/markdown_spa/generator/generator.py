@@ -70,14 +70,9 @@ class Generator:
                 entry[uri]["meta"] = self.__read_meta(item_path)
                 continue
 
-            # New HTML page
-            if not isdir(item_path) and ext == "html":
-                entry[uri] = Page(meta={}, ext=ext, children={})
-                continue
-
-            # New markdown page
-            if not isdir(item_path) and ext == "md":
-                entry[uri] = Page(meta=self.__read_meta(item_path), ext="md", children={})
+            # New page
+            if not isdir(item_path) and ext in ("md", "html"):
+                entry[uri] = Page(meta=self.__read_meta(item_path), ext=ext, children={})
                 continue
 
             # New dir
@@ -89,37 +84,55 @@ class Generator:
         
         return entry
 
-    def __render_tree(self, tree: dict[str, Page]) -> None:
-        for uri, page in tree.items():
-            makedirs(f"{self.config.dist_path}/{uri}", exist_ok=True)
-
-            with open(f"{self.config.pages_path}/{uri or 'index'}.{page['ext']}") as f:
-                content = f.read()
-
-            if page["ext"] == "html":
-                with open(f"{self.config.dist_path}/{uri}/index.html", "w") as f:
-                    f.write(Template(content).render(
-                        nav=self.nav, assets_path=self.config.assets_path.removeprefix(self.config.root+"/")
-                    ))
-                
-                continue
-
-            content = self.md.convert(
-                Generator.QUOTE_RE.sub(r'> { .quote .quote-\1 }', content)
-            )
-
-            content = Generator.CHECKBOX_RE \
+    def __render_md(self, page: Page, uri: str) -> None:
+        with open(f"{self.config.pages_path}/{uri or 'index'}.{page['ext']}") as f:
+            content = self.md.convert(Generator.QUOTE_RE.sub(
+                r'> { .quote .quote-\1 }', f.read()
+            ))
+        
+        content = Generator.CHECKBOX_RE \
                 .sub(Generator.__to_checkbox, content) \
                 .replace("<table", "<table tabindex='0'") \
                 .replace("<pre", "<pre tabindex='0'")
 
-            rendered = self.base_template.render(
-                page_content=content, nav=self.nav, uri=uri, meta=page["meta"],
+        rendered = self.base_template.render(
+            uri=uri, nav=self.nav, meta=page["meta"], page_content=content,
+            assets_path=self.config.assets_path.removeprefix(self.config.root+"/")
+        )
+
+        with open(f"{self.config.dist_path}/{uri}/index.html", "w") as f:
+            f.write(Generator.INTERNAL_LINK_RE.sub(
+                rf'\1="{self.config.base_url}\2"', rendered
+            ))
+
+    def __render_html(self, page: Page, uri: str) -> None:
+        with open(f"{self.config.pages_path}/{uri or 'index'}.{page['ext']}") as f:
+            for _ in range(len(page["meta"])):
+                f.readline()
+
+            content = Template(f.read()).render(
+                uri=uri, meta=page["meta"],
                 assets_path=self.config.assets_path.removeprefix(self.config.root+"/")
             )
+        
+        content = Generator.INTERNAL_LINK_RE.sub(
+            rf'\1="{self.config.base_url}\2"', content
+        )
 
-            with open(f"{self.config.dist_path}/{uri}/index.html", "w") as f:
-                f.write(Generator.INTERNAL_LINK_RE.sub(rf'\1="{self.config.base_url}\2"', rendered))
+        with open(f"{self.config.dist_path}/{uri}/index.html", "w") as f:
+            f.write(self.base_template.render(
+                uri=uri, nav=self.nav, meta=page["meta"], page_content=content,
+                assets_path=self.config.assets_path.removeprefix(self.config.root+"/")
+            ))
+
+    def __render_tree(self, tree: dict[str, Page]) -> None:
+        for uri, page in tree.items():
+            makedirs(f"{self.config.dist_path}/{uri}", exist_ok=True)
+
+            if page["ext"] == "md":
+                self.__render_md(page, uri)
+            elif page["ext"] == "html":
+                self.__render_html(page, uri)
 
             if page["children"]:
                 self.__render_tree(page["children"])
