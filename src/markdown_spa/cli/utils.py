@@ -2,7 +2,6 @@ from ..generator import Generator, Dependency, get_extension
 
 from os.path import isdir
 from sys import executable
-from traceback import format_exc
 from os import access, W_OK, R_OK
 from importlib.util import find_spec
 from typing import Callable, Optional
@@ -17,7 +16,10 @@ def echo_wrap(message: str, func: Callable[..., Optional[str]], *args, full_tb: 
     try:
         err = func(*args, **kwargs)
     except Exception as e:
-        err = format_exc() if full_tb else str(e)
+        if full_tb:
+            secho("failed", fg="red", bold=True)
+            raise e
+        err = str(e)
 
     if err:
         secho("failed", fg="red", bold=True)
@@ -57,7 +59,9 @@ def initialize_extension(extension: str, full_tb: bool = False) -> Optional[str]
     try:
         module = get_extension(extension)
     except Exception as e:
-        return format_exc() if full_tb else f"Extension {extension} not found!"
+        if full_tb:
+            raise e
+        return f"Extension {extension} not found!"
 
     values = {
         name: prompt(
@@ -73,7 +77,9 @@ def initialize_extension(extension: str, full_tb: bool = False) -> Optional[str]
     try:
         module.initialize(**values)
     except Exception as e:
-        return format_exc() if full_tb else f"Failed to initialize {extension}: {e}"
+        if full_tb:
+            raise e
+        return f"Failed to initialize {extension}: {e}"
 
     with open("config.ini", "a") as file:
         file.write(f"\n[{extension}]\n")
@@ -82,7 +88,7 @@ def initialize_extension(extension: str, full_tb: bool = False) -> Optional[str]
 
 
 def build_project(generator: Generator) -> int:
-    if err := echo_wrap("Loading config", generator.load_config):
+    if err := echo_wrap("Loading config", generator.load_config, full_tb=generator.full_tb):
         secho(err)
         return 1
 
@@ -92,16 +98,16 @@ def build_project(generator: Generator) -> int:
                 secho(err)
                 return 1
 
-    if err := echo_wrap("Copying assets", generator.copy_assets):
+    if err := echo_wrap("Copying assets", generator.copy_assets, full_tb=generator.full_tb):
         secho(err)
         return 1
 
-    if err := echo_wrap("Rendering pages", generator.render_pages):
+    if err := echo_wrap("Rendering pages", generator.render_pages, full_tb=generator.full_tb):
         secho(err)
         return 1
 
     for extension in generator.extensions:
-        if err := echo_wrap(f"Rendering '{extension.__class__.__name__}' extension", extension.render):
+        if err := echo_wrap(f"Rendering '{extension.__class__.__name__}' extension", extension.render, full_tb=generator.full_tb):
             secho(err)
             return 1
 

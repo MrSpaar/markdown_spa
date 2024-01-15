@@ -4,7 +4,6 @@ from .extension import Extension, get_extension
 from os.path import isdir
 from shutil import copytree
 from os import makedirs, listdir
-from traceback import format_exc
 from re import Match, compile as re_compile
 from typing import TypedDict, Optional, Union, Literal
 
@@ -134,7 +133,9 @@ class Generator:
             try:
                 instance = get_extension(extension)(self)
             except Exception as e:
-                return format_exc() if self.full_tb else f"Error while initializing {extension}: {e}"
+                if self.full_tb:
+                    raise e
+                return f"Error while initializing {extension}: {e}"
 
             if err := self.config.check_options(extension, instance.OPTIONS):
                 return err
@@ -150,22 +151,30 @@ class Generator:
         try:
             self.tree = self.__prepare(self.config.pages_path)
         except Exception as e:
-            return format_exc() if self.full_tb else f"Error while preparing pages: {e}"
+            if self.full_tb:
+                raise e
+            return f"Error while preparing pages: {e}"
 
         try:
             self.nav = self.env.get_template(self.config.nav_template).render(tree=self.tree)
         except Exception as e:
-            return format_exc() if self.full_tb else f"Error while rendering nav template: {e}"
+            if self.full_tb:
+                raise e
+            return f"Error while rendering nav template: {e}"
         
         try:
             self.base_template = self.env.get_template(self.config.base_template)
             self.__render_tree(self.tree)
         except Exception as e:
-            return format_exc() if self.full_tb else f"Error while rendering pages: {e}"
+            if self.full_tb:
+                raise e
+            return f"Error while rendering pages: {e}"
 
     def copy_assets(self) -> Optional[str]:
         """Copies assets from assets_path to dist_assets_path"""
         try:
             copytree(self.config.assets_path, self.config.dist_assets_path, dirs_exist_ok=True)
         except Exception as e:
-            return format_exc() if self.full_tb else f"Error while copying assets: {e}"
+            if self.full_tb:
+                raise e
+            return f"Error while copying assets: {e}"
