@@ -115,7 +115,7 @@ class Generator:
                 .replace("<pre", "<pre tabindex='0'")
 
             rendered = self.base_template.render(
-                page_content=content, nav=self.nav, meta=page["meta"],
+                page_content=content, nav=self.nav, uri=uri, meta=page["meta"],
                 assets_path=self.config.assets_path.removeprefix(self.config.root+"/")
             )
 
