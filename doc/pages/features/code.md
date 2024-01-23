@@ -9,7 +9,6 @@ Syntax highlighting in code blocks is done using the [codehilite](https://python
     #!python
     print("Hello World!")
 ```
-
 - With three backticks (uses [attr_list](https://python-markdown.github.io/extensions/attr_list/))
 ````markdown
 ```python

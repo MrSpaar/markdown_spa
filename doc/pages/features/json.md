@@ -46,3 +46,7 @@ function update(path, push = true) {
         });
 }
 ```
+
+> Don't add event listeners to elements that are not updated in the `prepare` function as this will considerably slow down browsing.
+> If you use the default `script.js` file, move the `prepare` function's content after the `popstate` event listener.
+> [!WARNING]
