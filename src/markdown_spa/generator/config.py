@@ -49,15 +49,6 @@ class IniConfig:
     def load_config(self) -> Optional[str]:
         """Load config from config.ini file (returns an optional error message)"""
 
-        if not self.parser.has_section("GENERATOR"):
-            return f"No config found in {self.root}"
-        
-        if diff := set(self.parser.options("GENERATOR")) - IniConfig.GENERATOR_OPTIONS:
-            return f"Unknown options in [GENERATOR] section: {', '.join(diff)}"
-        
-        if diff := set(self.parser.options("TEMPLATES")) - IniConfig.TEMPLATES_OPTIONS:
-            return f"Unknown options in [TEMPLATES] section: {', '.join(diff)}"
-        
         faulty_extensions = []
         self.extensions = set(self.parser.sections()) - {"DEFAULTS", "GENERATOR", "TEMPLATES"}
 
@@ -110,17 +101,58 @@ class IniConfig:
             return f"Error in section [{section}]: \n  - {faulty_options_str}"
 
     @property
+    def port(self) -> int:
+        """The port to run the server on"""
+        if not hasattr(self, "__port"):
+            self.__port = self.parser.getint(
+                "GENERATOR", "port", fallback=8000
+            )
+        return self.__port
+
+    @property
     def base_url(self) -> str:
         """The base url for the site"""
-        
         if not hasattr(self, "__base_url"):
-            self.__base_url = f"http://localhost:{self.port}"
+            self.__base_url = f"http://127.0.0.1:{self.port}"
 
             if var := environ.get("REPO"):
                 user, repo = var.split("/")
                 self.__base_url = f"https://{user}.github.io/{repo}"
 
         return self.__base_url
+
+    @property
+    def json(self) -> bool:
+        """Whether to generate a json files for each page"""
+        if not hasattr(self, "__json"):
+            self.__json = self.parser.getboolean(
+                "GENERATOR", "json", fallback=False
+            )
+        return self.__json
+    
+    @property
+    def dist_path(self) -> str:
+        """The path to the dist folder"""
+        if not hasattr(self, "__dist_path"):
+            path = self.parser.get("GENERATOR", "dist_path", fallback="generated")
+            self.__dist_path = f"{self.root}/{path}"
+        return self.__dist_path
+    
+    @property
+    def pages_path(self) -> str:
+        """The path to the pages folder"""
+        if not hasattr(self, "__pages_path"):
+            path = self.parser.get("GENERATOR", "pages_path", fallback="pages")
+            self.__pages_path = f"{self.root}/{path}"
+        return self.__pages_path
+
+    @property
+    def assets_path(self) -> str:
+        """The path to the assets folder"""
+        if not hasattr(self, "__assets_path"):
+            path = self.parser.get("GENERATOR", "assets_path", fallback="assets")
+            self.__assets_path = f"{self.root}/{path}"
+        return self.__assets_path
     
     @property
     def dist_assets_path(self) -> str:
@@ -129,59 +161,30 @@ class IniConfig:
             self.__dist_assets_path = f"{self.dist_path}/{self.assets_path[self.assets_path.find('/')+1:]}"
         return self.__dist_assets_path
 
-    GENERATOR_OPTIONS = {"port", "dist_path", "pages_path", "assets_path"}
-    """Options for the [GENERATOR] section of the config file"""
-
-    @property
-    def port(self) -> int:
-        """The port to run the server on"""
-        if not hasattr(self, "__port"):
-            self.__port = self.parser.getint("GENERATOR", "port")
-        return self.__port
-    
-    @property
-    def dist_path(self) -> str:
-        """The path to the dist folder"""
-        if not hasattr(self, "__dist_path"):
-            self.__dist_path = f"{self.root}/{self.parser.get('GENERATOR', 'dist_path')}"
-        return self.__dist_path
-    
-    @property
-    def pages_path(self) -> str:
-        """The path to the pages folder"""
-        if not hasattr(self, "__pages_path"):
-            self.__pages_path = f"{self.root}/{self.parser.get('GENERATOR', 'pages_path')}"
-        return self.__pages_path
-
-    @property
-    def assets_path(self) -> str:
-        """The path to the assets folder"""
-        if not hasattr(self, "__assets_path"):
-            self.__assets_path = f"{self.root}/{self.parser.get('GENERATOR', 'assets_path')}"
-        return self.__assets_path
-    
-    TEMPLATES_OPTIONS = {"templates_path", "base_template", "nav_template"}
-    """Options for the [TEMPLATES] section of the config file"""
-
     @property
     def templates_path(self) -> str:
         """The path to the templates folder"""
         if not hasattr(self, "__templates_path"):
-            self.__templates_path = f"{self.root}/{self.parser.get('TEMPLATES', 'templates_path')}"
+            path = self.parser.get("TEMPLATES", "templates_path", fallback="templates")
+            self.__templates_path = f"{self.root}/{path}"
         return self.__templates_path
 
     @property
     def base_template(self) -> str:
         """The path to the base template"""
         if not hasattr(self, "__base_template"):
-            self.__base_template = self.parser.get('TEMPLATES', 'base_template')
+            self.__base_template = self.parser.get(
+                'TEMPLATES', 'base_template', fallback='base.html'
+            )
         return self.__base_template
 
     @property
     def nav_template(self) -> str:
         """The path to the nav template"""
         if not hasattr(self, "__nav_template"):
-            self.__nav_template = self.parser.get('TEMPLATES', 'nav_template')
+            self.__nav_template = self.parser.get(
+                'TEMPLATES', 'nav_template', fallback='nav.html'
+            )
         return self.__nav_template
 
     def get(self, section: str, name: str, option: Option[T]) -> T:
