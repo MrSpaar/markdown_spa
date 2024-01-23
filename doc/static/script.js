@@ -12,7 +12,8 @@ function prepare() {
 }
 
 function update(path, push = true) {
-    document.getElementById('loader').classList.add('active');
+    let loader = document.getElementById('loader');
+    loader.classList.add('active');
 
     fetch(path + "index.json")
         .then(resp => resp.json())
@@ -24,7 +25,9 @@ function update(path, push = true) {
 
             if (push)
                 window.history.pushState({}, '', path);
+
             prepare();
+            loader.classList.remove('active');
         })
         .catch(_ => {
             const error = document.getElementById('error');
