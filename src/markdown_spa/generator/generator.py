@@ -120,9 +120,11 @@ class Generator:
             )
 
             with open(f"{self.config.dist_path}/{uri}/index.html", "w") as f:
-                f.write(self.base_template.render(
-                    uri=uri, nav=self.nav, meta=page["meta"], page_content=content,
-                    assets_path=self.config.assets_path.removeprefix(self.config.root+"/")
+                f.write(Generator.INTERNAL_LINK_RE.sub(rf'\1="{self.config.base_url}\2"',
+                    self.base_template.render(
+                        uri=uri, nav=self.nav, meta=page["meta"], page_content=content,
+                        assets_path=self.config.assets_path.removeprefix(self.config.root+"/")
+                    )
                 ))
 
             if self.config.json:
