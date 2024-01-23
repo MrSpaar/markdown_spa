@@ -11,13 +11,6 @@ from click import group, secho
 @group(context_settings=dict(help_option_names=['-h', '--help']))
 def main_group() -> int:
     """Static site generator for Markdown files."""
-    
-    current = version("markdown_spa")
-    latest = get("https://pypi.org/pypi/markdown_spa/json").json()["info"]["version"]
-    
-    if latest > current:
-        secho(f"Version {latest} is available, run '{executable} -m pip install -U markdown_spa' to update.", fg="yellow", bold=True)
-
     return 0
 
 def main() -> None:
