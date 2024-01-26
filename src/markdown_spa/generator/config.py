@@ -116,8 +116,8 @@ class IniConfig:
             self.__base_url = f"http://127.0.0.1:{self.port}"
 
             if var := environ.get("REPO"):
-                user, repo = var.split("/")
-                self.__base_url = f"https://{user}.github.io/{repo}"
+                user, repo = var.split("/") 
+                self.__base_url = f"https://{user}.github.io" if "github.io" in repo else f"https://{user}.github.io/{repo}"
 
         return self.__base_url
 
