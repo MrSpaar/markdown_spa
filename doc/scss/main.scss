@@ -245,7 +245,7 @@ blockquote {
 
 	p.quote::before {
 		display: block;
-		margin: -5px 0;
+		margin: 0 0 -5px 0;
 		font-size: 1.05em;
         font-weight: bold;
         height: 30px;
@@ -255,7 +255,7 @@ blockquote {
         border-color: var(--primary-color);
 
         p::before {
-            content: '🛈 Note ';
+            content: '📝 Note ';
             color: var(--primary-color);
         }
     }
@@ -264,8 +264,17 @@ blockquote {
         border-color: #cd5c5c;
 
         p::before {
-            content: '⚠ Warning ';
+            content: '⚠️ Warning ';
             color: #cd5c5c;
+        }
+    }
+
+    &:has(p.quote-TIP) {
+        border-color: #90ee90;
+
+        p::before {
+            content: '💡 Tip ';
+            color: #90ee90;
         }
     }
 }

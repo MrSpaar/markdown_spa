@@ -1,6 +1,6 @@
 <ul>
     {% for (uri, page) in tree.items() recursive -%}
-    <li><a href="/{{ uri }}">{{ page.meta.name }}</a>
+    <li><a href="/{{ uri }}{% if uri %}/{% endif %}">{{ page.meta.name }}</a>
         {% if page.children -%}
         <ul>
             {{ loop(page.children.items()) }}
