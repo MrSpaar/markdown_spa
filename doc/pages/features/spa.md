@@ -9,8 +9,8 @@ Whenever a link to another page is clicked or a popstate event is fired, the scr
 - Fetch the page and update the content
 - Call the `postFetch()` function if it exists
 
-> You can override the `preFetch()` and `postFetch()` functions to add custom logic.
 > [!TIP]
+> You can override the `preFetch()` and `postFetch()` functions to add custom logic.
 
 The default strategy is to fetch the new page as HTML and replace the entire document. However, if you want to load only a portion of the page, you can use the JSON strategy:
 
