@@ -9,8 +9,8 @@ To add it to an existing project, run `markdown_spa add SASS`, there are two opt
 - `source_path`: The path to the directory containing your SASS files
 - `main_path`: The path to the main SASS file (relative to project root)
 
-> The automatic configuration will delete `assets/style.css` if it exists.
 > [!WARNING]
+> The automatic configuration will delete `assets/style.css` if it exists.
 
 ## Manual configuration
 

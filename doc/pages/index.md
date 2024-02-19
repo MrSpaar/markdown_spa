@@ -33,5 +33,5 @@ And finally, to build your website you have two options:
 - Standalone: `markdown_spa build <folder (optionnal)>`
 - Live-reload: `markdown_spa watch <folder (optionnal)>`
 
-> If scripts aren't added to `PATH`, you can use `python -m markdown_spa` instead of `markdown_spa`.
 > [!NOTE]
+> If scripts aren't added to `PATH`, you can use `python -m markdown_spa` instead of `markdown_spa`.

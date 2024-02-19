@@ -9,8 +9,8 @@ To add it to an existing project, run `markdown_spa add Tailwind`, there are two
 - `config_file`: The path to the Tailwind config file (relative to project root)
 - `input_file`: The path to the input CSS file (optional, relative to project root)
 
-> The automatic configuration will delete `assets/style.css` if it exists.
 > [!WARNING]
+> The automatic configuration will delete `assets/style.css` if it exists.
 
 ## Manual configuration
 

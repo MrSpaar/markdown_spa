@@ -23,7 +23,7 @@ class Page(TypedDict):
 class Generator:
     """Main class for building `markdown_spa` projects"""
 
-    QUOTE_RE = re_compile(r'> \[!([A-Z]+)\]')
+    QUOTE_RE = re_compile(r"> \[!(.*?)\]\n(> .*)")
     CHECKBOX_RE = re_compile(r'\[([ xX])\] (.*)')
     INTERNAL_LINK_RE = re_compile(r'(href|src)=["\'](/[^"\']+|/)["\']')
     TAG_RE = re_compile(r'\s*\[(?P<key>[^\]]+)\]:\s*# \((?P<value>.*)\)')
@@ -88,9 +88,9 @@ class Generator:
     def __render_md(self, page: Page, uri: str) -> str:
         with open(f"{self.config.pages_path}/{uri or 'index'}.md") as f:
             content = self.md.convert(Generator.QUOTE_RE.sub(
-                r'> { .quote .quote-\1 }', f.read()
+                r"\2\n{.quote .quote-\1}", f.read()
             ))
-            
+
         return Generator.CHECKBOX_RE \
             .sub(Generator.__to_checkbox, content) \
             .replace("<table", "<table tabindex='0'") \

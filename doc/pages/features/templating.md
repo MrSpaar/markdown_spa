@@ -12,8 +12,8 @@ By default, the following variables are available:
 | `{{ assets_path }}`      | Base and nav templates, HTML pages | Path to the assets directory       |
 | `{{ page_content }}`     | Base template                      | HTML content of each markdown file |
 
-> Pages can be HTML or Markdown files, but the variables are only available in HTML files.
 > [!WARNING]
+> Pages can be HTML or Markdown files, but the variables are only available in HTML files.
 
 To add your own variables, you can add attributes at the top of **each** file:
 ```md

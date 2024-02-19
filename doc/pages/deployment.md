@@ -54,5 +54,5 @@ jobs:
         uses: actions/deploy-pages@v2
 ```
 
-> You'll need to change `path: './generated'` if you overridden `dist_path` in your `config.ini` file. 
 > [!WARNING]
+> You'll need to change `path: './generated'` if you overridden `dist_path` in your `config.ini` file. 
