@@ -1,17 +1,6 @@
 if (typeof preFetch !== 'function') { function preFetch() {} }
 if (typeof postFetch !== 'function') { function postFetch() {} }
 
-function overrideLinks() {
-    document.querySelectorAll('a').forEach(a => {
-        if (a.href.startsWith(window.location.origin) && !a.hasAttribute('onclick')) {
-            a.onclick = e => {
-                e.preventDefault();
-                updatePage(a.href);
-            };
-        }
-    });
-}
-
 async function updatePage(path) {
     preFetch();
 
@@ -22,15 +11,10 @@ async function updatePage(path) {
         document.documentElement.innerHTML = text;
     }
 
-    overrideLinks();
     postFetch();
-
-    window.history.pushState({}, '', path);
 }
 
 postFetch();
-overrideLinks();
-
 let curPath = window.location.pathname;
 
 window.addEventListener('popstate', async _ => {
@@ -41,3 +25,15 @@ window.addEventListener('popstate', async _ => {
     curPath = window.location.pathname;
     await updatePage(window.location.href);
 });
+
+window.addEventListener('click', e => {
+    if (!e.target.hasAttribute("href")) {
+        return;
+    }
+
+    if (e.target.href.startsWith(window.location.origin)) {
+        e.preventDefault();
+        updatePage(e.target.href);
+        window.history.pushState({}, '', e.target.href);
+    }
+})

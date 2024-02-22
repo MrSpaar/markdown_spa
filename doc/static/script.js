@@ -1,9 +1,5 @@
 let loader = document.getElementById('loader');
-
-document.getElementById('show-nav-label').onkeydown = e => {
-    if (e.key == 'Enter')
-        e.target.children[0].click();
-};
+let input = document.getElementById('show-nav')
 
 function preFetch() {
     loader.classList.add('active');
@@ -28,4 +24,5 @@ function postFetch() {
     }
 
     loader.classList.remove('active');
+    input.checked = false;
 }
