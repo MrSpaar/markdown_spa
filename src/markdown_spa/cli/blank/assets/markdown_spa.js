@@ -27,13 +27,21 @@ window.addEventListener('popstate', async _ => {
 });
 
 window.addEventListener('click', e => {
-    if (!e.target.hasAttribute("href")) {
+    let targetAnchor = e.target.closest('a');
+    if (!targetAnchor || !targetAnchor.hasAttribute("href")) {
         return;
     }
 
-    if (e.target.href.startsWith(window.location.origin)) {
+    href = (targetAnchor) ? targetAnchor.href : e.target.href;
+    e.preventDefault();
+
+    if (href == window.location.href) {
+        return;
+    }
+
+    if (href.startsWith(window.location.origin)) {
         e.preventDefault();
-        updatePage(e.target.href);
-        window.history.pushState({}, '', e.target.href);
+        updatePage(href);
+        window.history.pushState({}, '', href);
     }
 })
