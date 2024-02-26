@@ -49,4 +49,4 @@ jobs:
           path: './doc/generated'
       - name: Deploy to GitHub Pages 🌍
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
