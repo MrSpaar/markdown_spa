@@ -1,9 +1,9 @@
-from .config import Option, Dependency, T
-
 from pathlib import Path
 from importlib import import_module
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Type, final
+
+from .config import Option, Dependency, T
 
 if TYPE_CHECKING:
     from . import Generator
@@ -30,7 +30,7 @@ class Extension(ABC):
     @abstractmethod
     def render(self) -> None:
         """Called either via `markdown_spa build` or `markdown_spa watch` (if TO_WATCH is not empty)"""
-        ... 
+        ...
 
     @staticmethod
     @abstractmethod

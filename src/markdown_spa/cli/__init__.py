@@ -1,13 +1,14 @@
+from click import group
+
 from .project import init, watch, build
 from .extensions import install, uninstall, add, list
-
-from click import group
 
 
 @group(context_settings=dict(help_option_names=['-h', '--help']))
 def main_group() -> int:
     """Static site generator for Markdown files."""
     return 0
+
 
 def main() -> None:
     """Create the main command group"""

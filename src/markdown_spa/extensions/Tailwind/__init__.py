@@ -1,8 +1,8 @@
-from ...generator import Extension, Dependency, Option
-
 from os import remove
 from shutil import copy
 from os.path import exists
+
+from ...generator import Extension, Dependency, Option
 
 
 class Tailwind(Extension):

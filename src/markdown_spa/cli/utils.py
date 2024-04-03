@@ -1,5 +1,3 @@
-from ..generator import Generator, Dependency, get_extension
-
 from os.path import isdir
 from sys import executable
 from os import access, W_OK, R_OK
@@ -8,6 +6,7 @@ from typing import Callable, Optional
 from subprocess import PIPE, CalledProcessError, run
 
 from click import secho, prompt
+from ..generator import Generator, Dependency, get_extension
 
 
 def echo_wrap(message: str, func: Callable[..., Optional[str]], *args, full_tb: bool = False, **kwargs) -> Optional[str]:
@@ -24,8 +23,8 @@ def echo_wrap(message: str, func: Callable[..., Optional[str]], *args, full_tb: 
     if err:
         secho("failed", fg="red", bold=True)
         return err
-    
-    secho(f"done", fg="green", bold=True)
+
+    secho("done", fg="green", bold=True)
 
 
 def call(command) -> Optional[str]:

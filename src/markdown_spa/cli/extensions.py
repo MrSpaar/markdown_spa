@@ -1,5 +1,3 @@
-from .utils import echo_wrap, initialize_extension, call
-
 from os import listdir
 from pathlib import Path
 from shutil import rmtree
@@ -7,6 +5,7 @@ from os.path import exists
 from sys import executable
 
 from click import command, argument, option, secho
+from .utils import echo_wrap, initialize_extension, call
 
 
 @command()
@@ -28,19 +27,19 @@ def install(full_traceback: bool, upgrade: bool, name: str, url: str) -> int:
     ):
         secho(err, fg="red", bold=True)
         return 1
-    
+
     if not upgrade and (
         err := echo_wrap("Cloning repository", call, f"git clone {url} {path}", full_tb=full_traceback)
     ):
         secho(err, fg="red", bold=True)
         return 1
-        
+
     if exists(f"{path}/requirements.txt") and (
         err := echo_wrap("Installing requirements", call, f"{executable} -m pip install -r {name}/requirements.txt", full_tb=full_traceback)
     ):
         secho(err, fg="red", bold=True)
         return 1
-    
+
     secho("Extension installed!", fg="green", bold=True)
     return 0
 
@@ -71,14 +70,14 @@ def list() -> int:
 
     extensions = [
         path for path in listdir(modules_path)
-        if path not in ("__pycache__", "__init__.py") and exists (f"{modules_path}/{path}/__init__.py")
+        if path not in ("__pycache__", "__init__.py") and exists(f"{modules_path}/{path}/__init__.py")
     ]
 
     if not extensions:
         secho("No extensions found!", fg="red", bold=True)
         return 1
 
-    secho(f"Installed extensions: ", fg="green", bold=True, nl=False)
+    secho("Installed extensions: ", fg="green", bold=True, nl=False)
     secho(', '.join(extensions))
 
     return 0
@@ -97,6 +96,6 @@ def add(full_traceback: bool, name: str) -> int:
     if err := initialize_extension(name, full_traceback):
         secho(err, fg="red", bold=True)
         return 1
-    
+
     secho("Extension initialized!", fg="green", bold=True)
     return 0

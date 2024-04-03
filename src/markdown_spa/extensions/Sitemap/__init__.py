@@ -1,8 +1,8 @@
-from ...generator import Extension, Option
-
 from shutil import copy
 from datetime import datetime
 from configparser import ConfigParser
+
+from ...generator import Extension, Option
 
 
 class Sitemap(Extension):

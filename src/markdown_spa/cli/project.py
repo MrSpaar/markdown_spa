@@ -33,7 +33,7 @@ def init(full_traceback: bool, path: str) -> int:
         path for path in listdir(PPath(__file__).parent.parent/"extensions")
         if not path.endswith(".py") and not path.startswith("__")
     ]
-    
+
     dirs_str = "\n  - ".join(["", *dirs])
     inp = prompt(
         f"Choose extensions to enable (space-separated, empty to skip): {dirs_str}\n",
@@ -48,7 +48,7 @@ def init(full_traceback: bool, path: str) -> int:
     if diff := set(extensions).difference(dirs):
         secho(f"Unknown extensions: {', '.join(diff)}", fg="red", bold=True)
         return 1
-    
+
     chdir(path)
     for extension in extensions:
         secho(f"Initializing {extension}... ", fg="yellow", bold=True)

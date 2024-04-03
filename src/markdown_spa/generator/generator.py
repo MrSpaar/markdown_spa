@@ -1,6 +1,3 @@
-from .config import IniConfig
-from .extension import Extension, get_extension
-
 from json import dump
 from os.path import isdir
 from shutil import copytree
@@ -10,6 +7,9 @@ from typing import TypedDict, Optional, Union, Literal
 
 from markdown import Markdown
 from jinja2 import Environment, FileSystemLoader, Template
+
+from .config import IniConfig
+from .extension import Extension, get_extension
 
 
 class Page(TypedDict):
@@ -40,11 +40,11 @@ class Generator:
     def __to_checkbox(m: Match) -> str:
         checked: str = ' checked' if m.group(1).lower() == 'x' else ''
         return f"<input type='checkbox' disabled{checked} aria-label='checkbox list item'> {m.group(2)}"
-    
+
     def __read_meta(self, path: str) -> dict[str, str]:
         meta: dict[str, str] = self.config.defaults()
 
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             while (len(line := f.readline()) > 2 and (match := Generator.TAG_RE.match(line))):
                 meta[match.group("key")] = match.group("value")
 
@@ -58,8 +58,8 @@ class Generator:
             ext = item_path[item_path.rfind(".")+1:]
 
             uri = item_path.removeprefix(f"{self.config.pages_path}/") \
-                                .removesuffix(f".{ext}") \
-                                .removesuffix("index")
+                .removesuffix(f".{ext}") \
+                .removesuffix("index")
 
             # File already processed, processing dir
             if isdir(item_path) and uri in entry:
@@ -82,11 +82,11 @@ class Generator:
                 meta=self.config.defaults(),
                 children=self.__prepare(item_path)
             )
-        
+
         return entry
-    
-    def __render_md(self, page: Page, uri: str) -> str:
-        with open(f"{self.config.pages_path}/{uri or 'index'}.md") as f:
+
+    def __render_md(self, uri: str) -> str:
+        with open(f"{self.config.pages_path}/{uri or 'index'}.md", encoding="utf-8") as f:
             content = self.md.convert(Generator.QUOTE_RE.sub(
                 r"\2\n{.quote .quote-\1}", f.read()
             ))
@@ -97,7 +97,7 @@ class Generator:
             .replace("<pre", "<pre tabindex='0'")
 
     def __render_html(self, page: Page, uri: str) -> str:
-        with open(f"{self.config.pages_path}/{uri or 'index'}.{page['ext']}") as f:
+        with open(f"{self.config.pages_path}/{uri or 'index'}.{page['ext']}", encoding="utf-8") as f:
             for _ in range(len(page["meta"])):
                 f.readline()
 
@@ -109,26 +109,26 @@ class Generator:
     def __render_tree(self, tree: dict[str, Page]) -> None:
         for uri, page in tree.items():
             makedirs(f"{self.config.dist_path}/{uri}", exist_ok=True)
-            
+
             if page["ext"] == "md":
-                content = self.__render_md(page, uri)
+                content = self.__render_md(uri)
             else:
-                content = self.__render_html(page, uri)            
+                content = self.__render_html(page, uri)
 
             content = Generator.INTERNAL_LINK_RE.sub(
                 rf'\1="{self.config.base_url}\2"', content
             )
 
-            with open(f"{self.config.dist_path}/{uri}/index.html", "w") as f:
+            with open(f"{self.config.dist_path}/{uri}/index.html", "w", encoding="utf-8") as f:
                 f.write(Generator.INTERNAL_LINK_RE.sub(rf'\1="{self.config.base_url}\2"',
-                    self.base_template.render(
-                        uri=uri, nav=self.nav, meta=page["meta"], page_content=content,
-                        assets_path=self.config.assets_path.removeprefix(self.config.root+"/")
-                    )
+                        self.base_template.render(
+                            uri=uri, nav=self.nav, meta=page["meta"], page_content=content,
+                            assets_path=self.config.assets_path.removeprefix(self.config.root+"/")
+                        )
                 ))
 
             if self.config.json:
-                with open(f"{self.config.dist_path}/{uri}/index.json", "w") as f:
+                with open(f"{self.config.dist_path}/{uri}/index.json", "w", encoding="utf-8") as f:
                     dump({**page["meta"], "uri": uri, "page_content": content}, f, indent=4)
 
             if page["children"]:
@@ -138,7 +138,7 @@ class Generator:
         """Loads config from config_path"""
         if error := self.config.load_config():
             return error
-        
+
         for extension in self.config.extensions:
             try:
                 instance = get_extension(extension)(self)
@@ -171,7 +171,7 @@ class Generator:
             if self.full_tb:
                 raise e
             return f"Error while rendering nav template: {e}"
-        
+
         try:
             self.base_template = self.env.get_template(self.config.base_template)
             self.__render_tree(self.tree)

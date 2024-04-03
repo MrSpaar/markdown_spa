@@ -1,8 +1,8 @@
-from ...generator import Extension, Dependency, Option
-
 from shutil import copy
 from os.path import exists
 from os import makedirs, remove
+
+from ...generator import Extension, Dependency, Option
 
 
 class SASS(Extension):

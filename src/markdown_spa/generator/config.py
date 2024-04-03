@@ -1,6 +1,5 @@
 from os import environ
 from os.path import exists
-from typing import Optional
 from dataclasses import dataclass
 from importlib.util import find_spec
 from configparser import ConfigParser
@@ -8,6 +7,7 @@ from typing import TypeVar, Optional, Generic
 
 
 T = TypeVar("T", str, bool, int, float)
+
 
 @dataclass
 class Option(Generic[T]):
@@ -21,6 +21,7 @@ class Option(Generic[T]):
     def __post_init__(self) -> None:
         self.is_path = self.is_path or self.is_template
 
+
 @dataclass
 class Dependency:
     """Represents a dependency for an extension"""
@@ -33,14 +34,14 @@ class Dependency:
 
     def __post_init__(self) -> None:
         self.pip_package = self.pip_package or self.module
-    
+
     def __repr__(self) -> str:
         return self.pip_package
 
 
 class IniConfig:
     """Class for loading markdown_spa config from config.ini file."""
-    
+
     def __init__(self, root: str, ini_file: str = "config.ini") -> None:
         self.root = root
         self.parser = ConfigParser()
@@ -95,7 +96,7 @@ class IniConfig:
             if option.is_path and not exists(path):
                 faulty_options.append(f"{name} ({path}) not found")
                 continue
-        
+
         if faulty_options:
             faulty_options_str = "\n  - ".join(faulty_options)
             return f"Error in section [{section}]: \n  - {faulty_options_str}"
@@ -116,7 +117,7 @@ class IniConfig:
             self.__base_url = f"http://127.0.0.1:{self.port}"
 
             if var := environ.get("REPO"):
-                user, repo = var.split("/") 
+                user, repo = var.split("/")
                 self.__base_url = f"https://{user}.github.io" if "github.io" in repo else f"https://{user}.github.io/{repo}"
 
         return self.__base_url
@@ -129,7 +130,7 @@ class IniConfig:
                 "GENERATOR", "json", fallback=False
             )
         return self.__json
-    
+
     @property
     def dist_path(self) -> str:
         """The path to the dist folder"""
@@ -137,7 +138,7 @@ class IniConfig:
             path = self.parser.get("GENERATOR", "dist_path", fallback="generated")
             self.__dist_path = f"{self.root}/{path}"
         return self.__dist_path
-    
+
     @property
     def pages_path(self) -> str:
         """The path to the pages folder"""
@@ -153,7 +154,7 @@ class IniConfig:
             path = self.parser.get("GENERATOR", "assets_path", fallback="assets")
             self.__assets_path = f"{self.root}/{path}"
         return self.__assets_path
-    
+
     @property
     def dist_assets_path(self) -> str:
         """The path to the assets folder in the dist folder"""
