@@ -153,6 +153,7 @@ class Generator:
             self.extensions.append(instance)
 
         self.env.loader = FileSystemLoader(self.config.templates_path)
+        return None
 
     def render_pages(self) -> Optional[str]:
         """Renders pages from pages_path to dist_path"""
@@ -179,12 +180,17 @@ class Generator:
             if self.full_tb:
                 raise e
             return f"Error while rendering pages: {e}"
+        
+        return None
 
     def copy_assets(self) -> Optional[str]:
         """Copies assets from assets_path to dist_assets_path"""
+
         try:
             copytree(self.config.assets_path, self.config.dist_assets_path, dirs_exist_ok=True)
         except Exception as e:
             if self.full_tb:
                 raise e
             return f"Error while copying assets: {e}"
+        
+        return None

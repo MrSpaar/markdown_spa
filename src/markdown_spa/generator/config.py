@@ -75,6 +75,8 @@ class IniConfig:
         if faulty_paths:
             faulty_paths_str = "\n  - ".join(faulty_paths)
             return f"Paths not found: \n  - {faulty_paths_str}"
+        
+        return None
 
     def check_options(self, section: str, options: dict[str, Option]) -> Optional[str]:
         """Check if options are valid (returns an optional error message)"""
@@ -100,6 +102,8 @@ class IniConfig:
         if faulty_options:
             faulty_options_str = "\n  - ".join(faulty_options)
             return f"Error in section [{section}]: \n  - {faulty_options_str}"
+        
+        return None
 
     @property
     def port(self) -> int:

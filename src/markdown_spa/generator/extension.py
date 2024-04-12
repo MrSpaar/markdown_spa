@@ -23,6 +23,7 @@ class Extension(ABC):
         self.config = generator.config
 
     @property
+    @abstractmethod
     def TO_WATCH(cls) -> list[str]:
         """A list of paths to watch for changes"""
         ...
@@ -38,9 +39,8 @@ class Extension(ABC):
         """Called when the extension is added to a project, either via `markdown_spa init` or `markdown_spa add`"""
         ...
 
-    @classmethod
     @final
-    @property
+    @classmethod
     def PATH(cls) -> str:
         """The path to the extension (cannot be overridden)"""
         return f"{(Path(__file__).parent.parent / 'extensions').absolute()}/{cls.__name__}"

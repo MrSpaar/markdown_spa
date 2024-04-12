@@ -25,6 +25,7 @@ def echo_wrap(message: str, func: Callable[..., Optional[str]], *args, full_tb: 
         return err
 
     secho("done", fg="green", bold=True)
+    return None
 
 
 def call(command) -> Optional[str]:
@@ -39,6 +40,8 @@ def call(command) -> Optional[str]:
             return e.stderr.decode('utf-8')
         except UnicodeDecodeError:
             return "Could not error output to utf-8"
+    
+    return None
 
 
 def check_dir(path: str) -> Optional[str]:
@@ -47,11 +50,15 @@ def check_dir(path: str) -> Optional[str]:
 
     if not access(path, W_OK) or not access(path, R_OK):
         return f"Directory '{path}' not accessible!"
+    
+    return None
 
 
 def ensure_installed(dependency: Dependency) -> Optional[str]:
     if not find_spec(dependency.module):
         return call(f"{executable} -m pip install {dependency.pip_package}")
+    
+    return None
 
 
 def initialize_extension(extension: str, full_tb: bool = False) -> Optional[str]:
@@ -61,6 +68,8 @@ def initialize_extension(extension: str, full_tb: bool = False) -> Optional[str]
         if full_tb:
             raise e
         return f"Extension {extension} not found!"
+    
+    return None
 
     values = {
         name: prompt(
