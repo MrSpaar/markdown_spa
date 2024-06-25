@@ -1,5 +1,4 @@
-dist/
-Hello/
-generated/
-__pycache__/
+**/dist/
+**/generated/
+**/__pycache__/
 src/*.egg-info/

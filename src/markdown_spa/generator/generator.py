@@ -3,7 +3,7 @@ from os.path import isdir
 from shutil import copytree
 from os import makedirs, listdir
 from re import Match, compile as re_compile
-from typing import TypedDict, Optional, Union, Literal
+from typing import TypedDict, Optional, Union, Literal, Any
 
 from markdown import Markdown
 from jinja2 import Environment, FileSystemLoader, Template
@@ -42,11 +42,12 @@ class Generator:
         return f"<input type='checkbox' disabled{checked} aria-label='checkbox list item'> {m.group(2)}"
 
     def __read_meta(self, path: str) -> dict[str, str]:
-        meta: dict[str, str] = self.config.defaults()
+        meta: dict[str, Any] = self.config.defaults()
 
         with open(path, encoding="utf-8") as f:
             while (len(line := f.readline()) > 2 and (match := Generator.TAG_RE.match(line))):
-                meta[match.group("key")] = match.group("value")
+                value = match.group("value")
+                meta[match.group("key")] = int(value) if value.isdigit() else value
 
         return meta
 
