@@ -27,10 +27,10 @@ class Sitemap(Extension):
             self.get_option("sitemap")
         )
 
-        with open(f"{self.config.dist_path}/robots.txt", "w") as f:
+        with open(f"{self.config.dist_path}/robots.txt", "w", encoding="utf-8") as f:
             f.write(robots_template.render(url=self.config.base_url))
 
-        with open(f"{self.config.dist_path}/sitemap.xml", "w") as f:
+        with open(f"{self.config.dist_path}/sitemap.xml", "w", encoding="utf-8") as f:
             f.write(sitemap_template.render(
                 tree=self.generator.tree, url=self.config.base_url,
                 date=datetime.now().strftime("%Y-%m-%dT%H:%M:%S+00:00")

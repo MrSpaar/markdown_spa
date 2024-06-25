@@ -31,5 +31,5 @@ class Tailwind(Extension):
             remove("./assets/style.css")
 
         if kwargs["input_file"]:
-            with open(kwargs["input_file"], "w") as file:
+            with open(kwargs["input_file"], "w", encoding="utf-8") as file:
                 file.write("@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\n")

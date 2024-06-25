@@ -23,7 +23,7 @@ class SASS(Extension):
     def render(self) -> None:
         from sass import compile
 
-        with open(f"{self.config.dist_assets_path}/style.css", "w") as f:
+        with open(f"{self.config.dist_assets_path}/style.css", "w", encoding="utf-8") as f:
             f.write(compile(
                 output_style="compressed",
                 filename=f"{self.config.root}/{self.get_option('main_path')}"

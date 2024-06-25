@@ -24,7 +24,7 @@ class Extension(ABC):
 
     @property
     @abstractmethod
-    def TO_WATCH(cls) -> list[str]:
+    def TO_WATCH(self) -> list[str]:
         """A list of paths to watch for changes"""
         ...
 
