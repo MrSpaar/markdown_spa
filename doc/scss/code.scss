@@ -12,7 +12,7 @@ code {
 }
 
 .codehilite {
-	--content-color: black;
+    --content-color: black;
     --header-color: #f14343;
     --string-color: #d3671a;
     --comment-color: #817676;
@@ -37,6 +37,7 @@ code {
 		--highlight-color: #44475a;
     }
 
+	margin: 0 1rem;
 	border-radius: 3px;
     background-color: var(--alternative-background-color);
 
