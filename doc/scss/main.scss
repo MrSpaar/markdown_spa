@@ -1,10 +1,10 @@
 @import "code";
-@import url('https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap');
+@import url("https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap");
 
 html {
     --primary-color: #03a9f4;
     --background-color: #fff;
-	--alternative-background-color: #f5f1f1;
+    --alternative-background-color: #f5f1f1;
 
     font-size: 1.05em;
     scroll-behavior: smooth;
@@ -13,13 +13,15 @@ html {
 
     @media (prefers-color-scheme: dark) {
         --background-color: #1d1e22;
-		--alternative-background-color: #333232;
+        --alternative-background-color: #333232;
 
         color: white;
-    
+
         a {
             color: var(--primary-color);
-            &:visited { color: #87ceeb; }
+            &:visited {
+                color: #87ceeb;
+            }
         }
     }
 
@@ -43,7 +45,9 @@ html {
 
         &-thumb {
             background-color: #979393;
-            &:active {background-color: #555 }
+            &:active {
+                background-color: #555;
+            }
         }
     }
 }
@@ -52,18 +56,26 @@ html {
     height: 2px;
     position: fixed;
     background-color: var(--primary-color);
-    animation: loader .8s forwards;
+    animation: loader 0.8s forwards;
 
     @keyframes loader {
-        0% { width: 0; }
-        99% { width: 100%; }
-        100% { opacity: 0; }
+        0% {
+            width: 0;
+        }
+        99% {
+            width: 100%;
+        }
+        100% {
+            opacity: 0;
+        }
     }
 }
 
 #error {
     opacity: 0;
-    &.active { opacity: 1 }
+    &.active {
+        opacity: 1;
+    }
     transition: opacity 0.3s ease-in-out;
 
     z-index: 1;
@@ -116,31 +128,45 @@ nav {
             color: var(--nav-color);
             text-decoration: none;
         }
-        
+
         label {
             padding: 2px;
             transition: background-color 0.1s ease-in-out;
 
-            &, input { display: none; }
-            &:hover { background-color: rgba(0,0,0,0.1) }
+            &,
+            input {
+                display: none;
+            }
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.1);
+            }
         }
     }
 
     > ul {
         padding: 0;
         margin: 20px 0 0 20px;
-        > li { list-style-type: none }
+        > li {
+            list-style-type: none;
+        }
     }
 
     li {
         margin-top: 5px;
         list-style: square;
 
-        a, a:visited {
+        a.active {
+            cursor: not-allowed;
+        }
+
+        a,
+        a:visited {
             color: var(--nav-color);
             text-decoration: none;
             transition: color 0.1s ease-in-out;
-            &:hover { color: var(--primary-color) }
+            &:not(.active):hover {
+                color: var(--primary-color);
+            }
         }
     }
 
@@ -168,7 +194,9 @@ nav {
             }
         }
 
-        > ul { display: none }
+        > ul {
+            display: none;
+        }
         &:has(input:checked) > ul {
             display: block;
             margin-bottom: 20px;
@@ -196,7 +224,7 @@ h2.anchor {
     cursor: pointer;
 
     &:hover::before {
-        content: '#';
+        content: "#";
         color: #aaa;
         position: absolute;
         margin-left: -20px;
@@ -226,7 +254,7 @@ p {
         margin-top: 0;
     }
 
-    &:has(+ul) {
+    &:has(+ ul) {
         margin-bottom: 5px;
     }
 }
@@ -234,28 +262,28 @@ p {
 blockquote {
     width: calc(100% - 35px);
 
-	padding: 10px 15px;
-	margin-left: 0;
-	border-left: 5px solid;
-	background-color: var(--alternative-background-color);
+    padding: 10px 15px;
+    margin-left: 0;
+    border-left: 5px solid;
+    background-color: var(--alternative-background-color);
 
     p {
         margin: 0;
     }
 
-	p.quote::before {
-		display: block;
-		margin: 0 0 -5px 0;
-		font-size: 1.05em;
+    p.quote::before {
+        display: block;
+        margin: 0 0 -5px 0;
+        font-size: 1.05em;
         font-weight: bold;
         height: 30px;
-	}
+    }
 
     &:has(p.quote-NOTE) {
         border-color: var(--primary-color);
 
         p::before {
-            content: '📝 Note ';
+            content: "📝 Note ";
             color: var(--primary-color);
         }
     }
@@ -264,7 +292,7 @@ blockquote {
         border-color: #cd5c5c;
 
         p::before {
-            content: '⚠️ Warning ';
+            content: "⚠️ Warning ";
             color: #cd5c5c;
         }
     }
@@ -273,7 +301,7 @@ blockquote {
         border-color: #90ee90;
 
         p::before {
-            content: '💡 Tip ';
+            content: "💡 Tip ";
             color: #90ee90;
         }
     }
@@ -288,15 +316,16 @@ table:not(.codehilitetable) {
         @media (prefers-color-scheme: dark) {
             --table-border-color: #444;
         }
-        
+
         border: 1px solid var(--table-border-color);
     }
-    
+
     tr:nth-child(even) {
         background: var(--alternative-background-color);
     }
-    
-    td, th {
+
+    td,
+    th {
         padding: 10px;
         text-align: left;
     }
