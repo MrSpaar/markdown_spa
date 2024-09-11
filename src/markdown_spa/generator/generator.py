@@ -60,7 +60,8 @@ class Generator:
 
             uri = item_path.removeprefix(f"{self.config.pages_path}/") \
                 .removesuffix(f".{ext}") \
-                .removesuffix("index")
+                .removesuffix("index") \
+                .lower()
 
             # File already processed, processing dir
             if isdir(item_path) and uri in entry:
@@ -181,7 +182,7 @@ class Generator:
             if self.full_tb:
                 raise e
             return f"Error while rendering pages: {e}"
-        
+
         return None
 
     def copy_assets(self) -> Optional[str]:
@@ -193,5 +194,5 @@ class Generator:
             if self.full_tb:
                 raise e
             return f"Error while copying assets: {e}"
-        
+
         return None
