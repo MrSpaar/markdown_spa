@@ -1,12 +1,19 @@
-function currentURL() {
-    return window.location.href.endsWith("/")
+function currentA() {
+    let href = window.location.href.endsWith("/")
         ? window.location.href
         : `${window.location.href}/`;
+
+    const links = document.querySelectorAll("ul a");
+    const targetLink = Array.from(links).find(
+        (link) => link.href.toLowerCase() === href.toLowerCase(),
+    );
+
+    return targetLink;
 }
 
 let loader = document.getElementById("loader");
 let input = document.getElementById("show-nav");
-let a = document.querySelector(`ul a[href='${currentURL()}']`);
+let a = currentA();
 
 function preFetch() {
     loader.classList.add("active");
@@ -24,7 +31,7 @@ function updateWithJSON(json) {
 
 function postFetch() {
     a.classList.remove("active");
-    a = document.querySelector(`ul a[href='${currentURL()}']`);
+    a = currentA();
     a.classList.add("active");
 
     for (let h2 of document.getElementsByTagName("h2")) {
