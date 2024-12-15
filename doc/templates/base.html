@@ -1,36 +1,73 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Markdown SPA - {{ meta.name }}</title>
-    <meta name="description" content="{{ meta.description }}">
-    <link rel="stylesheet" href="/{{ assets_path }}/style.css" />
-</head>
-<body>
-    <nav>
-        <div id="header">
-            <a href="/" id="home">markdown_spa</a>
-            <label for="show-nav" id="show-nav-label" tabindex="0">
-                <input type="checkbox" id="show-nav"/>
-                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 50 50">
-                    <path d="M 5 8 A 2.0002 2.0002 0 1 0 5 12 L 45 12 A 2.0002 2.0002 0 1 0 45 8 L 5 8 z M 5 23 A 2.0002 2.0002 0 1 0 5 27 L 45 27 A 2.0002 2.0002 0 1 0 45 23 L 5 23 z M 5 38 A 2.0002 2.0002 0 1 0 5 42 L 45 42 A 2.0002 2.0002 0 1 0 45 38 L 5 38 z"></path>
-                </svg>
-            </label>
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>Markdown SPA - {{ meta.name }}</title>
+        <meta name="description" content="{{ meta.description }}" />
+        <link rel="stylesheet" href="/{{ assets_path }}/style.css" />
+
+        <link
+            rel="preload"
+            href="https://fonts.googleapis.com/css?family=Inconsolata&display=swap"
+            as="style"
+            onload="this.onload=null;this.rel='stylesheet'"
+        />
+        <noscript>
+            <link
+                href="https://fonts.googleapis.com/css?family=Inconsolata&display=swap"
+                rel="stylesheet"
+                type="text/css"
+            />
+        </noscript>
+
+        <link
+            rel="preload"
+            href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap"
+            as="style"
+            onload="this.onload=null;this.rel='stylesheet'"
+        />
+        <noscript>
+            <link
+                href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap"
+                rel="stylesheet"
+                type="text/css"
+            />
+        </noscript>
+    </head>
+    <body>
+        <nav>
+            <div id="header">
+                <a href="/" id="home">markdown_spa</a>
+                <label for="show-nav" id="show-nav-label" tabindex="0">
+                    <input type="checkbox" id="show-nav" />
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        x="0px"
+                        y="0px"
+                        width="100"
+                        height="100"
+                        viewBox="0 0 50 50"
+                    >
+                        <path
+                            d="M 5 8 A 2.0002 2.0002 0 1 0 5 12 L 45 12 A 2.0002 2.0002 0 1 0 45 8 L 5 8 z M 5 23 A 2.0002 2.0002 0 1 0 5 27 L 45 27 A 2.0002 2.0002 0 1 0 45 23 L 5 23 z M 5 38 A 2.0002 2.0002 0 1 0 5 42 L 45 42 A 2.0002 2.0002 0 1 0 45 38 L 5 38 z"
+                        ></path>
+                    </svg>
+                </label>
+            </div>
+
+            {{ nav }}
+        </nav>
+
+        <div id="loader"></div>
+
+        <div id="content">
+            <h1>{{ meta.name }}</h1>
+
+            {{+ page_content -}}
         </div>
-        
-        {{ nav }}
-    </nav>
 
-    <div id="loader"></div>
-
-    <div id="content">
-        <h1>{{ meta.name }}</h1>
-
-        {{+ page_content -}}
-    </div>
-
-    <script src="/{{ assets_path }}/script.js"></script>
-    <script src="/{{ assets_path }}/markdown_spa.js"></script>
-</body>
+        <script src="/{{ assets_path }}/script.js"></script>
+        <script src="/{{ assets_path }}/markdown_spa.js"></script>
+    </body>
 </html>
