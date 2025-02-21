@@ -4,7 +4,7 @@
 
 The Tailwind extension allows you to use Tailwind CSS in your templates and markdown files.
 
-To add it to an existing project, run `markdown_spa add Tailwind`, there are two options:
+To add it to an existing project, run `markdown_spa add Tailwind`, there are two `config.ini` options:
 
 - `config_file`: The path to the Tailwind config file (relative to project root)
 - `input_file`: The path to the input CSS file (optional, relative to project root)
@@ -14,7 +14,7 @@ To add it to an existing project, run `markdown_spa add Tailwind`, there are two
 
 ## Manual configuration
 
-First, modify your `config.ini` file to add the following section:
+First, add the following section to `config.ini`:
 ```ini
 [Tailwind]
 input_file = assets/tailwind.css
@@ -31,7 +31,7 @@ module.exports = {
 ```
 
 You can now use tailwind in your templates and markdown files.
-Optionally, you can have an input CSS file, it just needs the following content:
+Optionally, you can have an input CSS file:
 ```css
 @tailwind base;
 @tailwind components;

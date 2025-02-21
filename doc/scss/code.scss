@@ -5,8 +5,13 @@ code {
     background-color: #f1e9e9;
 
     @media (prefers-color-scheme: dark) {
-        background-color: #404145;
+        background-color: var(--alternative-background-color);
     }
+}
+
+.quote code,
+tr:nth-child(2n) code {
+    background-color: var(--background-color);
 }
 
 .codehilite {

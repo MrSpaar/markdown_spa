@@ -2,13 +2,9 @@
 [name]:        # (Extensions)
 [description]: # (Documentation on markdown_spa's extension system)
 
-`markdown_spa` has a simple extension system that allows you to add custom functionality to your site.
-To install an extension, simply run the following command:
-```bash
-markdown_spa install <extension-name> <git_repo_url>
-```
+`markdown_spa` has a simple extension system that allows you to add custom features.
+To install an extension, simply run the following command: `markdown_spa install <extension-name> <git_repo_url>`.
 
-This will install the extension globally for your user.
 `markdown_spa` will automatically load all extensions in the `config.ini` file:
 ```ini
 [extension-name]
@@ -32,7 +28,7 @@ class MyExtension(Extension):
         # if is_path=True, os.path.exists will be called on the value
         # if is_template=True, the template path will be prepended to the checked path
     }
-    
+
     @property
     def TO_WATCH(self) -> List[str]:
         # Any changes to these files will trigger a MyExtension.render
@@ -56,12 +52,12 @@ Dependencies will be automatically installed and that part of the initialization
 - Option values are prompted to the user
 - The `config.ini` file is updated with the user's input
 
-## Make an extension available to the user
+## Make an extension available to anyone
 
-Every `markdown_spa` extension must be a Python module that contains a class that inherits from `markdown_spa.Extension` 
+Every `markdown_spa` extension must be a Python module that contains a class that inherits from `markdown_spa.Extension`
 (class name = extension name).
 
-Here is a minimal example of an extension:
+Here is a minimal Markdown SPA extension called `MyExtension`:
 
 - File structure:
 ```

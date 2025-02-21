@@ -2,7 +2,7 @@
 [name]:        # (Templating)
 [description]: # (How to use jinja2 templates in a markdown_spa project)
 
-`markdown_spa` uses [jinja2](https://jinja.palletsprojects.com/en/3.0.x/), allowing you to create a base template that will be used for all pages.
+`markdown_spa` uses [jinja2](https://jinja.palletsprojects.com/en/3.0.x/), allowing you to create a base template for all generated pages.
 By default, the following variables are available:
 
 | Variable                 | Available in                       | Description                        |
@@ -12,10 +12,7 @@ By default, the following variables are available:
 | `{{ assets_path }}`      | Base and nav templates, HTML pages | Path to the assets directory       |
 | `{{ page_content }}`     | Base template                      | HTML content of each markdown file |
 
-> [!WARNING]
-> Pages can be HTML or Markdown files, but the variables are only available in HTML files.
-
-To add your own variables, you can add attributes at the top of **each** file:
+To add your own variables, you can add attributes at the top of **each** markdown file:
 ```md
 [title]:   # (This is a title)
 [summary]: # (This is a description)
@@ -23,7 +20,7 @@ To add your own variables, you can add attributes at the top of **each** file:
 This is the actual content of the rendered page.
 ```
 
-Then, in the base template, variables with the same name will be available:
+Then, in the base template, variables will be accessible through the `meta` variable:
 ```html
 <div id="app">
     <h1>{{ meta.title }}</h1>

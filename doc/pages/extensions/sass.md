@@ -4,7 +4,7 @@
 
 The SASS extension allows you to use SASS in your project.
 
-To add it to an existing project, run `markdown_spa add SASS`, there are two options:
+To add it to an existing project, run `markdown_spa add SASS`, there are two `config.ini` options:
 
 - `source_path`: The path to the directory containing your SASS files
 - `main_path`: The path to the main SASS file (relative to project root)
@@ -14,7 +14,7 @@ To add it to an existing project, run `markdown_spa add SASS`, there are two opt
 
 ## Manual configuration
 
-First, modify your `config.ini` file to add the following section:
+First, add the following section to `config.ini`:
 ```ini
 [SASS]
 source_path = scss

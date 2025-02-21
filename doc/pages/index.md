@@ -14,7 +14,7 @@
 
 First, to setup a new project:
 
-- Install the package (once): `pip install markdown_spa`
+- Make sure the package is installed: `pip install markdown_spa`
 - Create a blank project: `markdown_spa init <folder (optionnal)>`
 
 The `config.ini` file describes the project structure:

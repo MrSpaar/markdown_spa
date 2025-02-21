@@ -2,7 +2,7 @@
 [name]:        # (Deployment)
 [description]: # (How to setup automatic Github Pages deployment)
 
-Github-SPA includes a Github Actions workflow to automatically deploy a static website to Github Pages.
+Github-SPA comes with a Github Actions workflow that automatically deploys your website to Github Pages.
 To enable it, go to your repository's settings and choose `Github Actions` as source in the `Pages` section:
 ![Enable Github Pages](/static/gh-pages.webp){: width="681" height="469" }
 
@@ -55,4 +55,4 @@ jobs:
 ```
 
 > [!WARNING]
-> You'll need to change `path: './generated'` if you overridden `dist_path` in your `config.ini` file. 
+> You'll need to change `path: './generated'` if you overridden `dist_path` in your `config.ini` file.

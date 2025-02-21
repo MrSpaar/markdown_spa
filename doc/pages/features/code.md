@@ -2,7 +2,12 @@
 [name]:        # (Syntax Highlighting)
 [description]: # (Syntax highlighting in code blocks)
 
-Syntax highlighting in code blocks is done using the [codehilite](https://python-markdown.github.io/extensions/code_hilite/) and [fenced_code](https://python-markdown.github.io/extensions/fenced_code_blocks/) extensions. You can create code blocks (language name can be deduced):
+Syntax highlighting in code blocks comes pre-installed and is done using the [codehilite](https://python-markdown.github.io/extensions/code_hilite/) and [fenced_code](https://python-markdown.github.io/extensions/fenced_code_blocks/) extensions.
+
+> [!NOTE]
+>  All available themes are downloadable [here](https://pygments.org/styles/) and CSS files should be in your assets folder.
+
+You can create code blocks (language name can be deduced):
 
 - With a shebang (to show line numbers)
 ``` { .markdown linenos=true linenostart=1 }

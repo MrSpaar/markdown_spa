@@ -2,7 +2,7 @@
 [name]:        # (Single Page App)
 [description]: # (Control how pages are loaded)
 
-Any blank project comes with `markdown_spa.js` in the assets folder. This simple script controls how pages are loaded and what content is updated.
+Any project comes with `markdown_spa.js` in the assets folder. This simple script controls how pages are loaded and what content is updated.
 Whenever a link to another page is clicked or a popstate event is fired, the script will:
 
 - Call the `preFetch()` function if it exists
@@ -12,14 +12,14 @@ Whenever a link to another page is clicked or a popstate event is fired, the scr
 > [!TIP]
 > You can override the `preFetch()` and `postFetch()` functions to add custom logic.
 
-The default strategy is to fetch the new page as HTML and replace the entire document. However, if you want to load only a portion of the page, you can use the JSON strategy:
+By default the new page if fetched and replaces the entire document. However, if you want to modify specific parts of the page, you can use the JSON mode:
 
 - Enable JSON in the `config.ini` file:
 ```ini
 [GENERATOR]
 json = true
 ```
-- Along with each page, a JSON file will be generated:
+- A JSON file will be generated for each page
 ```json
 {
     "uri": "/uri/to/page",
@@ -27,7 +27,7 @@ json = true
     "any_meta_tag": "..."
 }
 ```
-- Create a `updateWithJSON` function before the `markdown_spa.js` script:
+- Add a `updateWithJSON` function to your website:
 ```js
 function updateWithJSON(json) {
     // Update the page with the JSON data, for instance:
