@@ -2,7 +2,7 @@
 [name]:        # (Deployment)
 [description]: # (How to setup automatic Github Pages deployment)
 
-Github-SPA comes with a Github Actions workflow that automatically deploys your website to Github Pages.
+[`markdown_spa`](https://github.com/MrSpaar/markdown_spa) comes with a Github Actions workflow that automatically deploys your website to Github Pages.
 To enable it, go to your repository's settings and choose `Github Actions` as source in the `Pages` section:
 ![Enable Github Pages](/static/gh-pages.webp){: width="681" height="469" }
 
